@@ -1,5 +1,9 @@
 package com.steelstorm.arsenal.fx;
 
+import com.steelstorm.arsenal.entity.AuraFxEntity;
+import javax.annotation.Nullable;
+import net.minecraft.world.entity.Entity;
+
 import com.steelstorm.arsenal.registry.ModParticles;
 import net.minecraft.core.Holder;
 import net.minecraft.server.level.ServerLevel;
@@ -64,10 +68,70 @@ public final class Fx {
     /** A flat ring expanding along the ground to `radius` blocks. */
     public static void ring(ServerLevel level, Vec3 at, int color, float radius) {
         level.sendParticles(ModParticles.SHOCKWAVE.get().with(color, radius), at.x, at.y + 0.08, at.z, 1, 0, 0, 0, 0);
+        if (radius >= 2.5F) {
+            // Big rings also get a glowing halo racing outward, trailing sparkles.
+            halo(level, at, color, lighten(color), radius * 1.15F, 12 + (int) radius * 2);
+        }
     }
 
     public static void impact(ServerLevel level, Vec3 at, int color, float scale) {
         level.sendParticles(ModParticles.IMPACT.get().with(color, scale), at.x, at.y, at.z, 1, 0, 0, 0, 0);
+        if (scale >= 1.8F) {
+            AuraFxEntity.spawn(level, AuraFxEntity.Style.SUNBURST, at, color, WHITE, scale * 1.6F, 10, 12, 0, null);
+            sparkles(level, at, color, 10 + (int) (scale * 4), scale * 0.5);
+        }
+    }
+
+    // ------------------------------------------------------------------ big glowing effects
+
+    /** An expanding ground shockwave halo. */
+    public static void halo(ServerLevel level, Vec3 at, int color, int color2, float radius, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.HALO, at, color, color2, radius, ticks, 0, 0, null);
+    }
+
+    /** Three spinning, growing rings around a point (or an entity). */
+    public static void gyro(ServerLevel level, Vec3 at, @Nullable Entity follow, int color, int color2, float radius, float height, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.GYRO, at, color, color2, radius, ticks, 0, height, follow);
+    }
+
+    /** Glowing orbs circling an entity (or a point). */
+    public static void orbit(ServerLevel level, Vec3 at, @Nullable Entity follow, int color, int color2, int count, float radius,
+                             float height, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.ORBIT, at, color, color2, radius, ticks, count, height, follow);
+    }
+
+    /** A column of light. */
+    public static void pillar(ServerLevel level, Vec3 at, int color, int color2, float width, float height, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.PILLAR, at, color, color2, width, ticks, 0, height, null);
+    }
+
+    /** A spinning magic circle on the ground. */
+    public static void circle(ServerLevel level, Vec3 at, @Nullable Entity follow, int color, int color2, float radius, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.CIRCLE, at, color, color2, radius, ticks, 0, 0, follow);
+    }
+
+    /** Rays of light bursting out of a point. */
+    public static void sunburst(ServerLevel level, Vec3 at, int color, int color2, float length, int rays, int ticks) {
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.SUNBURST, at, color, color2, length, ticks, rays, 0, null);
+    }
+
+    /** A spray of twinkling stars. */
+    public static void sparkles(ServerLevel level, Vec3 at, int color, int count, double spread) {
+        level.sendParticles(ModParticles.SPARKLE.get().with(color, 1.2F), at.x, at.y, at.z, count, spread, spread * 0.6, spread, 0.06);
+        level.sendParticles(ModParticles.SPARKLE.get().with(WHITE, 0.9F), at.x, at.y, at.z, count / 2, spread, spread * 0.6, spread, 0.04);
+    }
+
+    /** Glowing bubbles drifting up from a point. */
+    public static void orbs(ServerLevel level, Vec3 at, int color, int count, double spread) {
+        level.sendParticles(ModParticles.ORB.get().with(color, 1.4F), at.x, at.y, at.z, count, spread, spread * 0.5, spread, 0.03);
+    }
+
+    /** A colour pushed halfway toward white, for the bright inner parts of effects. */
+    public static int lighten(int color) {
+        int r = (((color >> 16) & 0xFF) + 255) / 2;
+        int g = (((color >> 8) & 0xFF) + 255) / 2;
+        int b = ((color & 0xFF) + 255) / 2;
+        return (r << 16) | (g << 8) | b;
     }
 
     public static void sound(Level level, Vec3 at, Holder<SoundEvent> sound, float volume, float pitch) {

@@ -26,6 +26,10 @@ public final class ModParticles {
     public static final DeferredHolder<ParticleType<?>, FxParticleType> BLOOD = register("blood", false);
     public static final DeferredHolder<ParticleType<?>, FxParticleType> RUNE = register("rune", false);
     public static final DeferredHolder<ParticleType<?>, FxParticleType> FROST = register("frost", false);
+    /** A twinkling four-pointed star. */
+    public static final DeferredHolder<ParticleType<?>, FxParticleType> SPARKLE = register("sparkle", true);
+    /** A glowing hollow bubble that drifts and pulses. */
+    public static final DeferredHolder<ParticleType<?>, FxParticleType> ORB = register("orb", true);
 
     private static DeferredHolder<ParticleType<?>, FxParticleType> register(String name, boolean alwaysShow) {
         return PARTICLES.register(name, () -> new FxParticleType(alwaysShow));

@@ -124,6 +124,14 @@ public final class AnimationEvents {
         }
     }
 
+    /** Our additive particles change the blend function; put it back once particles are drawn. */
+    @SubscribeEvent
+    public static void afterParticles(net.neoforged.neoforge.client.event.RenderLevelStageEvent event) {
+        if (event.getStage() == net.neoforged.neoforge.client.event.RenderLevelStageEvent.Stage.AFTER_PARTICLES) {
+            com.mojang.blaze3d.systems.RenderSystem.defaultBlendFunc();
+        }
+    }
+
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientAnims.clear();

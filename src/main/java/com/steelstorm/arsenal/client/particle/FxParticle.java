@@ -9,7 +9,7 @@ import net.minecraft.util.Mth;
 
 /** The general-purpose Steelstorm particle: behaviour depends on its {@link Kind}. */
 public class FxParticle extends TextureSheetParticle {
-    public enum Kind { GLOW, SPARK, SMOKE, PETAL, BLOOD, RUNE, FROST, IMPACT }
+    public enum Kind { GLOW, SPARK, SMOKE, PETAL, BLOOD, RUNE, FROST, IMPACT, SPARKLE, ORB }
 
     private static final int FULL_BRIGHT = 0xF000F0;
     private final SpriteSet sprites;
@@ -36,6 +36,8 @@ public class FxParticle extends TextureSheetParticle {
             case BLOOD -> { lifetime = 18 + random.nextInt(16); gravity = 1.0F; friction = 0.98F; baseSize = 0.08F * s; }
             case RUNE -> { lifetime = 26 + random.nextInt(16); gravity = -0.02F; friction = 0.9F; baseSize = 0.22F * s; }
             case FROST -> { lifetime = 28 + random.nextInt(22); gravity = 0.02F; friction = 0.95F; baseSize = 0.1F * s; }
+            case SPARKLE -> { lifetime = 12 + random.nextInt(14); gravity = -0.004F; friction = 0.88F; baseSize = 0.13F * s; }
+            case ORB -> { lifetime = 20 + random.nextInt(14); gravity = -0.01F; friction = 0.92F; baseSize = 0.14F * s; }
             default -> { lifetime = 6; gravity = 0; friction = 0; baseSize = 0.5F * s; }
         }
         this.quadSize = baseSize;
@@ -63,6 +65,13 @@ public class FxParticle extends TextureSheetParticle {
             case BLOOD -> { if (onGround) { xd = 0; zd = 0; } alpha = life > 0.7F ? (1 - life) / 0.3F : 1; }
             case RUNE -> alpha = life < 0.2F ? life * 5 : (1 - life) / 0.8F;
             case IMPACT -> setSpriteFromAge(sprites);
+            case SPARKLE -> {
+                // Twinkle: flare up, shimmer, fade.
+                float flare = life < 0.2F ? life / 0.2F : 1 - (life - 0.2F) / 0.8F;
+                quadSize = baseSize * flare * (0.8F + 0.4F * Mth.sin(age * 1.7F));
+                roll += 0.08F;
+            }
+            case ORB -> { alpha = life < 0.15F ? life / 0.15F : 1 - (life - 0.15F) / 0.85F; quadSize = baseSize * (1 + 0.15F * Mth.sin(age * 0.6F)); }
             default -> { }
         }
     }
@@ -70,13 +79,16 @@ public class FxParticle extends TextureSheetParticle {
     @Override
     protected int getLightColor(float partialTick) {
         return switch (kind) {
-            case GLOW, SPARK, RUNE, FROST, IMPACT -> FULL_BRIGHT;
+            case GLOW, SPARK, RUNE, FROST, IMPACT, SPARKLE, ORB -> FULL_BRIGHT;
             default -> super.getLightColor(partialTick);
         };
     }
 
     @Override
     public ParticleRenderType getRenderType() {
-        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        return switch (kind) {
+            case GLOW, SPARK, SPARKLE, ORB, FROST, RUNE -> AdditiveParticles.ADDITIVE;
+            default -> ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+        };
     }
 }

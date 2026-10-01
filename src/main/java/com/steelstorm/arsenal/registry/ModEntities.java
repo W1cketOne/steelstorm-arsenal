@@ -1,5 +1,7 @@
 package com.steelstorm.arsenal.registry;
 
+import com.steelstorm.arsenal.entity.AuraFxEntity;
+
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.entity.BanditArcher;
 import com.steelstorm.arsenal.entity.BanditCaptain;
@@ -74,6 +76,11 @@ public final class ModEntities {
             () -> EntityType.Builder.<OrbitBladesEntity>of(OrbitBladesEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(6).updateInterval(Integer.MAX_VALUE)
                     .build("orbit_blades"));
+
+    public static final Supplier<EntityType<AuraFxEntity>> AURA_FX = ENTITIES.register("aura_fx",
+            () -> EntityType.Builder.<AuraFxEntity>of(AuraFxEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(10).updateInterval(Integer.MAX_VALUE)
+                    .build("aura_fx"));
 
     public static final Supplier<EntityType<TargetDummyEntity>> TARGET_DUMMY = ENTITIES.register("target_dummy",
             () -> EntityType.Builder.<TargetDummyEntity>of(TargetDummyEntity::new, MobCategory.MISC)

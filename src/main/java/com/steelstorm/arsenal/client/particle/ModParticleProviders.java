@@ -24,6 +24,8 @@ public final class ModParticleProviders {
         event.registerSpriteSet(ModParticles.BLOOD.get(), sprites -> simple(sprites, FxParticle.Kind.BLOOD));
         event.registerSpriteSet(ModParticles.RUNE.get(), sprites -> simple(sprites, FxParticle.Kind.RUNE));
         event.registerSpriteSet(ModParticles.FROST.get(), sprites -> simple(sprites, FxParticle.Kind.FROST));
+        event.registerSpriteSet(ModParticles.SPARKLE.get(), sprites -> simple(sprites, FxParticle.Kind.SPARKLE));
+        event.registerSpriteSet(ModParticles.ORB.get(), sprites -> simple(sprites, FxParticle.Kind.ORB));
     }
 
     private static ParticleProvider<FxParticleOptions> simple(SpriteSet sprites, FxParticle.Kind kind) {

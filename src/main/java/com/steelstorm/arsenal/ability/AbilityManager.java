@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.UUID;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.InteractionHand;
@@ -85,9 +86,18 @@ public final class AbilityManager {
             }
             Fx.sound(player.level(), player.position(), ModSounds.ULTIMATE_CAST, 1.2F, 1.0F);
             Fx.ring(player.serverLevel(), player.position(), Fx.GOLD, 4.0F);
+            // The ultimate flare: a magic circle underfoot, a pillar of light and orbs whirling round.
+            int c = ctx.color();
+            ServerLevel level = player.serverLevel();
+            Fx.circle(level, player.position(), player, c, Fx.GOLD, 3.2F, 40);
+            Fx.pillar(level, player.position(), c, Fx.WHITE, 0.9F, 9.0F, 24);
+            Fx.orbit(level, player.position(), player, c, Fx.lighten(c), 10, 1.7F, 1.0F, 50);
+            Fx.halo(level, player.position(), Fx.GOLD, c, 7.0F, 22);
+            Fx.sparkles(level, player.position().add(0, 1, 0), c, 30, 1.2);
             Stamina.shake(player, 1.0F, 10);
         } else {
             Stamina.tryConsume(player, cost);
+            Fx.sparkles(player.serverLevel(), player.position().add(0, 1.1, 0), ctx.color(), 8, 0.5);
         }
         int cooldown = (int) Math.round(ability.cooldown() * Config.SPECIAL_COOLDOWN_MULTIPLIER.get());
         data.cooldownEnd.put(ability.id(), now + cooldown);

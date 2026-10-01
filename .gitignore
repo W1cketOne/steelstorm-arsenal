@@ -8,3 +8,7 @@ out/
 *.iml
 .vscode/
 bin/
+.DS_Store
+repo/
+**/src/generated/**/.cache/
+tools/__pycache__/

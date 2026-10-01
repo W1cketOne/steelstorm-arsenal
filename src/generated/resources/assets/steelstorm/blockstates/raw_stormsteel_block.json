@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "steelstorm:block/raw_stormsteel_block"
+    }
+  }
+}

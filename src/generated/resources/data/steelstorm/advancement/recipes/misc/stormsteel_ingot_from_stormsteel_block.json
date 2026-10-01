@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_stormsteel_block": {
+      "conditions": {
+        "items": [
+          {
+            "items": "steelstorm:stormsteel_block"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "steelstorm:stormsteel_ingot_from_stormsteel_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_stormsteel_block"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "steelstorm:stormsteel_ingot_from_stormsteel_block"
+    ]
+  }
+}

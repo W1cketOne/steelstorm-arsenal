@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_stormsteel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "steelstorm:raw_stormsteel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "steelstorm:raw_stormsteel_block"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_stormsteel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "steelstorm:raw_stormsteel_block"
+    ]
+  }
+}

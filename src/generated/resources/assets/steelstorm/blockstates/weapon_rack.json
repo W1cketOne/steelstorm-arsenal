@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "steelstorm:block/weapon_rack",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "steelstorm:block/weapon_rack"
+    },
+    "facing=south": {
+      "model": "steelstorm:block/weapon_rack",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "steelstorm:block/weapon_rack",
+      "y": 270
+    }
+  }
+}

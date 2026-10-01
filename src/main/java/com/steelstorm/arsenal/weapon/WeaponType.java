@@ -12,7 +12,10 @@ public enum WeaponType {
     GREATSWORD("greatsword", "Greatsword", 3.0F, 0.8F, 1.0, 35, 160),
     KATANA("katana", "Katana", 1.0F, 1.8F, 0.5, 25, 100),
     DUAL_DAGGERS("dual_daggers", "Dual Daggers", -2.0F, 3.0F, 0.0, 30, 140),
-    SPEAR("spear", "Spear", 0.0F, 1.2F, 2.0, 25, 120);
+    SPEAR("spear", "Spear", 0.0F, 1.2F, 2.0, 25, 120),
+    WARHAMMER("warhammer", "Warhammer", 4.0F, 0.7F, 0.0, 40, 180),
+    SCYTHE("scythe", "Scythe", 2.0F, 1.0F, 1.0, 35, 160),
+    BATTLEAXE("battleaxe", "Battleaxe", 3.0F, 0.9F, 0.0, 35, 160);
 
     /** Vanilla sword base: the item adds 3 damage on top of the player's base 1. */
     public static final float SWORD_BASE_DAMAGE = 3.0F;

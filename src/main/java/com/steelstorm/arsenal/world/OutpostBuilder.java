@@ -1,6 +1,10 @@
 package com.steelstorm.arsenal.world;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.block.WeaponRackBlockEntity;
+import com.steelstorm.arsenal.entity.TargetDummyEntity;
+import com.steelstorm.arsenal.registry.ModBlocks;
+import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModItems;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
@@ -14,9 +18,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.network.Filterable;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.world.entity.EquipmentSlot;
-import net.minecraft.world.entity.decoration.ArmorStand;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.component.WrittenBookContent;
@@ -298,10 +299,10 @@ public final class OutpostBuilder {
     }
 
     private void decorate() {
-        set(2, 0, DEPTH - 2, Blocks.CRAFTING_TABLE.defaultBlockState());
-        set(8, 0, DEPTH - 2, Blocks.SMITHING_TABLE.defaultBlockState());
+        set(1, 0, DEPTH - 3, Blocks.CRAFTING_TABLE.defaultBlockState());
+        set(WIDTH - 2, 0, DEPTH - 3, Blocks.SMITHING_TABLE.defaultBlockState());
         set(1, 0, DEPTH - 2, Blocks.BARREL.defaultBlockState());
-        set(9, 0, DEPTH - 2, Blocks.GRINDSTONE.defaultBlockState()
+        set(WIDTH - 2, 0, DEPTH - 2, Blocks.GRINDSTONE.defaultBlockState()
                 .setValue(net.minecraft.world.level.block.GrindstoneBlock.FACE, net.minecraft.world.level.block.state.properties.AttachFace.FLOOR)
                 .setValue(net.minecraft.world.level.block.GrindstoneBlock.FACING, front));
         set(3, 3, 6, Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true));
@@ -325,29 +326,39 @@ public final class OutpostBuilder {
     }
 
     private void placeWeaponWall() {
-        // Item frames on the inside of the back wall showing off a few mod weapons.
-        ItemStack[] display = {
+        // Two weapon racks against the back wall showing off the mod's weapons.
+        rack(3, new ItemStack[]{
                 new ItemStack(ModItems.weapon(WeaponType.GREATSWORD, WeaponTier.IRON).get()),
                 new ItemStack(ModItems.weapon(WeaponType.KATANA, WeaponTier.IRON).get()),
-                new ItemStack(ModItems.weapon(WeaponType.SPEAR, WeaponTier.IRON).get()),
-                new ItemStack(ModItems.weapon(WeaponType.LONGSWORD, WeaponTier.GOLD).get()),
-        };
-        int[] xs = {2, 4, 6, 8};
-        for (int i = 0; i < display.length; i++) {
-            ItemFrame frame = new ItemFrame(level, world(xs[i], 2, DEPTH - 2), front);
-            frame.setItem(display[i]);
-            level.addFreshEntity(frame);
+                new ItemStack(ModItems.weapon(WeaponType.SPEAR, WeaponTier.IRON).get())});
+        rack(7, new ItemStack[]{
+                new ItemStack(ModItems.weapon(WeaponType.WARHAMMER, WeaponTier.IRON).get()),
+                new ItemStack(ModItems.weapon(WeaponType.SCYTHE, WeaponTier.GOLD).get()),
+                new ItemStack(ModItems.weapon(WeaponType.BATTLEAXE, WeaponTier.IRON).get())});
+    }
+
+    private void rack(int x, ItemStack[] weapons) {
+        BlockPos pos = world(x, 0, DEPTH - 2);
+        level.setBlock(pos, ModBlocks.WEAPON_RACK.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING, front), Block.UPDATE_ALL);
+        if (level.getBlockEntity(pos) instanceof WeaponRackBlockEntity rack) {
+            for (int i = 0; i < weapons.length && i < WeaponRackBlockEntity.SLOTS; i++) {
+                rack.setWeapon(i, weapons[i]);
+            }
         }
     }
 
     private void placeDummies() {
         for (int x : new int[]{2, WIDTH - 3}) {
             BlockPos pos = world(x, 0, 2);
-            ArmorStand dummy = new ArmorStand(level, pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5);
-            dummy.setYRot(front.toYRot());
-            dummy.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CARVED_PUMPKIN));
-            dummy.setItemSlot(EquipmentSlot.CHEST, new ItemStack(Items.LEATHER_CHESTPLATE));
-            dummy.setCustomName(Component.literal("Training Dummy"));
+            TargetDummyEntity dummy = ModEntities.TARGET_DUMMY.get().create(level);
+            if (dummy == null) {
+                continue;
+            }
+            float yaw = front.getOpposite().toYRot();
+            dummy.moveTo(pos.getX() + 0.5, pos.getY(), pos.getZ() + 0.5, yaw, 0);
+            dummy.setYHeadRot(yaw);
+            dummy.setYBodyRot(yaw);
             level.addFreshEntity(dummy);
         }
     }
@@ -359,6 +370,7 @@ public final class OutpostBuilder {
             items.add(controlsBook());
             items.add(new ItemStack(ModItems.weapon(WeaponType.LONGSWORD, WeaponTier.STONE).get()));
             items.add(new ItemStack(ModItems.weapon(WeaponType.DUAL_DAGGERS, WeaponTier.STONE).get()));
+            items.add(new ItemStack(ModItems.THROWING_KNIFE.get(), 8));
             items.add(new ItemStack(Items.BREAD, 8));
             items.add(new ItemStack(Items.TORCH, 16));
             return items;
@@ -375,7 +387,7 @@ public final class OutpostBuilder {
             pages.add(page(Component.literal("§lSpecial Moves§r\nPress ")
                     .append(Component.keybind("key.steelstorm.special"))
                     .append("§r to unleash your weapon's special. Each weapon has its own, shown in its tooltip. Specials cost stamina and have a cooldown.")));
-            pages.add(page(Component.literal("§lTraining Yard§r\nPractice on the dummies outside.\n\nAll keys can be changed in Options > Controls > Key Binds > Steelstorm Arsenal.")));
+            pages.add(page(Component.literal("§lTraining Yard§r\nPractice on the target dummies outside: they show the damage of every hit.\n\nAll keys can be changed in Options > Controls > Key Binds > Steelstorm Arsenal.")));
             ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
             book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(
                     Filterable.passThrough("Warrior's Handbook"), "Outpost Quartermaster", 0, pages, true));

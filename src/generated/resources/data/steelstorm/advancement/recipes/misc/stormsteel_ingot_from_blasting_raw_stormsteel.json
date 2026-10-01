@@ -1,0 +1,32 @@
+{
+  "parent": "minecraft:recipes/root",
+  "criteria": {
+    "has_raw_stormsteel": {
+      "conditions": {
+        "items": [
+          {
+            "items": "steelstorm:raw_stormsteel"
+          }
+        ]
+      },
+      "trigger": "minecraft:inventory_changed"
+    },
+    "has_the_recipe": {
+      "conditions": {
+        "recipe": "steelstorm:stormsteel_ingot_from_blasting_raw_stormsteel"
+      },
+      "trigger": "minecraft:recipe_unlocked"
+    }
+  },
+  "requirements": [
+    [
+      "has_the_recipe",
+      "has_raw_stormsteel"
+    ]
+  ],
+  "rewards": {
+    "recipes": [
+      "steelstorm:stormsteel_ingot_from_blasting_raw_stormsteel"
+    ]
+  }
+}

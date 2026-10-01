@@ -1,7 +1,9 @@
 package com.steelstorm.arsenal.datagen;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.registry.ModBlocks;
 import com.steelstorm.arsenal.registry.ModEffects;
+import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModItems;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
@@ -23,6 +25,32 @@ public class ModLanguageProvider extends LanguageProvider {
             }
         }
         add(ModItems.STORMSTEEL_INGOT.get(), "Stormsteel Ingot");
+        add(ModItems.RAW_STORMSTEEL.get(), "Raw Stormsteel");
+        add(ModItems.CHAKRAM.get(), "Chakram");
+        add(ModItems.THROWING_KNIFE.get(), "Throwing Knife");
+        add(ModItems.TARGET_DUMMY.get(), "Target Dummy");
+        add(ModBlocks.STORMSTEEL_ORE.get(), "Stormsteel Ore");
+        add(ModBlocks.DEEPSLATE_STORMSTEEL_ORE.get(), "Deepslate Stormsteel Ore");
+        add(ModBlocks.STORMSTEEL_BLOCK.get(), "Block of Stormsteel");
+        add(ModBlocks.RAW_STORMSTEEL_BLOCK.get(), "Block of Raw Stormsteel");
+        add(ModBlocks.WEAPON_RACK.get(), "Weapon Rack");
+        add(ModEntities.TARGET_DUMMY.get(), "Target Dummy");
+        add(ModEntities.THROWN_SPEAR.get(), "Thrown Spear");
+        add(ModEntities.THROWING_KNIFE.get(), "Throwing Knife");
+        add(ModEntities.CHAKRAM.get(), "Chakram");
+        add(ModEffects.BLEED.get(), "Bleed");
+        add(ModEffects.ARMOR_BREAK.get(), "Armor Break");
+        enchantment("lacerate", "Lacerate", "Hits have a chance to cause Bleed.");
+        enchantment("executioner", "Executioner", "Deal extra damage to enemies below 35% health.");
+        enchantment("momentum", "Momentum", "Landing hits restores stamina.");
+        add("death.attack.steelstorm.bleed", "%1$s bled out");
+        add("death.attack.steelstorm.bleed.player", "%1$s bled out while fighting %2$s");
+        add("death.attack.steelstorm.zap", "%1$s was zapped by %2$s");
+        add("death.attack.steelstorm.zap.player", "%1$s was zapped by %2$s");
+        add("death.attack.steelstorm.zap.item", "%1$s was zapped by %2$s using %3$s");
+        add("tooltip.steelstorm.chakram", "Right-click to throw. Bounces between 3 enemies, then returns to you.");
+        add("tooltip.steelstorm.throwing_knife", "Right-click to throw. 30% chance to cause Bleed.");
+        add("tooltip.steelstorm.target_dummy", "Shows the damage of every hit. Sneak-punch with an empty hand to pick it up.");
 
         weapon(WeaponType.LONGSWORD, "Every 3rd hit in a row deals +30% damage",
                 "Rising Slash", "Launches the enemy in front of you into the air");
@@ -34,6 +62,12 @@ public class ModLanguageProvider extends LanguageProvider {
                 "Flurry", "Five lightning-fast strikes on the enemy in front of you");
         weapon(WeaponType.SPEAR, "Sneak + hold Use to throw it",
                 "Impale", "Skewers the enemy in front of you and pins it in place");
+        weapon(WeaponType.WARHAMMER, "Hits cause Armor Break",
+                "Earthquake", "Slams the ground, launching every nearby enemy");
+        weapon(WeaponType.SCYTHE, "Heals you for 10% of the damage you deal",
+                "Reap", "A full 360 degree spin that cuts everything around you");
+        weapon(WeaponType.BATTLEAXE, "Bonus damage against blocking enemies, and breaks shields",
+                "Whirlwind", "Spin three times, hitting everything around you");
 
         add("key.categories.steelstorm", "Steelstorm Arsenal");
         add("key.steelstorm.dodge", "Dodge Roll");
@@ -73,6 +107,11 @@ public class ModLanguageProvider extends LanguageProvider {
         add("tooltip.steelstorm.special_cost", "  Costs %s stamina, %ss cooldown");
         add("tooltip.steelstorm.stormsteel", "Stormsteel: hits sometimes zap a second nearby enemy");
         add("tooltip.steelstorm.controls", "Hold Use to guard and parry. Sneak + attack for a heavy attack.");
+    }
+
+    private void enchantment(String id, String name, String description) {
+        add("enchantment.steelstorm." + id, name);
+        add("enchantment.steelstorm." + id + ".desc", description);
     }
 
     private void config(String key, String name) {

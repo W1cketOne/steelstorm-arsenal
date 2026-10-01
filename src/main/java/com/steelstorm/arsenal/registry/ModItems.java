@@ -9,6 +9,10 @@ import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+import com.steelstorm.arsenal.entity.TargetDummyItem;
+import com.steelstorm.arsenal.weapon.ChakramItem;
+import com.steelstorm.arsenal.weapon.ThrowingKnifeItem;
+import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
@@ -39,6 +43,21 @@ public final class ModItems {
             WEAPONS.put(type, byTier);
         }
     }
+
+    public static final DeferredItem<ChakramItem> CHAKRAM = ITEMS.register("chakram",
+            () -> new ChakramItem(new Item.Properties().durability(250)));
+    public static final DeferredItem<ThrowingKnifeItem> THROWING_KNIFE = ITEMS.register("throwing_knife",
+            () -> new ThrowingKnifeItem(new Item.Properties().stacksTo(16)));
+    public static final DeferredItem<Item> RAW_STORMSTEEL = ITEMS.registerSimpleItem("raw_stormsteel");
+    public static final DeferredItem<BlockItem> STORMSTEEL_ORE = ITEMS.registerSimpleBlockItem("stormsteel_ore", ModBlocks.STORMSTEEL_ORE);
+    public static final DeferredItem<BlockItem> DEEPSLATE_STORMSTEEL_ORE =
+            ITEMS.registerSimpleBlockItem("deepslate_stormsteel_ore", ModBlocks.DEEPSLATE_STORMSTEEL_ORE);
+    public static final DeferredItem<BlockItem> STORMSTEEL_BLOCK = ITEMS.registerSimpleBlockItem("stormsteel_block", ModBlocks.STORMSTEEL_BLOCK);
+    public static final DeferredItem<BlockItem> RAW_STORMSTEEL_BLOCK =
+            ITEMS.registerSimpleBlockItem("raw_stormsteel_block", ModBlocks.RAW_STORMSTEEL_BLOCK);
+    public static final DeferredItem<BlockItem> WEAPON_RACK = ITEMS.registerSimpleBlockItem("weapon_rack", ModBlocks.WEAPON_RACK);
+    public static final DeferredItem<TargetDummyItem> TARGET_DUMMY = ITEMS.register("target_dummy",
+            () -> new TargetDummyItem(new Item.Properties().stacksTo(16)));
 
     public static DeferredItem<WeaponItem> weapon(WeaponType type, WeaponTier tier) {
         return WEAPONS.get(type).get(tier);

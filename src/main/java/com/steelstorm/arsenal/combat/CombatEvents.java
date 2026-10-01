@@ -24,6 +24,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
+import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
@@ -77,6 +78,13 @@ public final class CombatEvents {
         data.lastAttackStrength = player.getAttackStrengthScale(0.5F);
         data.heavyPending = false;
         data.finisherPending = false;
+        data.critPending = false;
+    }
+
+    /** Remembers vanilla crits so the katana can make them Bleed. */
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public static void onCrit(CriticalHitEvent event) {
+        Stamina.data(event.getEntity()).critPending = event.isCriticalHit();
     }
 
     @SubscribeEvent(priority = EventPriority.HIGH)
@@ -123,7 +131,7 @@ public final class CombatEvents {
     }
 
     public static boolean isGuarding(Player player) {
-        return player.isUsingItem() && player.getUseItem().getItem() instanceof WeaponItem weapon && weapon.canGuard();
+        return player.isUsingItem() && player.getUseItem().getItem() instanceof WeaponItem weapon && weapon.isGuarding(player.getUseItem());
     }
 
     private static float applyAttackBonuses(Player attacker, WeaponItem weapon, LivingEntity target, float amount) {

@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "M": {
+      "item": "steelstorm:stormsteel_ingot"
+    },
+    "S": {
+      "item": "minecraft:stick"
+    }
+  },
+  "pattern": [
+    "MSM",
+    "MSM",
+    " S "
+  ],
+  "result": {
+    "count": 1,
+    "id": "steelstorm:stormsteel_battleaxe"
+  }
+}

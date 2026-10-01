@@ -19,5 +19,9 @@ public class ModItemModelProvider extends ItemModelProvider {
             handheldItem(weapon.get());
         }
         basicItem(ModItems.STORMSTEEL_INGOT.get());
+        basicItem(ModItems.RAW_STORMSTEEL.get());
+        handheldItem(ModItems.CHAKRAM.get());
+        handheldItem(ModItems.THROWING_KNIFE.get());
+        basicItem(ModItems.TARGET_DUMMY.get());
     }
 }

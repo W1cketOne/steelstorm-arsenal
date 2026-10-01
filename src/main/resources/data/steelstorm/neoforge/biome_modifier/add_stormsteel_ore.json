@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#steelstorm:has_stormsteel_ore",
+  "features": "steelstorm:ore_stormsteel",
+  "step": "underground_ores"
+}

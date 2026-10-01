@@ -1,0 +1,14 @@
+{
+  "type": "minecraft:blasting",
+  "category": "misc",
+  "cookingtime": 100,
+  "experience": 1.0,
+  "group": "stormsteel_ingot",
+  "ingredient": {
+    "item": "steelstorm:raw_stormsteel"
+  },
+  "result": {
+    "count": 1,
+    "id": "steelstorm:stormsteel_ingot"
+  }
+}

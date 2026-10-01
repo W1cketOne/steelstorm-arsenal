@@ -31,6 +31,8 @@ public class CombatData {
     public boolean finisherPending;
     /** True for the hit currently being processed if it is a heavy (sneak) attack. */
     public boolean heavyPending;
+    /** True if vanilla decided the current swing is a critical hit. */
+    public boolean critPending;
 
     // What the client was last told, to avoid re-sending unchanged values every tick.
     public int syncedStamina = -1;

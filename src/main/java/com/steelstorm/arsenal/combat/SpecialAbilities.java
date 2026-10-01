@@ -80,6 +80,9 @@ public final class SpecialAbilities {
             case KATANA -> flashStep(player, weapon);
             case DUAL_DAGGERS -> flurry(player, weapon);
             case SPEAR -> impale(player, weapon);
+            case WARHAMMER -> earthquake(player, weapon);
+            case SCYTHE -> reap(player, weapon);
+            case BATTLEAXE -> whirlwind(player, weapon);
         };
     }
 
@@ -154,7 +157,7 @@ public final class SpecialAbilities {
             LivingEntity target = (LivingEntity) e;
             if (hit.add(target)) {
                 CombatUtil.specialHurt(player, target, damage);
-                WeaponEffects.onSpecialHit(player, weapon, target);
+                WeaponEffects.onSpecialHit(player, weapon, target, damage);
                 level.sendParticles(ParticleTypes.SWEEP_ATTACK, target.getX(), target.getY() + 1, target.getZ(), 1, 0, 0, 0, 0);
             }
         }
@@ -185,7 +188,7 @@ public final class SpecialAbilities {
                     return;
                 }
                 CombatUtil.specialHurt(player, target, damage);
-                WeaponEffects.onSpecialHit(player, weapon, target);
+                WeaponEffects.onSpecialHit(player, weapon, target, damage);
                 player.swing(hit % 2 == 0 ? InteractionHand.MAIN_HAND : InteractionHand.OFF_HAND, true);
                 player.serverLevel().sendParticles(ParticleTypes.CRIT, target.getX(), target.getY() + target.getBbHeight() * 0.6,
                         target.getZ(), 6, 0.3, 0.3, 0.3, 0.2);
@@ -209,6 +212,88 @@ public final class SpecialAbilities {
         sound(player, SoundEvents.CHAIN_PLACE, 1.0F, 0.6F);
         Stamina.shake(player, 0.5F, 5);
         return true;
+    }
+
+    private static boolean earthquake(ServerPlayer player, WeaponItem weapon) {
+        ServerLevel level = player.serverLevel();
+        float damage = power(player, weapon, 1.1F);
+        for (LivingEntity target : CombatUtil.around(player, player.position(), 5.5)) {
+            CombatUtil.specialHurt(player, target, damage);
+            WeaponEffects.onSpecialHit(player, weapon, target, damage);
+            Vec3 away = target.position().subtract(player.position()).multiply(1, 0, 1).normalize();
+            double resist = Math.max(0.2, 1.0 - target.getAttributeValue(net.minecraft.world.entity.ai.attributes.Attributes.KNOCKBACK_RESISTANCE));
+            target.setDeltaMovement(away.x * 0.6 * resist, 0.85 * resist, away.z * 0.6 * resist);
+            target.hurtMarked = true;
+        }
+        // Shockwave rings of broken ground.
+        for (int ring = 1; ring <= 5; ring++) {
+            final int r = ring;
+            ServerScheduler.schedule(ring, () -> {
+                for (int i = 0; i < r * 8; i++) {
+                    double angle = i * Math.PI * 2 / (r * 8);
+                    double x = player.getX() + Math.cos(angle) * r;
+                    double z = player.getZ() + Math.sin(angle) * r;
+                    BlockState ground = level.getBlockState(BlockPos.containing(x, player.getY() - 0.5, z));
+                    if (!ground.isAir()) {
+                        level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, ground), x, player.getY() + 0.1, z, 3, 0.1, 0.2, 0.1, 0.2);
+                    }
+                }
+            });
+        }
+        level.sendParticles(ParticleTypes.EXPLOSION_EMITTER, player.getX(), player.getY(), player.getZ(), 1, 0, 0, 0, 0);
+        sound(player, SoundEvents.GENERIC_EXPLODE.value(), 0.8F, 0.7F);
+        sound(player, SoundEvents.ANVIL_LAND, 0.6F, 0.5F);
+        Stamina.shake(player, 1.6F, 14);
+        for (var nearby : level.players()) {
+            if (nearby != player && nearby.distanceToSqr(player) < 100) {
+                Stamina.shake(nearby, 0.8F, 10);
+            }
+        }
+        return true;
+    }
+
+    private static boolean reap(ServerPlayer player, WeaponItem weapon) {
+        ServerLevel level = player.serverLevel();
+        float damage = power(player, weapon, 1.1F);
+        for (LivingEntity target : CombatUtil.around(player, player.position(), 4.0)) {
+            CombatUtil.specialHurt(player, target, damage);
+            WeaponEffects.onSpecialHit(player, weapon, target, damage);
+            target.knockback(0.5, player.getX() - target.getX(), player.getZ() - target.getZ());
+        }
+        spinParticles(level, player, 3.2, ParticleTypes.SWEEP_ATTACK);
+        sound(player, SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 0.6F);
+        sound(player, SoundEvents.WITHER_SHOOT, 0.3F, 1.6F);
+        Stamina.shake(player, 0.6F, 6);
+        return true;
+    }
+
+    private static boolean whirlwind(ServerPlayer player, WeaponItem weapon) {
+        float damage = power(player, weapon, 0.75F);
+        for (int spin = 0; spin < 3; spin++) {
+            final int s = spin;
+            ServerScheduler.schedule(spin * 6, () -> {
+                if (!player.isAlive()) {
+                    return;
+                }
+                for (LivingEntity target : CombatUtil.around(player, player.position(), 3.5)) {
+                    CombatUtil.specialHurt(player, target, damage);
+                    WeaponEffects.onSpecialHit(player, weapon, target, damage);
+                    target.knockback(0.35, player.getX() - target.getX(), player.getZ() - target.getZ());
+                }
+                player.swing(InteractionHand.MAIN_HAND, true);
+                spinParticles(player.serverLevel(), player, 2.6, ParticleTypes.SWEEP_ATTACK);
+                sound(player, SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 0.8F + s * 0.15F);
+            });
+        }
+        return true;
+    }
+
+    static void spinParticles(ServerLevel level, LivingEntity center, double radius, net.minecraft.core.particles.SimpleParticleType type) {
+        for (int i = 0; i < 12; i++) {
+            double angle = i * Math.PI / 6;
+            level.sendParticles(type, center.getX() + Math.cos(angle) * radius, center.getY(0.5), center.getZ() + Math.sin(angle) * radius,
+                    1, 0, 0, 0, 0);
+        }
     }
 
     /** Pins an entity in place: stagger plus heavy slowness. */

@@ -11,11 +11,15 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.ShapelessRecipeBuilder;
+import net.minecraft.data.recipes.SimpleCookingRecipeBuilder;
 import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.crafting.Ingredient;
+import net.minecraft.world.level.ItemLike;
+import java.util.List;
 
 public class ModRecipeProvider extends RecipeProvider {
     public ModRecipeProvider(PackOutput output, CompletableFuture<HolderLookup.Provider> lookup) {
@@ -23,6 +27,14 @@ public class ModRecipeProvider extends RecipeProvider {
     }
 
     /** Crafting grid patterns: M = tier material, S = stick. */
+    private static void storage(RecipeOutput output, ItemLike item, ItemLike block) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.BUILDING_BLOCKS, block)
+                .pattern("###").pattern("###").pattern("###").define('#', item)
+                .unlockedBy(getHasName(item), has(item)).save(output, SteelstormArsenal.id(getItemName(block)));
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, item, 9).requires(block)
+                .unlockedBy(getHasName(block), has(block)).save(output, SteelstormArsenal.id(getItemName(item) + "_from_" + getItemName(block)));
+    }
+
     static String[] pattern(WeaponType type) {
         return switch (type) {
             case LONGSWORD -> new String[]{"  M", " M ", "S  "};
@@ -30,6 +42,9 @@ public class ModRecipeProvider extends RecipeProvider {
             case KATANA -> new String[]{"  M", " M ", "SS "};
             case DUAL_DAGGERS -> new String[]{"M M", "S S"};
             case SPEAR -> new String[]{"  M", " S ", "S  "};
+            case WARHAMMER -> new String[]{"MMM", "MMM", " S "};
+            case SCYTHE -> new String[]{"MMM", "  S", "  S"};
+            case BATTLEAXE -> new String[]{"MSM", "MSM", " S "};
         };
     }
 
@@ -65,5 +80,35 @@ public class ModRecipeProvider extends RecipeProvider {
                 builder.save(output);
             }
         }
+
+        // Stormsteel processing.
+        for (ItemLike input : List.<ItemLike>of(ModItems.STORMSTEEL_ORE.get(), ModItems.DEEPSLATE_STORMSTEEL_ORE.get(), ModItems.RAW_STORMSTEEL.get())) {
+            String name = getItemName(input);
+            SimpleCookingRecipeBuilder.smelting(Ingredient.of(input), RecipeCategory.MISC, ModItems.STORMSTEEL_INGOT.get(), 1.0F, 200)
+                    .group("stormsteel_ingot").unlockedBy(getHasName(input), has(input))
+                    .save(output, SteelstormArsenal.id("stormsteel_ingot_from_smelting_" + name));
+            SimpleCookingRecipeBuilder.blasting(Ingredient.of(input), RecipeCategory.MISC, ModItems.STORMSTEEL_INGOT.get(), 1.0F, 100)
+                    .group("stormsteel_ingot").unlockedBy(getHasName(input), has(input))
+                    .save(output, SteelstormArsenal.id("stormsteel_ingot_from_blasting_" + name));
+        }
+        storage(output, ModItems.STORMSTEEL_INGOT.get(), ModItems.STORMSTEEL_BLOCK.get());
+        storage(output, ModItems.RAW_STORMSTEEL.get(), ModItems.RAW_STORMSTEEL_BLOCK.get());
+
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.CHAKRAM.get())
+                .pattern(" I ").pattern("IGI").pattern(" I ")
+                .define('I', Items.IRON_INGOT).define('G', Items.GOLD_INGOT)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, ModItems.THROWING_KNIFE.get(), 4)
+                .pattern(" I").pattern("S ")
+                .define('I', Items.IRON_INGOT).define('S', Items.STICK)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.WEAPON_RACK.get())
+                .pattern("SSS").pattern("S S").pattern("PPP")
+                .define('S', Items.STICK).define('P', ItemTags.PLANKS)
+                .unlockedBy("has_planks", has(ItemTags.PLANKS)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.MISC, ModItems.TARGET_DUMMY.get())
+                .pattern(" C ").pattern("SHS").pattern(" S ")
+                .define('C', Items.CARVED_PUMPKIN).define('H', Items.HAY_BLOCK).define('S', Items.STICK)
+                .unlockedBy(getHasName(Items.HAY_BLOCK), has(Items.HAY_BLOCK)).save(output);
     }
 }

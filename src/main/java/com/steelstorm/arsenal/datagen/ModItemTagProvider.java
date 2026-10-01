@@ -31,5 +31,11 @@ public class ModItemTagProvider extends ItemTagsProvider {
         tag(Tags.Items.MELEE_WEAPON_TOOLS).addTag(ModTags.Items.MELEE_WEAPONS);
         tag(ModTags.Items.STORMSTEEL_INGOTS).add(ModItems.STORMSTEEL_INGOT.get());
         tag(Tags.Items.INGOTS).addTag(ModTags.Items.STORMSTEEL_INGOTS);
+        tag(ModTags.Items.RAW_STORMSTEEL).add(ModItems.RAW_STORMSTEEL.get());
+        tag(Tags.Items.RAW_MATERIALS).addTag(ModTags.Items.RAW_STORMSTEEL);
+        copy(ModTags.Blocks.STORMSTEEL_ORES, ModTags.Items.STORMSTEEL_ORES);
+        copy(net.neoforged.neoforge.common.Tags.Blocks.ORES, Tags.Items.ORES);
+        tag(Tags.Items.RANGED_WEAPON_TOOLS).add(ModItems.CHAKRAM.get(), ModItems.THROWING_KNIFE.get());
+        tag(net.minecraft.tags.ItemTags.DURABILITY_ENCHANTABLE).add(ModItems.CHAKRAM.get());
     }
 }

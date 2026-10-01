@@ -1,0 +1,26 @@
+{
+  "base": {
+    "parent": "steelstorm:item/3d/skypiercer"
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/skypiercer"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/skypiercer"
+      }
+    },
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/skypiercer"
+      }
+    }
+  }
+}

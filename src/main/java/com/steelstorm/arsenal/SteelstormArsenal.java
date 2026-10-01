@@ -9,6 +9,8 @@ import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModCreativeTabs;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.registry.ModParticles;
+import com.steelstorm.arsenal.registry.ModSounds;
 import com.steelstorm.arsenal.registry.ModStructures;
 import net.minecraft.resources.ResourceLocation;
 import net.neoforged.bus.api.IEventBus;
@@ -32,6 +34,8 @@ public class SteelstormArsenal {
         ModStructures.PIECES.register(modEventBus);
         ModCreativeTabs.TABS.register(modEventBus);
         ModEffects.EFFECTS.register(modEventBus);
+        ModSounds.SOUNDS.register(modEventBus);
+        ModParticles.PARTICLES.register(modEventBus);
         ModAttachments.ATTACHMENTS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);

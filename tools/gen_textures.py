@@ -596,10 +596,7 @@ def gen_skins():
 
 
 if __name__ == "__main__":
-    gen_weapons()
-    gen_materials()
+    # Item icons, particles and effect icons now come from gen_icons.py / gen_fx.py.
     gen_blocks()
-    gen_dummy_item()
-    gen_effects()
     gen_skins()
     print("Textures written to", os.path.abspath(ROOT))

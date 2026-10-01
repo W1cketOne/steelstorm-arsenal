@@ -15,6 +15,26 @@
         {
           "type": "minecraft:item",
           "name": "steelstorm:voidreaver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:earthshaker"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:bloodfang"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:skypiercer"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:moonveil"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:kingsbane"
         }
       ],
       "rolls": 1.0

@@ -1,0 +1,26 @@
+{
+  "base": {
+    "parent": "steelstorm:item/3d/moonveil"
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/moonveil"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/moonveil"
+      }
+    },
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/moonveil"
+      }
+    }
+  }
+}

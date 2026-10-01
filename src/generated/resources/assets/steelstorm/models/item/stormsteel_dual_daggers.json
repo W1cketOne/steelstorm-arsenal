@@ -1,6 +1,37 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "steelstorm:item/stormsteel_dual_daggers"
+  "base": {
+    "parent": "steelstorm:item/3d/dual_daggers",
+    "textures": {
+      "blade": "steelstorm:item/3d/blade_stormsteel",
+      "collar": "steelstorm:item/3d/trim_gold",
+      "edge": "steelstorm:item/3d/edge_stormsteel",
+      "fuller": "steelstorm:item/3d/fuller_stormsteel",
+      "gem": "steelstorm:item/3d/gem_sapphire",
+      "grip": "steelstorm:item/3d/grip_dark_leather",
+      "metal": "steelstorm:item/3d/metal_stormsteel",
+      "shaft": "steelstorm:item/3d/shaft_birch",
+      "trim": "steelstorm:item/3d/trim_brass"
+    }
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/stormsteel_dual_daggers"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/stormsteel_dual_daggers"
+      }
+    },
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/stormsteel_dual_daggers"
+      }
+    }
   }
 }

@@ -19,7 +19,12 @@ public class LegendaryWeaponItem extends WeaponItem {
     public enum Legendary {
         TEMPEST_EDGE("tempest_edge", "Tempest Edge", WeaponType.LONGSWORD),
         RIMECLEAVER("rimecleaver", "Rimecleaver", WeaponType.GREATSWORD),
-        VOIDREAVER("voidreaver", "Voidreaver", WeaponType.SCYTHE);
+        VOIDREAVER("voidreaver", "Voidreaver", WeaponType.SCYTHE),
+        EARTHSHAKER("earthshaker", "Earthshaker", WeaponType.WARHAMMER),
+        BLOODFANG("bloodfang", "Bloodfang", WeaponType.DUAL_DAGGERS),
+        SKYPIERCER("skypiercer", "Skypiercer", WeaponType.SPEAR),
+        MOONVEIL("moonveil", "Moonveil", WeaponType.KATANA),
+        KINGSBANE("kingsbane", "Kingsbane", WeaponType.BATTLEAXE);
 
         private final String id;
         private final String displayName;

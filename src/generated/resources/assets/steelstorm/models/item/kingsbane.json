@@ -1,0 +1,26 @@
+{
+  "base": {
+    "parent": "steelstorm:item/3d/kingsbane"
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/kingsbane"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/kingsbane"
+      }
+    },
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/kingsbane"
+      }
+    }
+  }
+}

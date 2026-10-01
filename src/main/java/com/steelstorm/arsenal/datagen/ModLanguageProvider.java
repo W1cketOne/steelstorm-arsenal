@@ -5,6 +5,7 @@ import com.steelstorm.arsenal.registry.ModBlocks;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.registry.ModSounds;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
@@ -92,6 +93,7 @@ public class ModLanguageProvider extends LanguageProvider {
         weapon(WeaponType.BATTLEAXE, "Bonus damage against blocking enemies, and breaks shields",
                 "Whirlwind", "Spin three times, hitting everything around you");
 
+        ModSounds.SUBTITLES.forEach((event, text) -> add("subtitles.steelstorm." + event, text));
         add("key.categories.steelstorm", "Steelstorm Arsenal");
         add("key.steelstorm.dodge", "Dodge Roll");
         add("key.steelstorm.special", "Special Ability");

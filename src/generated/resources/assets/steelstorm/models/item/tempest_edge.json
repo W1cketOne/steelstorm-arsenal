@@ -1,6 +1,26 @@
 {
-  "parent": "minecraft:item/handheld",
-  "textures": {
-    "layer0": "steelstorm:item/tempest_edge"
+  "base": {
+    "parent": "steelstorm:item/3d/tempest_edge"
+  },
+  "loader": "neoforge:separate_transforms",
+  "perspectives": {
+    "fixed": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/tempest_edge"
+      }
+    },
+    "ground": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/tempest_edge"
+      }
+    },
+    "gui": {
+      "parent": "minecraft:item/generated",
+      "textures": {
+        "layer0": "steelstorm:item/tempest_edge"
+      }
+    }
   }
 }

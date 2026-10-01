@@ -24,9 +24,7 @@ public final class HammerAbilities {
                         "Hurl your hammer up to 14 blocks. It smashes into the first enemy or wall with a shockwave, "
                                 + "staggering and breaking armour, then flies back to your hand.",
                         30, 160, HammerAbilities::hammerThrow),
-                Ability.of("warhammer_fissure", "Fissure",
-                        "Drive the hammer into the ground and tear a 12-block crack ahead of you that throws enemies into the air.",
-                        35, 160, HammerAbilities::fissure),
+                SignatureAbilities.stonePrison(),
                 Ability.ultimate("warhammer_cataclysm", "Cataclysm",
                         "Leap high into the air and come down like a meteor: three huge shockwaves roll out 12 blocks, "
                                 + "launching and staggering everything they reach.",
@@ -77,25 +75,6 @@ public final class HammerAbilities {
         return true;
     }
 
-    static boolean fissure(AbilityContext ctx) {
-        int c = ctx.color();
-        Vec3 at = strikePoint(ctx);
-        Vec3 dir = ctx.flatLook();
-        ctx.slash(95, c, 1.1F, 1.4);
-        smashFx(ctx, at, 0.9F);
-        ctx.fissure(at, dir, 12, 1.5, 1.4F, 1.0, c, null);
-        ctx.soundAt(at, ModSounds.ABILITY_GROUND_CRACK, 1.3F, 0.9F);
-        ctx.soundAt(at, ModSounds.ABILITY_RUMBLE, 1.0F, 1.2F);
-        ctx.shakeNearby(at, 16, 0.8F, 10);
-        for (int i = 0; i < 12; i += 2) {
-            final int step = i;
-            ctx.later(i, () -> {
-                Vec3 p = at.add(dir.scale(step));
-                Fx.burst(ctx.level, ModParticles.GLOW.get(), 0xFFD166, 1.5F, p.add(0, 0.3, 0), 4, 0.4, 0.2, 0.4, 0.08);
-            });
-        }
-        return true;
-    }
 
     static boolean cataclysm(AbilityContext ctx) {
         int c = ctx.color();

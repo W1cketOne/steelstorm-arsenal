@@ -23,9 +23,7 @@ public final class KatanaAbilities {
                 Ability.of("katana_iaido", "Iaido",
                         "Sheathe the blade, then draw it in one wide, lightning-fast cut that deals heavy damage and two stacks of Bleed.",
                         30, 140, KatanaAbilities::iaido),
-                Ability.of("katana_petal_storm", "Petal Storm",
-                        "Surround yourself with a storm of blades and petals that cuts everything nearby six times.",
-                        30, 180, KatanaAbilities::petalStorm),
+                SignatureAbilities.windScar(),
                 Ability.ultimate("katana_thousand_cuts", "Thousand Cuts",
                         "Blink between up to eight nearby enemies, cutting each one, then return to where you started as "
                                 + "every wound opens at once. You can't be hurt while it lasts.",
@@ -80,30 +78,6 @@ public final class KatanaAbilities {
         return true;
     }
 
-    static boolean petalStorm(AbilityContext ctx) {
-        int c = ctx.color();
-        ctx.sound(ModSounds.ABILITY_PETALS, 1.0F, 1.0F);
-        for (int i = 0; i < 6; i++) {
-            final int pulse = i;
-            ctx.later(i * 5, () -> {
-                Vec3 center = ctx.pos().add(0, 1.0, 0);
-                for (int k = 0; k < 16; k++) {
-                    double a = k * Math.PI / 8 + pulse * 0.6;
-                    Vec3 p = center.add(Math.cos(a) * 3.2, Math.sin(a * 2 + pulse) * 0.6, Math.sin(a) * 3.2);
-                    Vec3 v = new Vec3(-Math.sin(a), 0.02, Math.cos(a)).scale(0.3);
-                    Fx.shoot(ctx.level, ModParticles.PETAL.get(), Fx.PETAL, 1.3F, p, v);
-                }
-                List<LivingEntity> hit = ctx.around(4.5);
-                for (LivingEntity e : hit) {
-                    ctx.hit(e, 0.45F, c);
-                    Fx.slash(ctx.level, e.getBoundingBox().getCenter(), ctx.level.random.nextFloat() * 360, 0,
-                            ctx.level.random.nextFloat() * 180 - 90, c, 0.6F);
-                }
-                ctx.sound(ModSounds.WEAPON_SWING, 0.7F, 1.3F + pulse * 0.05F);
-            });
-        }
-        return true;
-    }
 
     static boolean thousandCuts(AbilityContext ctx) {
         List<LivingEntity> targets = new ArrayList<>(ctx.around(10.0));

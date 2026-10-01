@@ -54,6 +54,9 @@ public class CombatData {
     public int venomKnives;
     /** No fall damage until this time (leaps, dives). */
     public long noFallUntil;
+    /** Greatsword Titan's Guard: until when damage is soaked up, and how much has been. */
+    public long titanGuardUntil;
+    public float titanStored;
     /** Last cosmetic swing broadcast, to rate-limit them. */
     public long lastSwingFx;
 

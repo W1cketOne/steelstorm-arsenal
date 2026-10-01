@@ -29,10 +29,7 @@ public final class ScytheAbilities {
                 Ability.of("scythe_deaths_crescent", "Death's Crescent",
                         "Throw a spinning crescent of death that flies out 12 blocks and comes back, cutting everything both ways.",
                         30, 140, ScytheAbilities::deathsCrescent),
-                Ability.ultimate("scythe_grim_eclipse", "Grim Eclipse",
-                        "A black sun rises over your head for 4 seconds. It drags every enemy within 7 blocks toward you "
-                                + "and drains them, healing you for each one.",
-                        700, ScytheAbilities::grimEclipse));
+                SignatureAbilities.deathMark());
     }
 
     /** Wisps of stolen life drifting from the victim to the caster. */
@@ -100,15 +97,6 @@ public final class ScytheAbilities {
         return true;
     }
 
-    static boolean grimEclipse(AbilityContext ctx) {
-        int c = ctx.color();
-        VortexEntity.spawn(ctx.player, ctx.pos().add(0, 3.2, 0), true, 7.0F, 0.9F, 80, c, ctx.dmg(0.35F), 0, 1.0F);
-        ctx.player.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, 80, 0, false, true, true));
-        Fx.ring(ctx.level, ctx.pos(), c, 7.0F);
-        ctx.sound(ModSounds.ABILITY_VOID, 1.4F, 0.6F);
-        ctx.sound(ModSounds.ABILITY_VOID_HUM, 1.2F, 0.8F);
-        return true;
-    }
 
     private ScytheAbilities() {
     }

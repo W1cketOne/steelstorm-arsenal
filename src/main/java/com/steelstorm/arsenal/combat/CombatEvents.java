@@ -132,6 +132,17 @@ public final class CombatEvents {
             return;
         }
 
+        // Greatsword Titan's Guard: soak up three quarters of every blow, to be released later.
+        if (!bypass && target instanceof ServerPlayer player) {
+            CombatData guard = Stamina.data(player);
+            if (guard.titanGuardUntil > player.level().getGameTime()) {
+                float soaked = event.getAmount() * 0.75F;
+                guard.titanStored += soaked;
+                event.setAmount(event.getAmount() - soaked);
+                Fx.sparks(player.serverLevel(), WeaponLooks.abilityColor(player.getMainHandItem()), player.position().add(0, 1.2, 0), 8, 0.5);
+            }
+        }
+
         // Guarding and parrying with a melee weapon.
         if (!bypass && target instanceof Player player && isGuarding(player) && source.getSourcePosition() != null
                 && !source.is(DamageTypeTags.BYPASSES_SHIELD) && !source.is(DamageTypeTags.IS_EXPLOSION)

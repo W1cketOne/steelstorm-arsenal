@@ -396,6 +396,49 @@ def glyph(name, d):
     elif name == "crown":
         d.polygon([(16, 96), (24, 36), (46, 70), (64, 24), (82, 70), (104, 36), (112, 96)], fill=W)
         d.rectangle([16, 98, 112, 112], fill=W)
+    elif name == "titan_guard":
+        d.polygon([(64, 14), (104, 30), (98, 84), (64, 116), (30, 84), (24, 30)], fill=W)
+        d.polygon([(64, 30), (88, 40), (84, 78), (64, 98), (44, 78), (40, 40)], fill=(0, 0, 0, 0))
+        blade(d, 64, 22, 64, 104, 9)
+    elif name == "sanctum":
+        blade(d, 64, 10, 64, 92, 14)
+        d.ellipse([16, 90, 112, 122], outline=W, width=7)
+        for x in (28, 100):
+            d.line([(x, 84), (x, 60)], fill=W, width=5)
+    elif name == "stone_prison":
+        for (x0, y0, x1, y1) in ((20, 20, 60, 60), (68, 20, 108, 60), (20, 68, 60, 108), (68, 68, 108, 108)):
+            d.rounded_rectangle([x0, y0, x1, y1], 6, fill=W)
+        d.line([(64, 14), (60, 50), (70, 70), (62, 114)], fill=(0, 0, 0, 0), width=6)
+    elif name == "wind_scar":
+        blade(d, 18, 18, 110, 110, 11); blade(d, 110, 18, 18, 110, 11)
+        d.arc([30, 30, 98, 98], 30, 150, fill=W, width=5)
+    elif name == "chain_hook":
+        for k in range(5):
+            x, y = 20 + k * 16, 104 - k * 16
+            d.ellipse([x - 8, y - 6, x + 8, y + 6], outline=W, width=5)
+        d.arc([78, 10, 118, 50], 300, 200, fill=W, width=9)
+        d.polygon([(96, 44), (112, 52), (100, 60)], fill=W)
+    elif name == "death_mark":
+        d.ellipse([28, 18, 100, 86], fill=W)
+        d.ellipse([42, 42, 58, 58], fill=(0, 0, 0, 0)); d.ellipse([70, 42, 86, 58], fill=(0, 0, 0, 0))
+        d.rectangle([44, 80, 84, 104], fill=W)
+        for x in (52, 64, 76):
+            d.line([(x, 84), (x, 104)], fill=(0, 0, 0, 0), width=4)
+    elif name == "hemorrhage":
+        star(d, c, c, 56, 9, 0.45)
+        for (x, y) in ((24, 24), (104, 30), (30, 104), (100, 100)):
+            d.ellipse([x - 8, y - 8, x + 8, y + 8], fill=W)
+        d.ellipse([c - 14, c - 14, c + 14, c + 14], fill=(230, 40, 60, 255))
+    elif name == "tectonic":
+        for i in range(6):
+            a = i * math.pi / 3
+            pts = [(c + math.cos(a + t * 0.5) * (12 + t * 48), c + math.sin(a + t * 0.5) * (12 + t * 48)) for t in (0, 0.33, 0.66, 1)]
+            d.line(pts, fill=W, width=7, joint="curve")
+        d.ellipse([c - 12, c - 12, c + 12, c + 12], fill=W)
+    elif name == "updraft":
+        for k, (w, y) in enumerate(((50, 20), (40, 40), (32, 60), (24, 80), (16, 98))):
+            d.arc([c - w, y - 8, c + w, y + 8], 0, 360, fill=W, width=6)
+        arrow(d, 64, 120, 64, 8, 6)
     else:
         raise ValueError(name)
 
@@ -404,30 +447,30 @@ ABILITY_ICONS = {
     # longsword
     "longsword_rising_slash": ("longsword", "up_slash"), "longsword_riposte": ("longsword", "stance"),
     "longsword_blade_dash": ("longsword", "dash"), "longsword_judgment": ("longsword", "judgment"),
-    "greatsword_ground_cleave": ("greatsword", "cleave"), "greatsword_crescent_wave": ("greatsword", "crescent"),
-    "greatsword_cyclone": ("greatsword", "cyclone"), "greatsword_colossus_strike": ("greatsword", "colossus"),
+    "greatsword_titans_guard": ("greatsword", "titan_guard"), "greatsword_crescent_wave": ("greatsword", "crescent"),
+    "greatsword_sword_sanctum": ("greatsword", "sanctum"), "greatsword_colossus_strike": ("greatsword", "colossus"),
     "katana_flash_step": ("katana", "flash"), "katana_iaido": ("katana", "iaido"),
-    "katana_petal_storm": ("katana", "petals"), "katana_thousand_cuts": ("katana", "thousand_cuts"),
+    "katana_wind_scar": ("katana", "wind_scar"), "katana_thousand_cuts": ("katana", "thousand_cuts"),
     "dual_daggers_flurry": ("dual_daggers", "flurry"), "dual_daggers_shadowstep": ("dual_daggers", "shadowstep"),
     "dual_daggers_fan_of_knives": ("dual_daggers", "fan_knives"), "dual_daggers_death_blossom": ("dual_daggers", "death_blossom"),
     "spear_impale": ("spear", "impale"), "spear_vault_leap": ("spear", "vault"),
     "spear_sweeping_arc": ("spear", "sweep"), "spear_dragon_dive": ("spear", "dragon_dive"),
     "warhammer_earthquake": ("warhammer", "earthquake"), "warhammer_hammer_throw": ("warhammer", "hammer_throw"),
-    "warhammer_fissure": ("warhammer", "fissure"), "warhammer_cataclysm": ("warhammer", "cataclysm"),
+    "warhammer_stone_prison": ("warhammer", "stone_prison"), "warhammer_cataclysm": ("warhammer", "cataclysm"),
     "scythe_reap": ("scythe", "reap"), "scythe_soul_harvest": ("scythe", "soul_harvest"),
-    "scythe_deaths_crescent": ("scythe", "deaths_crescent"), "scythe_grim_eclipse": ("scythe", "grim_eclipse"),
-    "battleaxe_whirlwind": ("battleaxe", "whirlwind"), "battleaxe_cleaving_leap": ("battleaxe", "cleaving_leap"),
+    "scythe_deaths_crescent": ("scythe", "deaths_crescent"), "scythe_death_mark": ("scythe", "death_mark"),
+    "battleaxe_whirlwind": ("battleaxe", "whirlwind"), "battleaxe_chain_hook": ("battleaxe", "chain_hook"),
     "battleaxe_war_cry": ("battleaxe", "war_cry"), "battleaxe_berserker_rage": ("battleaxe", "berserk"),
     "chakram_sawblade": ("chakram", "sawblade"), "chakram_twin_throw": ("chakram", "twin_throw"),
     "chakram_guard_ring": ("chakram", "guard_ring"), "chakram_blade_tempest": ("chakram", "blade_tempest"),
     "throwing_knife_volley": ("throwing_knife", "volley"), "throwing_knife_blink": ("throwing_knife", "blink"),
     "throwing_knife_venom": ("throwing_knife", "poison"), "throwing_knife_knife_storm": ("throwing_knife", "knife_storm"),
     "tempest_edge_thunder_verdict": ("legendary", "bolt"), "rimecleaver_absolute_zero": ("legendary", "snowflake"),
-    "voidreaver_event_horizon": ("legendary", "black_hole"), "earthshaker_worldbreaker": ("legendary", "world_crack"),
-    "bloodfang_crimson_frenzy": ("legendary", "crimson_frenzy"), "skypiercer_heavens_fall": ("legendary", "heaven"),
+    "voidreaver_event_horizon": ("legendary", "black_hole"), "earthshaker_tectonic_spiral": ("legendary", "tectonic"),
+    "bloodfang_hemorrhage": ("legendary", "hemorrhage"), "skypiercer_updraft": ("legendary", "updraft"),
     "moonveil_moonfall": ("legendary", "moon"), "kingsbane_regicide": ("legendary", "crown"),
 }
-ULTIMATE_SUFFIXES = ("judgment", "colossus_strike", "thousand_cuts", "death_blossom", "dragon_dive", "cataclysm", "grim_eclipse",
+ULTIMATE_SUFFIXES = ("judgment", "colossus_strike", "thousand_cuts", "death_blossom", "dragon_dive", "cataclysm", "death_mark",
                      "berserker_rage", "blade_tempest", "knife_storm")
 
 

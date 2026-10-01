@@ -39,17 +39,9 @@ public final class LegendaryUltimates {
                     "Tear open a black hole 10 blocks ahead. For 5 seconds it swallows everything nearby, then "
                             + "collapses in a devastating blast.",
                     700, LegendaryUltimates::eventHorizon);
-            case EARTHSHAKER -> Ability.ultimate("earthshaker_worldbreaker", "Worldbreaker",
-                    "Leap into the sky and strike the earth hard enough to break it: five colossal shockwaves and "
-                            + "four fissures tear outward 15 blocks.",
-                    700, LegendaryUltimates::worldbreaker);
-            case BLOODFANG -> Ability.ultimate("bloodfang_crimson_frenzy", "Crimson Frenzy",
-                    "Blink between up to six enemies in a spray of blood, leaving each one with five stacks of Bleed "
-                            + "and drinking a quarter of the damage as health.",
-                    600, LegendaryUltimates::crimsonFrenzy);
-            case SKYPIERCER -> Ability.ultimate("skypiercer_heavens_fall", "Heaven's Fall",
-                    "Twelve spears of light fall from the sky onto the spot you look at.",
-                    600, LegendaryUltimates::heavensFall);
+            case EARTHSHAKER -> SignatureAbilities.tectonicSpiral();
+            case BLOODFANG -> SignatureAbilities.hemorrhage();
+            case SKYPIERCER -> SignatureAbilities.updraft();
             case MOONVEIL -> Ability.ultimate("moonveil_moonfall", "Moonfall",
                     "Moonlight pins every enemy within 12 blocks in place, then three great crescents of moonlight "
                             + "sweep out in front of you.",
@@ -142,106 +134,8 @@ public final class LegendaryUltimates {
         return true;
     }
 
-    static boolean worldbreaker(AbilityContext ctx) {
-        int c = ctx.color();
-        Vec3 look = ctx.flatLook();
-        Shockwaves.dust(ctx.level, ctx.pos(), 2.0F);
-        ctx.sound(ModSounds.ABILITY_DASH, 1.3F, 0.5F);
-        ctx.leap(look.scale(0.3).add(0, 1.6, 0), null);
-        for (int i = 1; i < 34; i++) {
-            ctx.later(i, () -> {
-                if (!ctx.player.onGround()) {
-                    Vec3 p = ctx.player.getBoundingBox().getCenter();
-                    Fx.burst(ctx.level, ModParticles.GLOW.get(), c, 1.8F, p, 4, 0.4, 0.5, 0.4, 0.02);
-                }
-            });
-        }
-        ctx.later(13, () -> {
-            ctx.player.setDeltaMovement(look.scale(0.2).add(0, -2.8, 0));
-            ctx.player.hurtMarked = true;
-            AbilityManager.onLanding(ctx.player, 50, () -> {
-                Vec3 at = ctx.pos();
-                HammerAbilities.impact(ctx);
-                ctx.later(18, () -> ctx.shockwave(at, 15.0F, 1.2F, 0.8F, 0.6, c, null));
-                ctx.later(24, () -> ctx.shockwave(at, 15.0F, 1.5F, 0.5F, 0.4, 0xFFF1C1, null));
-                for (int k = 0; k < 4; k++) {
-                    Vec3 dir = Vec3.directionFromRotation(0, ctx.player.getYRot() + k * 90);
-                    ctx.fissure(at.add(dir.scale(1.5)), dir, 14, 1.3, 1.5F, 1.1, c, null);
-                }
-                Shockwaves.crater(ctx.level, at, 5.0F, 2.0F);
-            });
-        });
-        return true;
-    }
 
-    static boolean crimsonFrenzy(AbilityContext ctx) {
-        List<LivingEntity> targets = new ArrayList<>(ctx.around(10.0));
-        targets.removeIf(e -> !ctx.player.hasLineOfSight(e));
-        if (targets.isEmpty()) {
-            return false;
-        }
-        if (targets.size() > 6) {
-            targets = targets.subList(0, 6);
-        }
-        int c = ctx.color();
-        Vec3 start = ctx.pos();
-        List<LivingEntity> victims = targets;
-        CombatData data = ctx.data();
-        data.invulnerableUntil = ctx.now() + victims.size() * 5L + 10;
-        data.noFallUntil = ctx.now() + victims.size() * 5L + 40;
-        for (int i = 0; i < victims.size(); i++) {
-            final LivingEntity target = victims.get(i);
-            ctx.later(i * 5, () -> {
-                if (!target.isAlive()) {
-                    return;
-                }
-                ctx.blinkTo(ctx.behind(target, 0.9), null);
-                float before = target.getHealth();
-                ctx.hit(target, 1.4F, c);
-                ctx.bleed(target, 200, 5);
-                ctx.player.heal(Math.max(0, before - target.getHealth()) * 0.25F);
-                Vec3 at = target.getBoundingBox().getCenter();
-                Fx.slash(ctx.level, at, ctx.level.random.nextFloat() * 360, 0, 40, c, 1.0F);
-                Fx.slash(ctx.level, at, ctx.level.random.nextFloat() * 360, 0, -40, 0xFFFFFF, 0.9F);
-                Fx.burst(ctx.level, ModParticles.BLOOD.get(), 0xFFFFFF, 1.4F, at, 16, 0.3, 0.25);
-                ctx.soundAt(at, ModSounds.ABILITY_BLOOD, 1.0F, 1.0F);
-            });
-        }
-        ctx.later(victims.size() * 5 + 3, () -> {
-            ctx.blinkTo(start, null);
-            Fx.burst(ctx.level, ModParticles.BLOOD.get(), 0xFFFFFF, 1.4F, ctx.player.getBoundingBox().getCenter(), 20, 0.5, 0.2);
-        });
-        return true;
-    }
 
-    static boolean heavensFall(AbilityContext ctx) {
-        Vec3 center = ctx.aimPoint(20);
-        int c = ctx.color();
-        Fx.ring(ctx.level, center, c, 6.0F);
-        ctx.soundAt(center, ModSounds.ABILITY_CAST, 1.2F, 1.2F);
-        for (int i = 0; i < 12; i++) {
-            double a = ctx.level.random.nextDouble() * Math.PI * 2;
-            double r = i == 0 ? 0 : 1.0 + Math.sqrt(ctx.level.random.nextDouble()) * 4.5;
-            Vec3 at = center.add(Math.cos(a) * r, 0, Math.sin(a) * r);
-            BlockPos g = Shockwaves.ground(ctx.level, at.x, center.y, at.z);
-            Vec3 impact = g != null ? new Vec3(at.x, g.getY() + 1, at.z) : at;
-            SpectralWeaponEntity.drop(ctx.level, ctx.weaponCopy(), impact, 2.2F, c, 6 + i * 3, 18.0F, 3, 24, w -> {
-                if (!ctx.alive()) {
-                    return;
-                }
-                for (LivingEntity e : ctx.around(impact, 1.9)) {
-                    ctx.hit(e, 1.8F, c);
-                    Shockwaves.throwUp(e, impact, 0.45);
-                }
-                Shockwaves.ring(ctx.level, ctx.player, impact, 2.0F, 0.6F, 0, 0, c, null);
-                Fx.impact(ctx.level, impact.add(0, 0.4, 0), c, 1.4F);
-                Fx.sparks(ctx.level, 0xFFFFFF, impact.add(0, 0.2, 0), 8, 0.6);
-                ctx.soundAt(impact, ModSounds.ABILITY_BLADE_FALL, 0.9F, 1.2F);
-                ctx.shakeNearby(impact, 10, 0.3F, 4);
-            });
-        }
-        return true;
-    }
 
     static boolean moonfall(AbilityContext ctx) {
         int c = ctx.color();

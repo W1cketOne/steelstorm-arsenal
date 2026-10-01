@@ -17,39 +17,17 @@ import net.minecraft.world.phys.Vec3;
 public final class GreatswordAbilities {
     public static AbilitySet create() {
         return new AbilitySet("greatsword",
-                Ability.of("greatsword_ground_cleave", "Ground Cleave",
-                        "Bring the blade down so hard the ground splits open in a line in front of you, launching enemies.",
-                        35, 160, GreatswordAbilities::groundCleave),
+                SignatureAbilities.titansGuard(),
                 Ability.of("greatsword_crescent_wave", "Crescent Wave",
                         "Swing a wave of force that flies 16 blocks, passing through every enemy in its way.",
                         30, 140, GreatswordAbilities::crescentWave),
-                Ability.of("greatsword_cyclone", "Cyclone",
-                        "Spin with the blade outstretched for a second, hitting everything around you four times and dragging it in.",
-                        35, 180, GreatswordAbilities::cyclone),
+                SignatureAbilities.swordSanctum(),
                 Ability.ultimate("greatsword_colossus_strike", "Colossus Strike",
                         "Raise the greatsword for a moment, then slam it down: a 16-block fissure tears open ahead of you "
                                 + "and a shockwave bursts out around you.",
                         600, GreatswordAbilities::colossusStrike));
     }
 
-    static boolean groundCleave(AbilityContext ctx) {
-        int c = ctx.color();
-        Vec3 dir = ctx.flatLook();
-        Vec3 start = ctx.pos().add(dir.scale(1.4));
-        ctx.sound(ModSounds.WEAPON_SWING_HEAVY, 1.1F, 0.8F);
-        ctx.slash(95, c, 1.4F, 1.8);
-        ctx.later(3, () -> {
-            for (LivingEntity e : ctx.cone(3.0, 45)) {
-                ctx.hit(e, 1.4F, c);
-            }
-            ctx.fissure(start, dir, 8, 1.1, 1.2F, 0.75, c, null);
-            Shockwaves.dust(ctx.level, start, 1.5F);
-            Fx.impact(ctx.level, start.add(0, 0.3, 0), c, 1.8F);
-            ctx.soundAt(start, ModSounds.ABILITY_GROUND_CRACK, 1.2F, 0.9F);
-            ctx.shakeNearby(start, 14, 0.7F, 8);
-        });
-        return true;
-    }
 
     static boolean crescentWave(AbilityContext ctx) {
         int c = ctx.color();
@@ -61,30 +39,6 @@ public final class GreatswordAbilities {
         return true;
     }
 
-    static boolean cyclone(AbilityContext ctx) {
-        int c = ctx.color();
-        ctx.player.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 22, 0, false, false, false));
-        for (int i = 0; i < 4; i++) {
-            final int pulse = i;
-            ctx.later(i * 5, () -> {
-                Vec3 center = ctx.pos();
-                float baseYaw = ctx.player.getYRot() + pulse * 90;
-                for (int k = 0; k < 3; k++) {
-                    float yaw = baseYaw + k * 120;
-                    Vec3 at = center.add(Vec3.directionFromRotation(0, yaw).scale(1.6)).add(0, 1.0, 0);
-                    ctx.slashAt(at, yaw + 90, 0, c, 1.15F);
-                }
-                for (LivingEntity e : ctx.around(4.0)) {
-                    if (ctx.hit(e, 0.7F, c)) {
-                        ctx.pull(e, center, 0.35);
-                    }
-                }
-                Fx.burst(ctx.level, ModParticles.GLOW.get(), c, 1.2F, center.add(0, 0.6, 0), 8, 2.0, 0.2, 2.0, 0.02);
-                ctx.sound(ModSounds.WEAPON_SWING_HEAVY, 0.9F, 0.9F + pulse * 0.08F);
-            });
-        }
-        return true;
-    }
 
     static boolean colossusStrike(AbilityContext ctx) {
         int c = ctx.color();

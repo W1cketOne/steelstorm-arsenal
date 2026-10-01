@@ -21,10 +21,7 @@ public final class BattleaxeAbilities {
                 Ability.of("battleaxe_whirlwind", "Whirlwind",
                         "Spin like a whirlwind for over a second, hitting everything around you six times. You can keep moving.",
                         35, 160, BattleaxeAbilities::whirlwind),
-                Ability.of("battleaxe_cleaving_leap", "Cleaving Leap",
-                        "Leap to the spot you look at (up to 8 blocks) and bury the axe in the ground, breaking armour "
-                                + "and staggering everything you land near.",
-                        30, 140, BattleaxeAbilities::cleavingLeap),
+                SignatureAbilities.chainHook(),
                 Ability.of("battleaxe_war_cry", "War Cry",
                         "A terrifying roar. Enemies within 8 blocks are weakened, slowed and staggered; you gain "
                                 + "Strength and Speed for 6 seconds.",
@@ -56,32 +53,6 @@ public final class BattleaxeAbilities {
         return true;
     }
 
-    static boolean cleavingLeap(AbilityContext ctx) {
-        int c = ctx.color();
-        Vec3 target = ctx.aimPoint(8.0);
-        Vec3 to = target.subtract(ctx.pos());
-        Vec3 flat = new Vec3(to.x, 0, to.z);
-        double dist = Math.min(8.0, flat.length());
-        Vec3 dir = flat.lengthSqr() < 1e-4 ? ctx.flatLook() : flat.normalize();
-        ctx.sound(ModSounds.ABILITY_DASH, 1.0F, 0.7F);
-        ctx.leap(dir.scale(0.25 + dist * 0.11).add(0, 0.85, 0), land -> {
-            Vec3 at = land.pos();
-            land.slash(95, c, 1.3F, 1.2);
-            for (LivingEntity e : land.around(at, 2.8)) {
-                if (land.hit(e, 1.8F, c)) {
-                    land.armorBreak(e, 120);
-                    land.stagger(e, 40);
-                }
-            }
-            Shockwaves.crater(land.level, at.add(land.flatLook().scale(1.0)), 2.0F, 1.0F);
-            land.shockwave(at, 3.0F, 0.8F, 0, 0.3, c, null);
-            Fx.impact(land.level, at.add(0, 0.4, 0), c, 1.8F);
-            land.sound(ModSounds.ABILITY_SHOCKWAVE, 1.1F, 1.1F);
-            land.sound(ModSounds.WEAPON_HIT_METAL, 0.9F, 0.6F);
-            land.shakeNearby(at, 14, 0.8F, 8);
-        });
-        return true;
-    }
 
     static boolean warCry(AbilityContext ctx) {
         int c = ctx.color();

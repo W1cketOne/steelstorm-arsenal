@@ -74,7 +74,7 @@ public final class OutpostBuilder {
             // Nothing dry and flat nearby (e.g. an ocean spawn): build on a stone foundation instead.
             Direction front = Direction.WEST;
             BlockPos center = spawn.relative(Direction.EAST, 10);
-            int ground = Math.max(level.getSeaLevel() + 1, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, center.getX(), center.getZ()));
+            int ground = Math.max(level.getSeaLevel() + 1, groundHeight(level, center.getX(), center.getZ()));
             site = new Site(center, front, ground);
             SteelstormArsenal.LOGGER.info("No natural site for the Warrior's Outpost near spawn, building on a foundation");
         }
@@ -141,7 +141,7 @@ public final class OutpostBuilder {
                 if (Math.abs(column.getX() - spawn.getX()) <= 1 && Math.abs(column.getZ() - spawn.getZ()) <= 1) {
                     return null;
                 }
-                int h = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
+                int h = groundHeight(level, column.getX(), column.getZ());
                 BlockPos top = new BlockPos(column.getX(), h - 1, column.getZ());
                 if (!level.getFluidState(top).isEmpty() || !level.getFluidState(top.above()).isEmpty()) {
                     return null;
@@ -157,6 +157,19 @@ public final class OutpostBuilder {
         lastSlope = max - min;
         heights.sort(Integer::compare);
         return heights.get(heights.size() / 2);
+    }
+
+    /** The height of the first free block above the real ground, looking through trees and plants. */
+    private static int groundHeight(ServerLevel level, int x, int z) {
+        BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos(x, level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, x, z) - 1, z);
+        while (pos.getY() > level.getMinBuildHeight()) {
+            BlockState state = level.getBlockState(pos);
+            if (!state.is(BlockTags.LOGS) && !state.is(BlockTags.LEAVES) && !state.canBeReplaced()) {
+                break;
+            }
+            pos.move(Direction.DOWN);
+        }
+        return pos.getY() + 1;
     }
 
     /** Local (x across, y up from the floor surface, z front-to-back) to world coordinates. */

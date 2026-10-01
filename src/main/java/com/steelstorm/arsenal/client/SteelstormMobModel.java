@@ -2,6 +2,9 @@ package com.steelstorm.arsenal.client;
 
 import com.steelstorm.arsenal.entity.SteelstormMonster;
 import com.steelstorm.arsenal.entity.StormHerald;
+import com.steelstorm.arsenal.client.anim.WeaponAnimator;
+import com.steelstorm.arsenal.client.anim.WeaponPoses;
+import com.steelstorm.arsenal.weapon.WeaponItem;
 import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
@@ -23,6 +26,9 @@ public class SteelstormMobModel<T extends SteelstormMonster> extends PlayerModel
         leftArmPose = ArmPose.EMPTY;
         if (entity.getMainHandItem().getItem() instanceof BowItem && entity.isAggressive()) {
             rightArmPose = ArmPose.BOW_AND_ARROW;
+        } else if (entity.getMainHandItem().getItem() instanceof WeaponItem weapon) {
+            // Mod weapons swing and pose exactly like they do for players.
+            rightArmPose = (WeaponAnimator.isTwoHanded(weapon.type()) ? WeaponPoses.TWO_HANDED : WeaponPoses.ONE_HANDED).getValue();
         } else if (!entity.getMainHandItem().isEmpty()) {
             rightArmPose = ArmPose.ITEM;
         }

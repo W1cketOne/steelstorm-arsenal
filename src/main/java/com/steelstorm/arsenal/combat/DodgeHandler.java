@@ -1,5 +1,8 @@
 package com.steelstorm.arsenal.combat;
 
+import com.steelstorm.arsenal.anim.CastPose;
+import com.steelstorm.arsenal.network.PlayerAnimPayload;
+
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModParticles;
@@ -47,6 +50,7 @@ public final class DodgeHandler {
         data.dodgeCooldownEnd = now + Config.DODGE_COOLDOWN_TICKS.get();
         data.invulnerableUntil = now + Config.DODGE_INVULNERABILITY_TICKS.get();
         player.stopUsingItem();
+        PlayerAnimPayload.send(player, CastPose.DODGE);
 
         ServerLevel level = player.serverLevel();
         Fx.sound(level, player.position(), ModSounds.PLAYER_DODGE, 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F);

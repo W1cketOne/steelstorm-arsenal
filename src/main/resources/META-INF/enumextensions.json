@@ -1,0 +1,16 @@
+{
+  "entries": [
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "STEELSTORM_ONE_HANDED",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {"class": "com/steelstorm/arsenal/client/anim/WeaponPoses", "field": "ONE_HANDED"}
+    },
+    {
+      "enum": "net/minecraft/client/model/HumanoidModel$ArmPose",
+      "name": "STEELSTORM_TWO_HANDED",
+      "constructor": "(ZLnet/neoforged/neoforge/client/IArmPoseTransformer;)V",
+      "parameters": {"class": "com/steelstorm/arsenal/client/anim/WeaponPoses", "field": "TWO_HANDED"}
+    }
+  ]
+}

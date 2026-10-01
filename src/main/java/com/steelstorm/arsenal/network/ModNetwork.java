@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class ModNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("2");
+        PayloadRegistrar registrar = event.registrar("3");
         // Keybinds only *request* actions; the server validates stamina, cooldowns and charge.
         registrar.playToServer(DodgePayload.TYPE, DodgePayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
@@ -37,6 +37,8 @@ public final class ModNetwork {
                 (payload, context) -> ClientPayloadHandler.handleSync(payload));
         registrar.playToClient(FeedbackPayload.TYPE, FeedbackPayload.STREAM_CODEC,
                 (payload, context) -> ClientPayloadHandler.handleFeedback(payload));
+        registrar.playToClient(PlayerAnimPayload.TYPE, PlayerAnimPayload.STREAM_CODEC,
+                (payload, context) -> ClientPayloadHandler.handleAnim(payload));
     }
 
     private ModNetwork() {

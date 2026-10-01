@@ -1,5 +1,8 @@
 package com.steelstorm.arsenal.ability;
 
+import com.steelstorm.arsenal.anim.CastPose;
+import com.steelstorm.arsenal.network.PlayerAnimPayload;
+
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.combat.CombatData;
@@ -92,6 +95,7 @@ public final class AbilityManager {
         player.displayClientMessage(Component.translatable(ability.nameKey())
                 .withStyle(ability.isUltimate() ? ChatFormatting.GOLD : ChatFormatting.AQUA, ChatFormatting.BOLD), true);
         player.swing(InteractionHand.MAIN_HAND, true);
+        PlayerAnimPayload.send(player, CastPose.forAbility(ability.id()));
         if (!creative && stack.isDamageableItem()) {
             stack.hurtAndBreak(ability.isUltimate() ? 5 : 2, player, EquipmentSlot.MAINHAND);
         }

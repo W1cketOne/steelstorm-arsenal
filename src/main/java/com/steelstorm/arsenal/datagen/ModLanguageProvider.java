@@ -5,6 +5,7 @@ import com.steelstorm.arsenal.registry.ModBlocks;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
 import net.minecraft.data.PackOutput;
@@ -43,6 +44,28 @@ public class ModLanguageProvider extends LanguageProvider {
         enchantment("lacerate", "Lacerate", "Hits have a chance to cause Bleed.");
         enchantment("executioner", "Executioner", "Deal extra damage to enemies below 35% health.");
         enchantment("momentum", "Momentum", "Landing hits restores stamina.");
+        for (LegendaryWeaponItem.Legendary legendary : LegendaryWeaponItem.Legendary.values()) {
+            add(ModItems.legendary(legendary).get(), legendary.displayName());
+        }
+        add("weapon.steelstorm.tempest_edge.legendary", "Combo finishers call down lightning");
+        add("weapon.steelstorm.rimecleaver.legendary", "Hits freeze enemies solid");
+        add("weapon.steelstorm.voidreaver.legendary", "Reap pulls enemies into a void vortex");
+        add("tooltip.steelstorm.legendary", "Legendary: ");
+        add(ModItems.BANDIT_DUELIST_SPAWN_EGG.get(), "Bandit Duelist Spawn Egg");
+        add(ModItems.BANDIT_ARCHER_SPAWN_EGG.get(), "Bandit Archer Spawn Egg");
+        add(ModItems.IRON_REVENANT_SPAWN_EGG.get(), "Iron Revenant Spawn Egg");
+        add(ModItems.FALLEN_WARLORD_SPAWN_EGG.get(), "Fallen Warlord Spawn Egg");
+        add(ModEntities.BANDIT_DUELIST.get(), "Bandit Duelist");
+        add(ModEntities.BANDIT_ARCHER.get(), "Bandit Archer");
+        add(ModEntities.IRON_REVENANT.get(), "Iron Revenant");
+        add(ModEntities.FALLEN_WARLORD.get(), "The Fallen Warlord");
+        add("message.steelstorm.warlord_phase2", "The Fallen Warlord calls on his fallen knights!");
+        add("message.steelstorm.warlord_phase3", "The Fallen Warlord is enraged!");
+        config("structures", "Structures");
+        config("abandonedArmoryChance", "Abandoned Armory Chance");
+        config("banditCampChance", "Bandit Camp Chance");
+        config("ruinedColosseumChance", "Ruined Colosseum Chance");
+        config("starterOutpost", "Starter Outpost");
         add("death.attack.steelstorm.bleed", "%1$s bled out");
         add("death.attack.steelstorm.bleed.player", "%1$s bled out while fighting %2$s");
         add("death.attack.steelstorm.zap", "%1$s was zapped by %2$s");

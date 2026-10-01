@@ -13,7 +13,8 @@ public final class OutpostEvents {
     /** Only fires while a brand-new world chooses its spawn point, never for existing worlds. */
     @SubscribeEvent
     public static void onCreateSpawn(LevelEvent.CreateSpawnPosition event) {
-        if (event.getLevel() instanceof ServerLevel level && level.dimension() == Level.OVERWORLD) {
+        if (event.getLevel() instanceof ServerLevel level && level.dimension() == Level.OVERWORLD
+                && com.steelstorm.arsenal.Config.STARTER_OUTPOST.get()) {
             OutpostSavedData.get(level).markPending();
         }
     }

@@ -1,0 +1,5 @@
+{
+  "type": "neoforge:add_spawns",
+  "biomes": "#steelstorm:spawns_iron_revenant",
+  "spawners": {"type": "steelstorm:iron_revenant", "weight": 10, "minCount": 1, "maxCount": 1}
+}

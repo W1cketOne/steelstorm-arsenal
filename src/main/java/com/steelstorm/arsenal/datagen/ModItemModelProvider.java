@@ -2,7 +2,9 @@ package com.steelstorm.arsenal.datagen;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponItem;
+import java.util.List;
 import net.minecraft.data.PackOutput;
 import net.neoforged.neoforge.client.model.generators.ItemModelProvider;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
@@ -23,5 +25,12 @@ public class ModItemModelProvider extends ItemModelProvider {
         handheldItem(ModItems.CHAKRAM.get());
         handheldItem(ModItems.THROWING_KNIFE.get());
         basicItem(ModItems.TARGET_DUMMY.get());
+        for (LegendaryWeaponItem.Legendary legendary : LegendaryWeaponItem.Legendary.values()) {
+            handheldItem(ModItems.legendary(legendary).get());
+        }
+        for (var egg : List.of(ModItems.BANDIT_DUELIST_SPAWN_EGG, ModItems.BANDIT_ARCHER_SPAWN_EGG,
+                ModItems.IRON_REVENANT_SPAWN_EGG, ModItems.FALLEN_WARLORD_SPAWN_EGG)) {
+            withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
+        }
     }
 }

@@ -28,6 +28,12 @@ public final class Config {
     public static final ModConfigSpec.IntValue DODGE_INVULNERABILITY_TICKS;
     public static final ModConfigSpec.DoubleValue SPECIAL_COOLDOWN_MULTIPLIER;
 
+    // World
+    public static final ModConfigSpec.DoubleValue ARMORY_CHANCE;
+    public static final ModConfigSpec.DoubleValue BANDIT_CAMP_CHANCE;
+    public static final ModConfigSpec.DoubleValue COLOSSEUM_CHANCE;
+    public static final ModConfigSpec.BooleanValue STARTER_OUTPOST;
+
     static {
         BUILDER.push("stamina");
         MAX_STAMINA = BUILDER.comment("Maximum stamina").defineInRange("maxStamina", 100.0, 10.0, 1000.0);
@@ -58,6 +64,17 @@ public final class Config {
                 .defineInRange("dodgeInvulnerabilityTicks", 8, 0, 40);
         SPECIAL_COOLDOWN_MULTIPLIER = BUILDER.comment("Multiplier on every special ability's cooldown")
                 .defineInRange("specialCooldownMultiplier", 1.0, 0.0, 10.0);
+        BUILDER.pop();
+
+        BUILDER.comment("Structures only generate in newly explored chunks.").push("structures");
+        ARMORY_CHANCE = BUILDER.comment("Chance (0-1) that each possible Abandoned Armory spot actually gets one. 0 disables them.")
+                .defineInRange("abandonedArmoryChance", 0.75, 0.0, 1.0);
+        BANDIT_CAMP_CHANCE = BUILDER.comment("Chance (0-1) that each possible Bandit Camp spot actually gets one. 0 disables them.")
+                .defineInRange("banditCampChance", 0.6, 0.0, 1.0);
+        COLOSSEUM_CHANCE = BUILDER.comment("Chance (0-1) that each possible Ruined Colosseum spot actually gets one. 0 disables them.")
+                .defineInRange("ruinedColosseumChance", 0.7, 0.0, 1.0);
+        STARTER_OUTPOST = BUILDER.comment("Build the Warrior's Outpost next to spawn when a new world is created")
+                .define("starterOutpost", true);
         BUILDER.pop();
     }
 

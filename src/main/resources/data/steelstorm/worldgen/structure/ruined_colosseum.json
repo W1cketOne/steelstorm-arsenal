@@ -1,0 +1,8 @@
+{
+  "type": "steelstorm:steelstorm_structure",
+  "kind": "ruined_colosseum",
+  "biomes": "#steelstorm:has_structure/ruined_colosseum",
+  "step": "surface_structures",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_box"
+}

@@ -2,6 +2,7 @@ package com.steelstorm.arsenal.combat;
 
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.registry.ModEffects;
+import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponType;
 import java.util.HashSet;
@@ -261,6 +262,9 @@ public final class SpecialAbilities {
             target.knockback(0.5, player.getX() - target.getX(), player.getZ() - target.getZ());
         }
         spinParticles(level, player, 3.2, ParticleTypes.SWEEP_ATTACK);
+        if (weapon instanceof LegendaryWeaponItem legendary && legendary.legendary() == LegendaryWeaponItem.Legendary.VOIDREAVER) {
+            WeaponEffects.voidVortex(player);
+        }
         sound(player, SoundEvents.PLAYER_ATTACK_SWEEP, 1.0F, 0.6F);
         sound(player, SoundEvents.WITHER_SHOOT, 0.3F, 1.6F);
         Stamina.shake(player, 0.6F, 6);

@@ -1,7 +1,16 @@
 package com.steelstorm.arsenal.registry;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.entity.BanditArcher;
+import com.steelstorm.arsenal.entity.BanditDuelist;
 import com.steelstorm.arsenal.entity.ChakramEntity;
+import com.steelstorm.arsenal.entity.FallenWarlord;
+import com.steelstorm.arsenal.entity.IronRevenant;
+import java.util.List;
+import net.minecraft.world.entity.SpawnPlacementTypes;
+import net.minecraft.world.entity.monster.Monster;
+import net.minecraft.world.level.levelgen.Heightmap;
+import net.neoforged.neoforge.event.entity.RegisterSpawnPlacementsEvent;
 import com.steelstorm.arsenal.entity.TargetDummyEntity;
 import com.steelstorm.arsenal.entity.ThrowingKnifeEntity;
 import com.steelstorm.arsenal.entity.ThrownSpear;
@@ -31,9 +40,34 @@ public final class ModEntities {
             () -> EntityType.Builder.<TargetDummyEntity>of(TargetDummyEntity::new, MobCategory.MISC)
                     .sized(0.6F, 1.95F).clientTrackingRange(8).build("target_dummy"));
 
+    public static final Supplier<EntityType<BanditDuelist>> BANDIT_DUELIST = ENTITIES.register("bandit_duelist",
+            () -> EntityType.Builder.<BanditDuelist>of(BanditDuelist::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F).clientTrackingRange(8).build("bandit_duelist"));
+    public static final Supplier<EntityType<BanditArcher>> BANDIT_ARCHER = ENTITIES.register("bandit_archer",
+            () -> EntityType.Builder.<BanditArcher>of(BanditArcher::new, MobCategory.MONSTER)
+                    .sized(0.6F, 1.95F).clientTrackingRange(8).build("bandit_archer"));
+    public static final Supplier<EntityType<IronRevenant>> IRON_REVENANT = ENTITIES.register("iron_revenant",
+            () -> EntityType.Builder.<IronRevenant>of(IronRevenant::new, MobCategory.MONSTER)
+                    .sized(0.7F, 2.05F).clientTrackingRange(8).build("iron_revenant"));
+    public static final Supplier<EntityType<FallenWarlord>> FALLEN_WARLORD = ENTITIES.register("fallen_warlord",
+            () -> EntityType.Builder.<FallenWarlord>of(FallenWarlord::new, MobCategory.MONSTER)
+                    .sized(0.9F, 2.8F).fireImmune().clientTrackingRange(10).build("fallen_warlord"));
+
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(TARGET_DUMMY.get(), TargetDummyEntity.createAttributes().build());
+        event.put(BANDIT_DUELIST.get(), BanditDuelist.createAttributes().build());
+        event.put(BANDIT_ARCHER.get(), BanditArcher.createAttributes().build());
+        event.put(IRON_REVENANT.get(), IronRevenant.createAttributes().build());
+        event.put(FALLEN_WARLORD.get(), FallenWarlord.createAttributes().build());
+    }
+
+    @SubscribeEvent
+    public static void registerSpawnPlacements(RegisterSpawnPlacementsEvent event) {
+        for (Supplier<? extends EntityType<? extends Monster>> type : List.of(BANDIT_DUELIST, BANDIT_ARCHER, IRON_REVENANT)) {
+            event.register(type.get(), SpawnPlacementTypes.ON_GROUND, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES,
+                    Monster::checkMonsterSpawnRules, RegisterSpawnPlacementsEvent.Operation.REPLACE);
+        }
     }
 
     private ModEntities() {

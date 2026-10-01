@@ -1,0 +1,9 @@
+{
+  "structures": [{"structure": "steelstorm:bandit_camp", "weight": 1}],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "spacing": 34,
+    "separation": 12,
+    "salt": 518273904
+  }
+}

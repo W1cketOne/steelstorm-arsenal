@@ -73,6 +73,12 @@ public class ModLanguageProvider extends LanguageProvider {
         config("abandonedArmoryChance", "Abandoned Armory Chance");
         config("banditCampChance", "Bandit Camp Chance");
         config("ruinedColosseumChance", "Ruined Colosseum Chance");
+        config("provingGroundsChance", "Proving Grounds Chance");
+        config("knightsCryptChance", "Knight's Crypt Chance");
+        config("stormShrineChance", "Storm Shrine Chance");
+        config("blacksmithChance", "Blacksmith's Forge Chance");
+        config("watchtowerChance", "Watchtower Chance");
+        config("stormsteelMineChance", "Stormsteel Mine Chance");
         config("starterOutpost", "Starter Outpost");
         add("death.attack.steelstorm.bleed", "%1$s bled out");
         add("death.attack.steelstorm.bleed.player", "%1$s bled out while fighting %2$s");
@@ -196,6 +202,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add("message.steelstorm.gong_resting", "The gong is silent. Try again in %s min.");
         add("message.steelstorm.sarcophagus", "Something stirs inside...");
         add("message.steelstorm.pedestal_sealed", "Sealed by %s. Defeat the guardian first!");
+        add("message.steelstorm.pedestal_tombs", "Sealed. The dead still sleep here: open every sarcophagus.");
         add("message.steelstorm.pedestal_claimed", "You claimed %s!");
         add("message.steelstorm.storm_rages", "The storm already rages. Defeat the Storm Herald first.");
         add("message.steelstorm.altar_charge", "The altar hums with power (%s/%s)");

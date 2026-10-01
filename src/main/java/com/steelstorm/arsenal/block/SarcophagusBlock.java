@@ -1,6 +1,7 @@
 package com.steelstorm.arsenal.block;
 
 import com.mojang.serialization.MapCodec;
+import com.steelstorm.arsenal.entity.CryptKnight;
 import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModEntities;
 import com.steelstorm.arsenal.registry.ModParticles;
@@ -14,11 +15,15 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.MobSpawnType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.monster.Skeleton;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -34,6 +39,7 @@ import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParamSets;
 import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.CollisionContext;
@@ -41,7 +47,7 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A two-block stone coffin. Opening it slides the lid aside, spills its grave goods, and wakes
- * the Crypt Knight sleeping inside.
+ * the Crypt Knight sleeping inside (or, if a knight already walks nearby, two skeletons).
  */
 public class SarcophagusBlock extends HorizontalDirectionalBlock {
     public enum Part implements StringRepresentable {
@@ -159,12 +165,36 @@ public class SarcophagusBlock extends HorizontalDirectionalBlock {
         }
     }
 
+    /**
+     * Wakes a Crypt Knight, or, while one is already up and about nearby, two of its skeletal
+     * retainers instead.
+     */
     private static void wakeKnight(ServerLevel level, BlockPos head, Direction facing) {
+        Vec3 at = Vec3.atBottomCenterOf(head.above());
+        boolean knightAwake = !level.getEntitiesOfClass(CryptKnight.class, new AABB(head).inflate(24), Mob::isAlive).isEmpty();
+        if (knightAwake) {
+            for (int i = 0; i < 2; i++) {
+                Skeleton skeleton = EntityType.SKELETON.create(level);
+                if (skeleton == null) {
+                    continue;
+                }
+                // One rises from each end of the coffin.
+                Vec3 spot = Vec3.atBottomCenterOf((i == 0 ? head : head.relative(facing.getOpposite())).above());
+                skeleton.moveTo(spot.x, spot.y, spot.z, facing.toYRot() + 180, 0);
+                skeleton.finalizeSpawn(level, level.getCurrentDifficultyAt(head), MobSpawnType.EVENT, null);
+                skeleton.setItemSlot(EquipmentSlot.HEAD, new ItemStack(Items.CHAINMAIL_HELMET));
+                skeleton.setDropChance(EquipmentSlot.HEAD, 0.0F);
+                skeleton.setPersistenceRequired();
+                level.addFreshEntity(skeleton);
+            }
+            Fx.burst(level, ModParticles.SMOKE.get(), 0x2A2E3A, 1.6F, at.add(0, 1, 0), 18, 0.5, 0.6, 0.5, 0.03);
+            Fx.sound(level, at, ModSounds.BLOCK_SARCOPHAGUS_OPEN, 0.8F, 1.4F);
+            return;
+        }
         Mob knight = ModEntities.CRYPT_KNIGHT.get().create(level);
         if (knight == null) {
             return;
         }
-        Vec3 at = Vec3.atBottomCenterOf(head.above());
         knight.moveTo(at.x, at.y, at.z, facing.toYRot() + 180, 0);
         knight.finalizeSpawn(level, level.getCurrentDifficultyAt(head), MobSpawnType.EVENT, null);
         knight.setPersistenceRequired();

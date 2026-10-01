@@ -33,6 +33,12 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue ARMORY_CHANCE;
     public static final ModConfigSpec.DoubleValue BANDIT_CAMP_CHANCE;
     public static final ModConfigSpec.DoubleValue COLOSSEUM_CHANCE;
+    public static final ModConfigSpec.DoubleValue PROVING_GROUNDS_CHANCE;
+    public static final ModConfigSpec.DoubleValue KNIGHTS_CRYPT_CHANCE;
+    public static final ModConfigSpec.DoubleValue STORM_SHRINE_CHANCE;
+    public static final ModConfigSpec.DoubleValue BLACKSMITH_CHANCE;
+    public static final ModConfigSpec.DoubleValue WATCHTOWER_CHANCE;
+    public static final ModConfigSpec.DoubleValue STORMSTEEL_MINE_CHANCE;
     public static final ModConfigSpec.BooleanValue STARTER_OUTPOST;
 
     static {
@@ -76,6 +82,18 @@ public final class Config {
                 .defineInRange("banditCampChance", 0.6, 0.0, 1.0);
         COLOSSEUM_CHANCE = BUILDER.comment("Chance (0-1) that each possible Ruined Colosseum spot actually gets one. 0 disables them.")
                 .defineInRange("ruinedColosseumChance", 0.7, 0.0, 1.0);
+        PROVING_GROUNDS_CHANCE = BUILDER.comment("Chance (0-1) that a possible Proving Grounds location actually gets one")
+                .defineInRange("provingGroundsChance", 0.7, 0.0, 1.0);
+        KNIGHTS_CRYPT_CHANCE = BUILDER.comment("Chance (0-1) that a possible Knight's Crypt location actually gets one")
+                .defineInRange("knightsCryptChance", 0.7, 0.0, 1.0);
+        STORM_SHRINE_CHANCE = BUILDER.comment("Chance (0-1) that a possible Storm Shrine location actually gets one")
+                .defineInRange("stormShrineChance", 0.8, 0.0, 1.0);
+        BLACKSMITH_CHANCE = BUILDER.comment("Chance (0-1) that a possible Blacksmith's Forge location actually gets one")
+                .defineInRange("blacksmithChance", 0.75, 0.0, 1.0);
+        WATCHTOWER_CHANCE = BUILDER.comment("Chance (0-1) that a possible Watchtower location actually gets one")
+                .defineInRange("watchtowerChance", 0.7, 0.0, 1.0);
+        STORMSTEEL_MINE_CHANCE = BUILDER.comment("Chance (0-1) that a possible Stormsteel Mine location actually gets one")
+                .defineInRange("stormsteelMineChance", 0.7, 0.0, 1.0);
         STARTER_OUTPOST = BUILDER.comment("Build the Warrior's Outpost next to spawn when a new world is created")
                 .define("starterOutpost", true);
         BUILDER.pop();

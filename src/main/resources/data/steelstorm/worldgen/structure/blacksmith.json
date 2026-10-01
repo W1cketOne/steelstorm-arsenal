@@ -1,7 +1,7 @@
 {
   "type": "steelstorm:steelstorm_structure",
-  "kind": "abandoned_armory",
-  "biomes": "#steelstorm:has_structure/abandoned_armory",
+  "kind": "blacksmith",
+  "biomes": "#steelstorm:has_structure/blacksmith",
   "step": "top_layer_modification",
   "spawn_overrides": {},
   "terrain_adaptation": "beard_thin"

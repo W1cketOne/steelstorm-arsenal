@@ -307,6 +307,10 @@ public final class OutpostBuilder {
                 .setValue(net.minecraft.world.level.block.GrindstoneBlock.FACING, front));
         set(3, 3, 6, Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true));
         set(7, 3, 6, Blocks.LANTERN.defaultBlockState().setValue(LanternBlock.HANGING, true));
+        // A whetstone to sharpen blades, and a signal brazier to light when night falls.
+        set(WIDTH - 2, 0, 5, ModBlocks.WHETSTONE.get().defaultBlockState()
+                .setValue(net.minecraft.world.level.block.HorizontalDirectionalBlock.FACING, right.getOpposite()));
+        set(1, 0, 1, ModBlocks.SIGNAL_BRAZIER.get().defaultBlockState());
         // Wall torches on the inside of the back wall corners.
         set(1, 2, 5, Blocks.WALL_TORCH.defaultBlockState().setValue(WallTorchBlock.FACING, right));
         set(WIDTH - 2, 2, 5, Blocks.WALL_TORCH.defaultBlockState().setValue(WallTorchBlock.FACING, right.getOpposite()));
@@ -378,15 +382,22 @@ public final class OutpostBuilder {
 
         public static ItemStack controlsBook() {
             List<Filterable<Component>> pages = new ArrayList<>();
-            pages.add(page(Component.literal("§lSteelstorm Arsenal§r\n\nWelcome, warrior. Fighting here takes skill, not spam-clicking.\n\nWatch your §9stamina§r bar above your hunger bar: dodging, heavy attacks and specials all spend it.")));
+            pages.add(page(Component.literal("§lSteelstorm Arsenal§r\n\nWelcome, warrior. Fighting here takes skill, not spam-clicking.\n\nWatch your §9stamina§r bar above your hunger bar: dodging, heavy attacks and abilities all spend it.")));
+            pages.add(page(Component.literal("§lAbilities§r\nEvery weapon has three abilities:\n")
+                    .append(Component.keybind("key.steelstorm.ability_1")).append(", ")
+                    .append(Component.keybind("key.steelstorm.ability_2")).append(" and ")
+                    .append(Component.keybind("key.steelstorm.ability_3"))
+                    .append(".\n\nHold §oShift§r over a weapon to read what they do. Each has its own cooldown, shown on the bar above your hotbar.")));
+            pages.add(page(Component.literal("§lUltimate§r\nLanding hits and taking blows fills the §6ultimate meter§r. When it glows, press ")
+                    .append(Component.keybind("key.steelstorm.ultimate"))
+                    .append(" to unleash your weapon's ultimate. Legendary weapons have their own.")));
             pages.add(page(Component.literal("§lDodge Roll§r\nPress ")
                     .append(Component.keybind("key.steelstorm.dodge"))
-                    .append("§r while moving to roll about 3 blocks. You can't be hurt for a moment mid-roll. 1 second cooldown.")));
-            pages.add(page(Component.literal("§lParry§r\nHold §oUse§r (right-click) with a melee weapon to guard.\n\nGet hit in the first 5 ticks for a §6perfect parry§r: no damage and the attacker is staggered.\n\nLater, guarding only reduces damage.")));
-            pages.add(page(Component.literal("§lHeavy Attack§r\nSneak while you attack for 1.5x damage and extra knockback. Costs stamina.\n\n§lCombos§r\nLanding hits in a row builds your combo counter.")));
-            pages.add(page(Component.literal("§lSpecial Moves§r\nPress ")
-                    .append(Component.keybind("key.steelstorm.special"))
-                    .append("§r to unleash your weapon's special. Each weapon has its own, shown in its tooltip. Specials cost stamina and have a cooldown.")));
+                    .append(" while moving to roll about 3 blocks. You can't be hurt for a moment mid-roll.")));
+            pages.add(page(Component.literal("§lParry§r\nHold §oUse§r (right-click) with a melee weapon to guard.\n\nGet hit just as you raise it for a §6perfect parry§r: no damage and the attacker is staggered.")));
+            pages.add(page(Component.literal("§lHeavy Attack§r\nSneak while you attack for 1.5x damage and extra knockback.\n\n§lCombos§r\nLanding hits in a row builds your combo counter.")));
+            pages.add(page(Component.literal("§lSmithing§r\nUse a weapon on a §lWhetstone§r to sharpen it: +2 damage for 20 hits.\n\nPlace a §lrune§r on a §lRune Forge§r, then use a weapon on it to burn the rune in: fire, frost, storm, venom, blood or wind.")));
+            pages.add(page(Component.literal("§lAdventure§r\nExplore to find armories, bandit camps, watchtowers, blacksmiths, crypts, mines, storm shrines, proving grounds and colosseums.\n\nStrike an §lArena Gong§r to fight for its coffer. Light a §lSignal Brazier§r to reveal lurking foes.")));
             pages.add(page(Component.literal("§lTraining Yard§r\nPractice on the target dummies outside: they show the damage of every hit.\n\nAll keys can be changed in Options > Controls > Key Binds > Steelstorm Arsenal.")));
             ItemStack book = new ItemStack(Items.WRITTEN_BOOK);
             book.set(DataComponents.WRITTEN_BOOK_CONTENT, new WrittenBookContent(

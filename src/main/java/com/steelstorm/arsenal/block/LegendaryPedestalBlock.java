@@ -38,7 +38,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 
 /**
  * A stone pedestal with a weapon floating over it. While a guardian (Crypt Knight, Fallen Warlord
- * or Storm Herald) lives within 24 blocks, the weapon is sealed and can't be taken.
+ * or Storm Herald) lives within 24 blocks, or an unopened sarcophagus lies within 12, the weapon
+ * is sealed and can't be taken.
  */
 public class LegendaryPedestalBlock extends BaseEntityBlock {
     public static final MapCodec<LegendaryPedestalBlock> CODEC = simpleCodec(LegendaryPedestalBlock::new);
@@ -77,11 +78,26 @@ public class LegendaryPedestalBlock extends BaseEntityBlock {
                 .stream().findFirst().orElse(null);
     }
 
+    /** True while a closed sarcophagus lies near: its dead must be woken (and beaten) first. */
+    public static boolean tombsSealed(BlockGetter level, BlockPos pos) {
+        for (BlockPos p : BlockPos.betweenClosed(pos.offset(-12, -3, -12), pos.offset(12, 3, 12))) {
+            BlockState state = level.getBlockState(p);
+            if (state.getBlock() instanceof SarcophagusBlock && !state.getValue(SarcophagusBlock.OPEN)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean sealed(Level level, BlockPos pos) {
+        return guardian(level, pos) != null || tombsSealed(level, pos);
+    }
+
     /** Can't be broken to get around the seal. */
     @Override
     protected float getDestroyProgress(BlockState state, Player player, BlockGetter level, BlockPos pos) {
         if (!player.getAbilities().instabuild && level instanceof Level world && level.getBlockEntity(pos) instanceof ItemHolderBlockEntity pedestal
-                && !pedestal.getItem().isEmpty() && guardian(world, pos) != null) {
+                && !pedestal.getItem().isEmpty() && sealed(world, pos)) {
             return 0.0F;
         }
         return super.getDestroyProgress(state, player, level, pos);
@@ -110,9 +126,10 @@ public class LegendaryPedestalBlock extends BaseEntityBlock {
         if (level instanceof ServerLevel server) {
             Mob guard = guardian(level, pos);
             Vec3 top = Vec3.atCenterOf(pos).add(0, 0.9, 0);
-            if (guard != null && !player.getAbilities().instabuild) {
-                player.displayClientMessage(Component.translatable("message.steelstorm.pedestal_sealed", guard.getDisplayName())
-                        .withStyle(ChatFormatting.DARK_RED), true);
+            if ((guard != null || tombsSealed(level, pos)) && !player.getAbilities().instabuild) {
+                Component message = guard != null ? Component.translatable("message.steelstorm.pedestal_sealed", guard.getDisplayName())
+                        : Component.translatable("message.steelstorm.pedestal_tombs");
+                player.displayClientMessage(message.copy().withStyle(ChatFormatting.DARK_RED), true);
                 Fx.burst(server, ModParticles.RUNE.get(), 0xFF4040, 1.3F, top, 10, 0.3, 0.02);
                 Fx.sound(server, top, ModSounds.ABILITY_ZAP, 0.8F, 0.6F);
                 return InteractionResult.SUCCESS;

@@ -1,9 +1,0 @@
-{
-  "structures": [{"structure": "steelstorm:ruined_colosseum", "weight": 1}],
-  "placement": {
-    "type": "minecraft:random_spread",
-    "spacing": 72,
-    "separation": 28,
-    "salt": 284710563
-  }
-}

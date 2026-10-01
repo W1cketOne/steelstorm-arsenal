@@ -1,0 +1,6 @@
+{
+  "parent": "steelstorm:item/handheld_weapon",
+  "textures": {
+    "layer0": "steelstorm:item/golden_dual_daggers"
+  }
+}

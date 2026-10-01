@@ -1,0 +1,6 @@
+{
+  "parent": "steelstorm:item/handheld_large",
+  "textures": {
+    "layer0": "steelstorm:item/netherite_greatsword"
+  }
+}

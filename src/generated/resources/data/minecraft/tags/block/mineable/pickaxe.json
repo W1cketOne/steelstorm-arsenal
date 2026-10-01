@@ -3,6 +3,13 @@
     "steelstorm:stormsteel_ore",
     "steelstorm:deepslate_stormsteel_ore",
     "steelstorm:stormsteel_block",
-    "steelstorm:raw_stormsteel_block"
+    "steelstorm:raw_stormsteel_block",
+    "steelstorm:whetstone",
+    "steelstorm:rune_forge",
+    "steelstorm:champions_coffer",
+    "steelstorm:sarcophagus",
+    "steelstorm:legendary_pedestal",
+    "steelstorm:storm_altar",
+    "steelstorm:signal_brazier"
   ]
 }

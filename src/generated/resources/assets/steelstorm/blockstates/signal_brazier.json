@@ -1,0 +1,10 @@
+{
+  "variants": {
+    "lit=false": {
+      "model": "steelstorm:block/signal_brazier"
+    },
+    "lit=true": {
+      "model": "steelstorm:block/signal_brazier_lit"
+    }
+  }
+}

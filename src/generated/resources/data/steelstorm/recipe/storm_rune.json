@@ -1,0 +1,22 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:amethyst_shard"
+    },
+    {
+      "item": "minecraft:amethyst_shard"
+    },
+    {
+      "item": "minecraft:lapis_lazuli"
+    },
+    {
+      "item": "steelstorm:stormsteel_ingot"
+    }
+  ],
+  "result": {
+    "count": 1,
+    "id": "steelstorm:storm_rune"
+  }
+}

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "charge=0": {
+      "model": "steelstorm:block/storm_altar_0"
+    },
+    "charge=1": {
+      "model": "steelstorm:block/storm_altar_1"
+    },
+    "charge=2": {
+      "model": "steelstorm:block/storm_altar_2"
+    },
+    "charge=3": {
+      "model": "steelstorm:block/storm_altar_3"
+    },
+    "charge=4": {
+      "model": "steelstorm:block/storm_altar_4"
+    }
+  }
+}

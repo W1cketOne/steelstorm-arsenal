@@ -166,6 +166,17 @@ public class WeaponItem extends SwordItem {
                 .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.steelstorm.passive").withStyle(ChatFormatting.GOLD)
                 .append(Component.translatable(type.passiveKey()).withStyle(ChatFormatting.YELLOW)));
+        Rune rune = stack.get(ModDataComponents.RUNE);
+        if (rune != null) {
+            tooltip.add(Component.translatable("tooltip.steelstorm.rune", Component.translatable(rune.nameKey()))
+                    .withStyle(s -> s.withColor(net.minecraft.network.chat.TextColor.fromRgb(rune.color())))
+                    .append(Component.literal(" - ").withStyle(ChatFormatting.DARK_GRAY))
+                    .append(Component.translatable(rune.effectKey()).withStyle(ChatFormatting.GRAY)));
+        }
+        int sharp = stack.getOrDefault(ModDataComponents.SHARPENED, 0);
+        if (sharp > 0) {
+            tooltip.add(Component.translatable("tooltip.steelstorm.sharpened", sharp).withStyle(ChatFormatting.YELLOW));
+        }
         AbilityTooltips.append(stack, tooltip, flag);
         if (isStormsteel()) {
             tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel").withStyle(ChatFormatting.BLUE));

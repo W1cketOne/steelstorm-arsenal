@@ -3,13 +3,13 @@ package com.steelstorm.arsenal.client;
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.client.render.EarthChunkRenderer;
 import com.steelstorm.arsenal.client.render.GroundWaveRenderer;
+import com.steelstorm.arsenal.client.render.ItemHolderRenderer;
 import com.steelstorm.arsenal.client.render.OrbitBladesRenderer;
 import com.steelstorm.arsenal.client.render.SlashWaveRenderer;
 import com.steelstorm.arsenal.client.render.SpectralWeaponRenderer;
 import com.steelstorm.arsenal.client.render.VortexRenderer;
 import com.steelstorm.arsenal.registry.ModBlockEntities;
 import com.steelstorm.arsenal.registry.ModEntities;
-import net.minecraft.client.model.geom.ModelLayers;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
@@ -31,15 +31,15 @@ public final class ClientRenderers {
         event.registerEntityRenderer(ModEntities.ORBIT_BLADES.get(), OrbitBladesRenderer::new);
         event.registerEntityRenderer(ModEntities.TARGET_DUMMY.get(),
                 ctx -> new SkinnedHumanoidRenderer<>(ctx, SteelstormArsenal.id("textures/entity/target_dummy.png"), 1.0F));
-        event.registerEntityRenderer(ModEntities.BANDIT_DUELIST.get(), ctx -> new SkinnedHumanoidRenderer<>(ctx,
-                new SteelstormMobModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), SteelstormArsenal.id("textures/entity/bandit_duelist.png"), 1.0F));
-        event.registerEntityRenderer(ModEntities.BANDIT_ARCHER.get(), ctx -> new SkinnedHumanoidRenderer<>(ctx,
-                new SteelstormMobModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), SteelstormArsenal.id("textures/entity/bandit_archer.png"), 1.0F));
-        event.registerEntityRenderer(ModEntities.IRON_REVENANT.get(), ctx -> new SkinnedHumanoidRenderer<>(ctx,
-                new SteelstormMobModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), SteelstormArsenal.id("textures/entity/iron_revenant.png"), 1.05F));
-        event.registerEntityRenderer(ModEntities.FALLEN_WARLORD.get(), ctx -> new SkinnedHumanoidRenderer<>(ctx,
-                new SteelstormMobModel<>(ctx.bakeLayer(ModelLayers.ZOMBIE)), SteelstormArsenal.id("textures/entity/fallen_warlord.png"), 1.4F));
+        event.registerEntityRenderer(ModEntities.BANDIT_DUELIST.get(), ctx -> new SteelstormMobRenderer<>(ctx, "bandit_duelist", 1.0F, false));
+        event.registerEntityRenderer(ModEntities.BANDIT_ARCHER.get(), ctx -> new SteelstormMobRenderer<>(ctx, "bandit_archer", 1.0F, false));
+        event.registerEntityRenderer(ModEntities.BANDIT_CAPTAIN.get(), ctx -> new SteelstormMobRenderer<>(ctx, "bandit_captain", 1.05F, false));
+        event.registerEntityRenderer(ModEntities.IRON_REVENANT.get(), ctx -> new SteelstormMobRenderer<>(ctx, "iron_revenant", 1.05F, true));
+        event.registerEntityRenderer(ModEntities.CRYPT_KNIGHT.get(), ctx -> new SteelstormMobRenderer<>(ctx, "crypt_knight", 1.15F, true));
+        event.registerEntityRenderer(ModEntities.FALLEN_WARLORD.get(), ctx -> new SteelstormMobRenderer<>(ctx, "fallen_warlord", 1.4F, true));
+        event.registerEntityRenderer(ModEntities.STORM_HERALD.get(), ctx -> new SteelstormMobRenderer<>(ctx, "storm_herald", 1.2F, true));
         event.registerBlockEntityRenderer(ModBlockEntities.WEAPON_RACK.get(), WeaponRackRenderer::new);
+        event.registerBlockEntityRenderer(ModBlockEntities.ITEM_HOLDER.get(), ItemHolderRenderer::new);
     }
 
     private ClientRenderers() {

@@ -2,7 +2,10 @@ package com.steelstorm.arsenal.registry;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.entity.BanditArcher;
+import com.steelstorm.arsenal.entity.BanditCaptain;
 import com.steelstorm.arsenal.entity.BanditDuelist;
+import com.steelstorm.arsenal.entity.CryptKnight;
+import com.steelstorm.arsenal.entity.StormHerald;
 import com.steelstorm.arsenal.entity.ChakramEntity;
 import com.steelstorm.arsenal.entity.EarthChunkEntity;
 import com.steelstorm.arsenal.entity.GroundWaveEntity;
@@ -89,6 +92,16 @@ public final class ModEntities {
             () -> EntityType.Builder.<FallenWarlord>of(FallenWarlord::new, MobCategory.MONSTER)
                     .sized(0.9F, 2.8F).fireImmune().clientTrackingRange(10).build("fallen_warlord"));
 
+    public static final Supplier<EntityType<BanditCaptain>> BANDIT_CAPTAIN = ENTITIES.register("bandit_captain",
+            () -> EntityType.Builder.<BanditCaptain>of(BanditCaptain::new, MobCategory.MONSTER)
+                    .sized(0.65F, 2.0F).clientTrackingRange(10).build("bandit_captain"));
+    public static final Supplier<EntityType<CryptKnight>> CRYPT_KNIGHT = ENTITIES.register("crypt_knight",
+            () -> EntityType.Builder.<CryptKnight>of(CryptKnight::new, MobCategory.MONSTER)
+                    .sized(0.75F, 2.3F).fireImmune().clientTrackingRange(10).build("crypt_knight"));
+    public static final Supplier<EntityType<StormHerald>> STORM_HERALD = ENTITIES.register("storm_herald",
+            () -> EntityType.Builder.<StormHerald>of(StormHerald::new, MobCategory.MONSTER)
+                    .sized(0.8F, 2.4F).fireImmune().clientTrackingRange(12).build("storm_herald"));
+
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
         event.put(TARGET_DUMMY.get(), TargetDummyEntity.createAttributes().build());
@@ -96,6 +109,9 @@ public final class ModEntities {
         event.put(BANDIT_ARCHER.get(), BanditArcher.createAttributes().build());
         event.put(IRON_REVENANT.get(), IronRevenant.createAttributes().build());
         event.put(FALLEN_WARLORD.get(), FallenWarlord.createAttributes().build());
+        event.put(BANDIT_CAPTAIN.get(), BanditCaptain.createAttributes().build());
+        event.put(CRYPT_KNIGHT.get(), CryptKnight.createAttributes().build());
+        event.put(STORM_HERALD.get(), StormHerald.createAttributes().build());
     }
 
     @SubscribeEvent

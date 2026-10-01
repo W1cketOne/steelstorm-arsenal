@@ -17,7 +17,12 @@ public class ModEntityTypeTagProvider extends EntityTypeTagsProvider {
     @Override
     protected void addTags(HolderLookup.Provider provider) {
         // Undead: Smite works on them and healing potions hurt them.
-        tag(EntityTypeTags.UNDEAD).add(ModEntities.IRON_REVENANT.get(), ModEntities.FALLEN_WARLORD.get());
-        tag(EntityTypeTags.ILLAGER_FRIENDS).add(ModEntities.BANDIT_DUELIST.get(), ModEntities.BANDIT_ARCHER.get());
+        tag(EntityTypeTags.UNDEAD).add(ModEntities.IRON_REVENANT.get(), ModEntities.FALLEN_WARLORD.get(), ModEntities.CRYPT_KNIGHT.get());
+        tag(EntityTypeTags.SENSITIVE_TO_SMITE).add(ModEntities.IRON_REVENANT.get(), ModEntities.FALLEN_WARLORD.get(),
+                ModEntities.CRYPT_KNIGHT.get());
+        tag(EntityTypeTags.INVERTED_HEALING_AND_HARM).add(ModEntities.IRON_REVENANT.get(), ModEntities.FALLEN_WARLORD.get(),
+                ModEntities.CRYPT_KNIGHT.get());
+        tag(EntityTypeTags.ILLAGER_FRIENDS).add(ModEntities.BANDIT_DUELIST.get(), ModEntities.BANDIT_ARCHER.get(),
+                ModEntities.BANDIT_CAPTAIN.get());
     }
 }

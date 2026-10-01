@@ -8,6 +8,8 @@ import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModParticles;
 import com.steelstorm.arsenal.registry.ModSounds;
 import com.steelstorm.arsenal.registry.ModDamageTypes;
+import com.steelstorm.arsenal.registry.ModDataComponents;
+import com.steelstorm.arsenal.weapon.Rune;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModEnchantments;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
@@ -69,6 +71,10 @@ public final class WeaponEffects {
                 default -> {
                 }
             }
+        }
+        // Whetstone: a sharpened edge hits harder.
+        if (player.getMainHandItem().getOrDefault(ModDataComponents.SHARPENED, 0) > 0) {
+            amount += 2.0F;
         }
         int executioner = ModEnchantments.level(player, player.getMainHandItem(), ModEnchantments.EXECUTIONER);
         if (executioner > 0 && target.getHealth() <= target.getMaxHealth() * 0.35F) {
@@ -169,6 +175,10 @@ public final class WeaponEffects {
 
     /** A special ability hit a target; weapon passives that make sense for specials apply too. */
     public static void onSpecialHit(Player player, WeaponItem weapon, LivingEntity target, float damage) {
+        Rune rune = player.getMainHandItem().get(ModDataComponents.RUNE);
+        if (rune != null && player.getRandom().nextFloat() < 0.35F) {
+            rune.onHit(player, target, damage);
+        }
         switch (weapon.type()) {
             case KATANA -> BleedEffect.apply(target, 120);
             case WARHAMMER -> target.addEffect(new MobEffectInstance(ModEffects.ARMOR_BREAK, 100, 0));
@@ -182,9 +192,26 @@ public final class WeaponEffects {
         }
     }
 
-    /** Effects shared by every weapon: Stormsteel zaps and enchantments. */
+    /** Effects shared by every weapon: sharpening, runes, Stormsteel zaps and enchantments. */
     private static void applySharedOnHit(Player player, WeaponItem weapon, LivingEntity target) {
         ItemStack stack = player.getMainHandItem();
+        int sharp = stack.getOrDefault(ModDataComponents.SHARPENED, 0);
+        if (sharp > 0) {
+            if (sharp <= 1) {
+                stack.remove(ModDataComponents.SHARPENED);
+                player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.steelstorm.dull")
+                        .withStyle(net.minecraft.ChatFormatting.GRAY), true);
+            } else {
+                stack.set(ModDataComponents.SHARPENED, sharp - 1);
+            }
+            if (player.level() instanceof ServerLevel level) {
+                Fx.sparks(level, 0xFFE9A8, target.getBoundingBox().getCenter(), 3, 0.3);
+            }
+        }
+        Rune rune = stack.get(ModDataComponents.RUNE);
+        if (rune != null) {
+            rune.onHit(player, target, weapon.attackDamage());
+        }
         int lacerate = ModEnchantments.level(player, stack, ModEnchantments.LACERATE);
         if (lacerate > 0 && player.getRandom().nextFloat() < 0.15F * lacerate) {
             BleedEffect.apply(target, 100);

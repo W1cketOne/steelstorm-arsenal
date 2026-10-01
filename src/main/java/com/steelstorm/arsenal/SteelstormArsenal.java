@@ -1,6 +1,7 @@
 package com.steelstorm.arsenal;
 
 import com.mojang.logging.LogUtils;
+import com.steelstorm.arsenal.registry.ModArmorMaterials;
 import com.steelstorm.arsenal.registry.ModAttachments;
 import com.steelstorm.arsenal.registry.ModBlockEntities;
 import com.steelstorm.arsenal.registry.ModBlocks;
@@ -37,6 +38,7 @@ public class SteelstormArsenal {
         ModSounds.SOUNDS.register(modEventBus);
         ModParticles.PARTICLES.register(modEventBus);
         ModAttachments.ATTACHMENTS.register(modEventBus);
+        ModArmorMaterials.MATERIALS.register(modEventBus);
 
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
         modContainer.registerConfig(ModConfig.Type.CLIENT, Config.CLIENT_SPEC);

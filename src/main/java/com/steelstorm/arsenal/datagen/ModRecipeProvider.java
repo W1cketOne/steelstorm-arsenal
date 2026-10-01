@@ -2,6 +2,7 @@ package com.steelstorm.arsenal.datagen;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.weapon.Rune;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
 import java.util.concurrent.CompletableFuture;
@@ -110,5 +111,57 @@ public class ModRecipeProvider extends RecipeProvider {
                 .pattern(" C ").pattern("SHS").pattern(" S ")
                 .define('C', Items.CARVED_PUMPKIN).define('H', Items.HAY_BLOCK).define('S', Items.STICK)
                 .unlockedBy(getHasName(Items.HAY_BLOCK), has(Items.HAY_BLOCK)).save(output);
+
+        // Interactive blocks.
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.WHETSTONE.get())
+                .pattern(" F ").pattern("PGP").pattern("P P")
+                .define('F', Items.FLINT).define('G', Items.GRINDSTONE).define('P', ItemTags.PLANKS)
+                .unlockedBy(getHasName(Items.GRINDSTONE), has(Items.GRINDSTONE)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.RUNE_FORGE.get())
+                .pattern("AAA").pattern("ISI").pattern("OOO")
+                .define('A', Items.AMETHYST_SHARD).define('I', Items.IRON_INGOT).define('S', Items.SMITHING_TABLE)
+                .define('O', Items.POLISHED_BLACKSTONE)
+                .unlockedBy(getHasName(Items.AMETHYST_SHARD), has(Items.AMETHYST_SHARD)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.SIGNAL_BRAZIER.get())
+                .pattern("ICI").pattern("IBI").pattern(" B ")
+                .define('I', Items.IRON_INGOT).define('C', ItemTags.COALS).define('B', Items.IRON_BARS)
+                .unlockedBy(getHasName(Items.IRON_INGOT), has(Items.IRON_INGOT)).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.STORM_ALTAR.get())
+                .pattern("DSD").pattern("SBS").pattern("DDD")
+                .define('D', Items.POLISHED_DEEPSLATE).define('S', ModItems.STORMSTEEL_INGOT.get()).define('B', ModItems.STORMSTEEL_BLOCK.get())
+                .unlockedBy(getHasName(ModItems.STORMSTEEL_INGOT.get()), has(ModItems.STORMSTEEL_INGOT.get())).save(output);
+        ShapedRecipeBuilder.shaped(RecipeCategory.DECORATIONS, ModItems.LEGENDARY_PEDESTAL.get())
+                .pattern("GGG").pattern(" Q ").pattern("QQQ")
+                .define('G', Items.GOLD_INGOT).define('Q', Items.QUARTZ_BLOCK)
+                .unlockedBy(getHasName(Items.QUARTZ_BLOCK), has(Items.QUARTZ_BLOCK)).save(output);
+
+        // Runes: two amethyst shards, lapis, and the element.
+        rune(output, Rune.EMBER, Items.BLAZE_POWDER);
+        rune(output, Rune.FROST, Items.PACKED_ICE);
+        rune(output, Rune.STORM, ModItems.STORMSTEEL_INGOT.get());
+        rune(output, Rune.VENOM, Items.FERMENTED_SPIDER_EYE);
+        rune(output, Rune.VAMPIRIC, Items.GHAST_TEAR);
+        rune(output, Rune.GALE, Items.FEATHER);
+
+        // Stormsteel armour.
+        armor(output, ModItems.STORMSTEEL_HELMET.get(), "MMM", "M M");
+        armor(output, ModItems.STORMSTEEL_CHESTPLATE.get(), "M M", "MMM", "MMM");
+        armor(output, ModItems.STORMSTEEL_LEGGINGS.get(), "MMM", "M M", "M M");
+        armor(output, ModItems.STORMSTEEL_BOOTS.get(), "M M", "M M");
+    }
+
+    private static void rune(RecipeOutput output, Rune rune, ItemLike element) {
+        ShapelessRecipeBuilder.shapeless(RecipeCategory.MISC, ModItems.rune(rune).get())
+                .requires(Items.AMETHYST_SHARD, 2).requires(Items.LAPIS_LAZULI).requires(element)
+                .unlockedBy(getHasName(Items.AMETHYST_SHARD), has(Items.AMETHYST_SHARD)).save(output);
+    }
+
+    private static void armor(RecipeOutput output, ItemLike result, String... rows) {
+        ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result);
+        for (String row : rows) {
+            builder.pattern(row);
+        }
+        builder.define('M', ModItems.STORMSTEEL_INGOT.get())
+                .unlockedBy(getHasName(ModItems.STORMSTEEL_INGOT.get()), has(ModItems.STORMSTEEL_INGOT.get())).save(output);
     }
 }

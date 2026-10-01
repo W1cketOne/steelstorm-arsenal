@@ -2,6 +2,7 @@ package com.steelstorm.arsenal.datagen;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.registry.ModItems;
+import com.steelstorm.arsenal.weapon.Rune;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponTier;
@@ -44,8 +45,17 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.STORMSTEEL_INGOT.get());
         basicItem(ModItems.RAW_STORMSTEEL.get());
         basicItem(ModItems.TARGET_DUMMY.get());
+        for (Rune rune : Rune.values()) {
+            basicItem(ModItems.rune(rune).get());
+        }
+        basicItem(ModItems.VAULT_KEY.get());
+        basicItem(ModItems.STORMSTEEL_HELMET.get());
+        basicItem(ModItems.STORMSTEEL_CHESTPLATE.get());
+        basicItem(ModItems.STORMSTEEL_LEGGINGS.get());
+        basicItem(ModItems.STORMSTEEL_BOOTS.get());
         for (var egg : List.of(ModItems.BANDIT_DUELIST_SPAWN_EGG, ModItems.BANDIT_ARCHER_SPAWN_EGG,
-                ModItems.IRON_REVENANT_SPAWN_EGG, ModItems.FALLEN_WARLORD_SPAWN_EGG)) {
+                ModItems.IRON_REVENANT_SPAWN_EGG, ModItems.FALLEN_WARLORD_SPAWN_EGG, ModItems.BANDIT_CAPTAIN_SPAWN_EGG,
+                ModItems.CRYPT_KNIGHT_SPAWN_EGG, ModItems.STORM_HERALD_SPAWN_EGG)) {
             withExistingParent(egg.getId().getPath(), mcLoc("item/template_spawn_egg"));
         }
     }

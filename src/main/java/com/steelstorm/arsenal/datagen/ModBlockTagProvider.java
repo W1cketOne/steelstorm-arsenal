@@ -22,7 +22,10 @@ public class ModBlockTagProvider extends BlockTagsProvider {
                 ModBlocks.STORMSTEEL_BLOCK.get(), ModBlocks.RAW_STORMSTEEL_BLOCK.get());
         tag(BlockTags.NEEDS_IRON_TOOL).add(ModBlocks.STORMSTEEL_ORE.get(), ModBlocks.DEEPSLATE_STORMSTEEL_ORE.get(),
                 ModBlocks.STORMSTEEL_BLOCK.get(), ModBlocks.RAW_STORMSTEEL_BLOCK.get());
-        tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.WEAPON_RACK.get());
+        tag(BlockTags.MINEABLE_WITH_AXE).add(ModBlocks.WEAPON_RACK.get(), ModBlocks.BANDIT_VAULT.get());
+        tag(BlockTags.MINEABLE_WITH_PICKAXE).add(ModBlocks.WHETSTONE.get(), ModBlocks.RUNE_FORGE.get(), ModBlocks.CHAMPIONS_COFFER.get(),
+                ModBlocks.SARCOPHAGUS.get(), ModBlocks.LEGENDARY_PEDESTAL.get(), ModBlocks.STORM_ALTAR.get(), ModBlocks.SIGNAL_BRAZIER.get());
+        tag(BlockTags.NEEDS_IRON_TOOL).add(ModBlocks.RUNE_FORGE.get(), ModBlocks.STORM_ALTAR.get());
         tag(ModTags.Blocks.STORMSTEEL_ORES).add(ModBlocks.STORMSTEEL_ORE.get(), ModBlocks.DEEPSLATE_STORMSTEEL_ORE.get());
         tag(Tags.Blocks.ORES).addTag(ModTags.Blocks.STORMSTEEL_ORES);
         tag(Tags.Blocks.ORES_IN_GROUND_STONE).add(ModBlocks.STORMSTEEL_ORE.get());

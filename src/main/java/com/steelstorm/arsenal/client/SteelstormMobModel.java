@@ -1,18 +1,20 @@
 package com.steelstorm.arsenal.client;
 
 import com.steelstorm.arsenal.entity.SteelstormMonster;
-import net.minecraft.client.model.HumanoidModel;
+import com.steelstorm.arsenal.entity.StormHerald;
+import net.minecraft.client.model.PlayerModel;
 import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.BowItem;
 
 /**
- * Vanilla humanoid model with two extra poses: a drawn bow while an archer is aggressive, and both
- * arms raised overhead while any Steelstorm enemy winds up a telegraphed attack.
+ * The player model (with its second skin layer for hoods, cloaks and armour plates) plus extra
+ * poses: a drawn bow while an archer is aggressive, both arms raised overhead while any Steelstorm
+ * enemy winds up a telegraphed attack, and a floating caster's pose for the Storm Herald.
  */
-public class SteelstormMobModel<T extends SteelstormMonster> extends HumanoidModel<T> {
+public class SteelstormMobModel<T extends SteelstormMonster> extends PlayerModel<T> {
     public SteelstormMobModel(ModelPart root) {
-        super(root);
+        super(root, false);
     }
 
     @Override
@@ -30,6 +32,13 @@ public class SteelstormMobModel<T extends SteelstormMonster> extends HumanoidMod
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         super.setupAnim(entity, limbSwing, limbSwingAmount, ageInTicks, netHeadYaw, headPitch);
+        if (entity instanceof StormHerald) {
+            // Floating: legs hang loose and sway, the free arm reaches out.
+            rightLeg.xRot = 0.15F + Mth.sin(ageInTicks * 0.08F) * 0.08F;
+            leftLeg.xRot = 0.25F + Mth.sin(ageInTicks * 0.08F + 1.0F) * 0.08F;
+            leftArm.xRot = -0.4F + Mth.sin(ageInTicks * 0.1F) * 0.1F;
+            leftArm.zRot = -0.5F;
+        }
         if (entity.isCharging()) {
             // Telegraph: weapon raised high overhead, trembling slightly.
             float shake = Mth.sin(ageInTicks * 1.7F) * 0.06F;
@@ -40,5 +49,9 @@ public class SteelstormMobModel<T extends SteelstormMonster> extends HumanoidMod
             rightArm.zRot = 0;
             leftArm.zRot = 0;
         }
+        rightSleeve.copyFrom(rightArm);
+        leftSleeve.copyFrom(leftArm);
+        rightPants.copyFrom(rightLeg);
+        leftPants.copyFrom(leftLeg);
     }
 }

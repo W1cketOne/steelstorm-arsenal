@@ -13,7 +13,13 @@ import com.steelstorm.arsenal.entity.TargetDummyItem;
 import com.steelstorm.arsenal.weapon.ChakramItem;
 import com.steelstorm.arsenal.weapon.ThrowingKnifeItem;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
+import com.steelstorm.arsenal.item.HintItem;
+import com.steelstorm.arsenal.item.RuneItem;
+import com.steelstorm.arsenal.item.StormsteelArmorItem;
+import com.steelstorm.arsenal.weapon.Rune;
+import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.Rarity;
 import net.neoforged.neoforge.common.DeferredSpawnEggItem;
 import net.minecraft.world.item.Item;
 import net.neoforged.neoforge.registries.DeferredItem;
@@ -78,6 +84,55 @@ public final class ModItems {
             () -> new DeferredSpawnEggItem(ModEntities.IRON_REVENANT, 0x8A8A8A, 0xFF3A2A, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> FALLEN_WARLORD_SPAWN_EGG = ITEMS.register("fallen_warlord_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.FALLEN_WARLORD, 0x2A1416, 0xC9971A, new Item.Properties()));
+
+    // Runes, keys and armour.
+    private static final Map<Rune, DeferredItem<RuneItem>> RUNES = new EnumMap<>(Rune.class);
+
+    static {
+        for (Rune rune : Rune.values()) {
+            RUNES.put(rune, ITEMS.register(rune.id() + "_rune",
+                    () -> new RuneItem(rune, new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON))));
+        }
+    }
+
+    public static final DeferredItem<HintItem> VAULT_KEY = ITEMS.register("vault_key",
+            () -> new HintItem("tooltip.steelstorm.vault_key", new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
+    public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_HELMET = armor("stormsteel_helmet", ArmorItem.Type.HELMET);
+    public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_CHESTPLATE = armor("stormsteel_chestplate", ArmorItem.Type.CHESTPLATE);
+    public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_LEGGINGS = armor("stormsteel_leggings", ArmorItem.Type.LEGGINGS);
+    public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_BOOTS = armor("stormsteel_boots", ArmorItem.Type.BOOTS);
+
+    // Interactive blocks.
+    public static final DeferredItem<BlockItem> WHETSTONE = ITEMS.registerSimpleBlockItem("whetstone", ModBlocks.WHETSTONE);
+    public static final DeferredItem<BlockItem> RUNE_FORGE = ITEMS.registerSimpleBlockItem("rune_forge", ModBlocks.RUNE_FORGE,
+            new Item.Properties().rarity(Rarity.UNCOMMON));
+    public static final DeferredItem<BlockItem> SIGNAL_BRAZIER = ITEMS.registerSimpleBlockItem("signal_brazier", ModBlocks.SIGNAL_BRAZIER);
+    public static final DeferredItem<BlockItem> STORM_ALTAR = ITEMS.registerSimpleBlockItem("storm_altar", ModBlocks.STORM_ALTAR,
+            new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<BlockItem> ARENA_GONG = ITEMS.registerSimpleBlockItem("arena_gong", ModBlocks.ARENA_GONG,
+            new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<BlockItem> CHAMPIONS_COFFER = ITEMS.registerSimpleBlockItem("champions_coffer", ModBlocks.CHAMPIONS_COFFER,
+            new Item.Properties().rarity(Rarity.RARE));
+    public static final DeferredItem<BlockItem> BANDIT_VAULT = ITEMS.registerSimpleBlockItem("bandit_vault", ModBlocks.BANDIT_VAULT);
+    public static final DeferredItem<BlockItem> SARCOPHAGUS = ITEMS.registerSimpleBlockItem("sarcophagus", ModBlocks.SARCOPHAGUS);
+    public static final DeferredItem<BlockItem> LEGENDARY_PEDESTAL = ITEMS.registerSimpleBlockItem("legendary_pedestal",
+            ModBlocks.LEGENDARY_PEDESTAL, new Item.Properties().rarity(Rarity.RARE));
+
+    public static final DeferredItem<DeferredSpawnEggItem> BANDIT_CAPTAIN_SPAWN_EGG = ITEMS.register("bandit_captain_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.BANDIT_CAPTAIN, 0x3A2412, 0xC9A227, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> CRYPT_KNIGHT_SPAWN_EGG = ITEMS.register("crypt_knight_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.CRYPT_KNIGHT, 0x2A2E3A, 0x7FA7FF, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> STORM_HERALD_SPAWN_EGG = ITEMS.register("storm_herald_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.STORM_HERALD, 0x1B2A4A, 0x7FD8FF, new Item.Properties()));
+
+    private static DeferredItem<StormsteelArmorItem> armor(String name, ArmorItem.Type type) {
+        return ITEMS.register(name, () -> new StormsteelArmorItem(ModArmorMaterials.STORMSTEEL, type,
+                new Item.Properties().durability(type.getDurability(35)).fireResistant()));
+    }
+
+    public static DeferredItem<RuneItem> rune(Rune rune) {
+        return RUNES.get(rune);
+    }
 
     public static DeferredItem<LegendaryWeaponItem> legendary(LegendaryWeaponItem.Legendary legendary) {
         return LEGENDARIES.get(legendary);

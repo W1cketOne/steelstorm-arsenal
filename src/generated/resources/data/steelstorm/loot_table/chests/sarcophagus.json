@@ -1,0 +1,189 @@
+{
+  "type": "minecraft:chest",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_ingot",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 12.0,
+                "min": 4.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:gold_nugget",
+          "weight": 4
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:bone",
+          "weight": 3
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 3.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:emerald",
+          "weight": 2
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 1.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:diamond"
+        },
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 1.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:experience_bottle",
+          "weight": 2
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 4.0,
+        "min": 2.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:ember_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:frost_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:storm_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:venom_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:vampiric_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:gale_rune"
+        }
+      ],
+      "rolls": {
+        "type": "minecraft:uniform",
+        "max": 1.0,
+        "min": 0.0
+      }
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.05,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:tempest_edge"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:rimecleaver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:voidreaver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:earthshaker"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:bloodfang"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:skypiercer"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:moonveil"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:kingsbane"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "steelstorm:chests/sarcophagus"
+}

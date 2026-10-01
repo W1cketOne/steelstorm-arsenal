@@ -1,9 +1,13 @@
 package com.steelstorm.arsenal.item;
 
+import com.steelstorm.arsenal.SteelstormArsenal;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.Holder;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.ArmorItem;
 import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.ItemStack;
@@ -13,6 +17,12 @@ import net.minecraft.world.item.TooltipFlag;
 public class StormsteelArmorItem extends ArmorItem {
     public StormsteelArmorItem(Holder<ArmorMaterial> material, Type type, Properties properties) {
         super(material, type, properties);
+    }
+
+    /** Textures for the 3D model (see client.StormsteelArmorRendering): one for the legs, one for the rest. */
+    @Override
+    public ResourceLocation getArmorTexture(ItemStack stack, Entity entity, EquipmentSlot slot, ArmorMaterial.Layer layer, boolean innerModel) {
+        return SteelstormArsenal.id("textures/models/armor/stormsteel_3d_" + (innerModel ? "inner" : "outer") + ".png");
     }
 
     @Override

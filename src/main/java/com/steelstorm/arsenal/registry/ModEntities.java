@@ -4,6 +4,13 @@ import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.entity.BanditArcher;
 import com.steelstorm.arsenal.entity.BanditDuelist;
 import com.steelstorm.arsenal.entity.ChakramEntity;
+import com.steelstorm.arsenal.entity.EarthChunkEntity;
+import com.steelstorm.arsenal.entity.GroundWaveEntity;
+import com.steelstorm.arsenal.entity.OrbitBladesEntity;
+import com.steelstorm.arsenal.entity.SlashWaveEntity;
+import com.steelstorm.arsenal.entity.SpectralWeaponEntity;
+import com.steelstorm.arsenal.entity.ThrownHammerEntity;
+import com.steelstorm.arsenal.entity.VortexEntity;
 import com.steelstorm.arsenal.entity.FallenWarlord;
 import com.steelstorm.arsenal.entity.IronRevenant;
 import java.util.List;
@@ -36,6 +43,35 @@ public final class ModEntities {
     public static final Supplier<EntityType<ChakramEntity>> CHAKRAM = ENTITIES.register("chakram",
             () -> EntityType.Builder.<ChakramEntity>of(ChakramEntity::new, MobCategory.MISC)
                     .sized(0.7F, 0.25F).clientTrackingRange(6).updateInterval(1).build("chakram"));
+    public static final Supplier<EntityType<ThrownHammerEntity>> THROWN_HAMMER = ENTITIES.register("thrown_hammer",
+            () -> EntityType.Builder.<ThrownHammerEntity>of(ThrownHammerEntity::new, MobCategory.MISC)
+                    .sized(0.8F, 0.8F).clientTrackingRange(6).updateInterval(1).build("thrown_hammer"));
+
+    // Ability visuals. None of these are saved; the client animates most of them on its own.
+    public static final Supplier<EntityType<GroundWaveEntity>> GROUND_WAVE = ENTITIES.register("ground_wave",
+            () -> EntityType.Builder.<GroundWaveEntity>of(GroundWaveEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(8).updateInterval(Integer.MAX_VALUE)
+                    .build("ground_wave"));
+    public static final Supplier<EntityType<EarthChunkEntity>> EARTH_CHUNK = ENTITIES.register("earth_chunk",
+            () -> EntityType.Builder.<EarthChunkEntity>of(EarthChunkEntity::new, MobCategory.MISC)
+                    .sized(0.98F, 0.98F).noSave().noSummon().fireImmune().clientTrackingRange(6).updateInterval(Integer.MAX_VALUE)
+                    .build("earth_chunk"));
+    public static final Supplier<EntityType<SlashWaveEntity>> SLASH_WAVE = ENTITIES.register("slash_wave",
+            () -> EntityType.Builder.<SlashWaveEntity>of(SlashWaveEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(6).updateInterval(1).build("slash_wave"));
+    public static final Supplier<EntityType<SpectralWeaponEntity>> SPECTRAL_WEAPON = ENTITIES.register("spectral_weapon",
+            () -> EntityType.Builder.<SpectralWeaponEntity>of(SpectralWeaponEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(8).updateInterval(Integer.MAX_VALUE)
+                    .build("spectral_weapon"));
+    public static final Supplier<EntityType<VortexEntity>> VORTEX = ENTITIES.register("vortex",
+            () -> EntityType.Builder.<VortexEntity>of(VortexEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F).noSave().noSummon().fireImmune().clientTrackingRange(8).updateInterval(Integer.MAX_VALUE)
+                    .build("vortex"));
+    public static final Supplier<EntityType<OrbitBladesEntity>> ORBIT_BLADES = ENTITIES.register("orbit_blades",
+            () -> EntityType.Builder.<OrbitBladesEntity>of(OrbitBladesEntity::new, MobCategory.MISC)
+                    .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(6).updateInterval(Integer.MAX_VALUE)
+                    .build("orbit_blades"));
+
     public static final Supplier<EntityType<TargetDummyEntity>> TARGET_DUMMY = ENTITIES.register("target_dummy",
             () -> EntityType.Builder.<TargetDummyEntity>of(TargetDummyEntity::new, MobCategory.MISC)
                     .sized(0.6F, 1.95F).clientTrackingRange(8).build("target_dummy"));

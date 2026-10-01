@@ -1,5 +1,6 @@
 package com.steelstorm.arsenal.weapon;
 
+import com.steelstorm.arsenal.ability.AbilityTooltips;
 import com.steelstorm.arsenal.entity.ChakramEntity;
 import java.util.List;
 import net.minecraft.ChatFormatting;
@@ -43,5 +44,6 @@ public class ChakramItem extends Item implements ThrowableWeapon {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.steelstorm.chakram").withStyle(ChatFormatting.YELLOW));
+        AbilityTooltips.append(stack, tooltip, flag);
     }
 }

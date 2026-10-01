@@ -85,19 +85,25 @@ def impact_frame(k):
 
 
 def smoke_frame(k, seed):
+    """A soft puff of smoke, growing and thinning over its four frames. Fully clear at the edges."""
     rng = random.Random(seed + k)
-    img = Image.new("RGBA", (16, 16))
-    for _ in range(5):
-        cx, cy = rng.uniform(5, 11), rng.uniform(5, 11)
-        r = rng.uniform(3, 5) * (1 + k * 0.12)
-        for y in range(16):
-            for x in range(16):
-                dist = math.hypot(x - cx, y - cy) / r
+    n = 32
+    alpha = [[0.0] * n for _ in range(n)]
+    for _ in range(6):
+        cx, cy = rng.uniform(14, 18), rng.uniform(14, 18)
+        r = rng.uniform(9.5, 11.5) * (1 + k * 0.05)
+        for y in range(n):
+            for x in range(n):
+                dist = math.hypot(x + 0.5 - cx, y + 0.5 - cy) / r
                 if dist < 1:
-                    a = (1 - dist) ** 1.2 * (1 - k * 0.2) * 255
-                    old = img.getpixel((x, y))
-                    shade = int(255 - 60 * (y / 16))
-                    img.putpixel((x, y), (shade, shade, shade, min(255, old[3] + int(a * 0.6))))
+                    alpha[y][x] += (1 - dist * dist) ** 1.5 * 0.4
+    img = Image.new("RGBA", (n, n))
+    for y in range(n):
+        for x in range(n):
+            edge = math.hypot(x + 0.5 - n / 2, y + 0.5 - n / 2) / (n / 2)
+            a = min(1.0, alpha[y][x]) * (1 - k * 0.18) * max(0.0, 1 - edge ** 4)
+            shade = int(250 - 50 * (y / n))
+            img.putpixel((x, y), (shade, shade, shade, int(255 * a)))
     return img
 
 
@@ -519,8 +525,75 @@ def effect_icon(kind):
     return img.resize((18, 18), Image.LANCZOS)
 
 
+# ----------------------------------------------------------------------------- entity effect textures
+# Drawn with additive blending, so these are greyscale brightness maps; the game tints them.
+
+
+def smoothstep(e0, e1, x):
+    t = min(1.0, max(0.0, (x - e0) / (e1 - e0)))
+    return t * t * (3 - 2 * t)
+
+
+def slash_wave_texture():
+    """Crescent ribbon: u runs tip to tip along the arc, v across the band (bright middle line)."""
+    w, h = 64, 32
+    img = Image.new("RGBA", (w, h))
+    px = img.load()
+    rnd = random.Random(7)
+    streak = [0.8 + 0.2 * rnd.random() for _ in range(h)]
+    for x in range(w):
+        u = (x + 0.5) / w
+        fade = smoothstep(0.0, 0.2, u) * smoothstep(0.0, 0.2, 1 - u)
+        for y in range(h):
+            v = (y + 0.5) / h
+            core = math.exp(-((v - 0.5) / 0.13) ** 2)
+            halo = 0.45 * math.exp(-((v - 0.5) / 0.3) ** 2)
+            b = min(1.0, (core + halo) * fade * streak[y] * (0.9 + 0.1 * math.sin(u * 37 + y)))
+            c = int(255 * b)
+            px[x, y] = (c, c, c, c)
+    return img
+
+
+def vortex_ring_texture():
+    """Accretion ring: u around the ring (tiles), v from the outer edge (0) to the inner edge (1)."""
+    w, h = 64, 32
+    img = Image.new("RGBA", (w, h))
+    px = img.load()
+    rnd = random.Random(11)
+    phases = [rnd.random() * math.tau for _ in range(6)]
+    for x in range(w):
+        u = x / w
+        for y in range(h):
+            v = (y + 0.5) / h
+            radial = (v ** 1.6) * (1 - 0.6 * smoothstep(0.92, 1.0, v)) + 0.15 * math.exp(-((v - 0.35) / 0.08) ** 2)
+            swirl = 0.55
+            for k, ph in enumerate(phases):
+                swirl += 0.09 * math.sin(math.tau * (k + 1) * u + ph + v * (3 + k))
+            b = max(0.0, min(1.0, radial * swirl * 1.4))
+            c = int(255 * b)
+            px[x, y] = (c, c, c, c)
+    return img
+
+
+def glow_texture():
+    """Soft round glow for halos and beams."""
+    n = 32
+    img = Image.new("RGBA", (n, n))
+    px = img.load()
+    for x in range(n):
+        for y in range(n):
+            r = math.hypot((x + 0.5) / n - 0.5, (y + 0.5) / n - 0.5) * 2
+            b = max(0.0, math.exp(-(r / 0.42) ** 2) - 0.0035) * (1 - smoothstep(0.85, 1.0, r))
+            c = int(255 * min(1.0, b))
+            px[x, y] = (c, c, c, c)
+    return img
+
+
 def main():
     write_particles()
+    save(slash_wave_texture(), "entity", "slash_wave.png")
+    save(vortex_ring_texture(), "entity", "vortex_ring.png")
+    save(glow_texture(), "entity", "glow.png")
     for key in ABILITY_ICONS:
         save(ability_icon(key), "gui", "ability", f"{key}.png")
     save(hud(), "gui", "hud.png")

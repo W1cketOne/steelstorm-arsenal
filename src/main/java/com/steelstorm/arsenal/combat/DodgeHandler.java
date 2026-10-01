@@ -1,7 +1,9 @@
 package com.steelstorm.arsenal.combat;
 
 import com.steelstorm.arsenal.Config;
-import net.minecraft.core.particles.ParticleTypes;
+import com.steelstorm.arsenal.fx.Fx;
+import com.steelstorm.arsenal.registry.ModParticles;
+import com.steelstorm.arsenal.registry.ModSounds;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvents;
@@ -47,9 +49,10 @@ public final class DodgeHandler {
         player.stopUsingItem();
 
         ServerLevel level = player.serverLevel();
-        level.playSound(null, player.blockPosition(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.9F, 0.7F);
-        level.playSound(null, player.blockPosition(), SoundEvents.ARMOR_EQUIP_LEATHER.value(), SoundSource.PLAYERS, 0.8F, 1.3F);
-        level.sendParticles(ParticleTypes.CLOUD, player.getX(), player.getY() + 0.1, player.getZ(), 8, 0.3, 0.05, 0.3, 0.02);
+        Fx.sound(level, player.position(), ModSounds.PLAYER_DODGE, 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F);
+        Fx.burst(level, ModParticles.SMOKE.get(), 0xB8B2A7, 1.1F, player.position().add(0, 0.15, 0), 8, 0.35, 0.05, 0.35, 0.02);
+        Vec3 behind = player.position().subtract(dir.scale(0.6)).add(0, 1.0, 0);
+        Fx.burst(level, ModParticles.GLOW.get(), Fx.STEEL, 0.8F, behind, 5, 0.25, 0.4, 0.25, 0.0);
         Stamina.sync(player, true);
     }
 

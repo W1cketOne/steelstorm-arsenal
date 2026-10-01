@@ -14,15 +14,24 @@ import org.lwjgl.glfw.GLFW;
 public final class ModKeyMappings {
     public static final String CATEGORY = "key.categories.steelstorm";
 
-    public static final KeyMapping DODGE = new KeyMapping("key.steelstorm.dodge", KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_LEFT_ALT, CATEGORY);
-    public static final KeyMapping SPECIAL = new KeyMapping("key.steelstorm.special", KeyConflictContext.IN_GAME,
-            InputConstants.Type.KEYSYM, GLFW.GLFW_KEY_R, CATEGORY);
+    public static final KeyMapping DODGE = key("dodge", GLFW.GLFW_KEY_LEFT_ALT);
+    public static final KeyMapping ABILITY_1 = key("ability_1", GLFW.GLFW_KEY_R);
+    public static final KeyMapping ABILITY_2 = key("ability_2", GLFW.GLFW_KEY_G);
+    public static final KeyMapping ABILITY_3 = key("ability_3", GLFW.GLFW_KEY_V);
+    public static final KeyMapping ULTIMATE = key("ultimate", GLFW.GLFW_KEY_Z);
+    /** The ability keys in slot order. */
+    public static final KeyMapping[] ABILITIES = {ABILITY_1, ABILITY_2, ABILITY_3, ULTIMATE};
+
+    private static KeyMapping key(String name, int defaultKey) {
+        return new KeyMapping("key.steelstorm." + name, KeyConflictContext.IN_GAME, InputConstants.Type.KEYSYM, defaultKey, CATEGORY);
+    }
 
     @SubscribeEvent
     public static void register(RegisterKeyMappingsEvent event) {
         event.register(DODGE);
-        event.register(SPECIAL);
+        for (KeyMapping key : ABILITIES) {
+            event.register(key);
+        }
     }
 
     private ModKeyMappings() {

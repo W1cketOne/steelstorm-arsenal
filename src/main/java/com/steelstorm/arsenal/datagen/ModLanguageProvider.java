@@ -1,6 +1,7 @@
 package com.steelstorm.arsenal.datagen;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.ability.Abilities;
 import com.steelstorm.arsenal.registry.ModBlocks;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModEntities;
@@ -49,8 +50,13 @@ public class ModLanguageProvider extends LanguageProvider {
             add(ModItems.legendary(legendary).get(), legendary.displayName());
         }
         add("weapon.steelstorm.tempest_edge.legendary", "Combo finishers call down lightning");
-        add("weapon.steelstorm.rimecleaver.legendary", "Hits freeze enemies solid");
-        add("weapon.steelstorm.voidreaver.legendary", "Reap pulls enemies into a void vortex");
+        add("weapon.steelstorm.rimecleaver.legendary", "Hits chill enemies, slowing them to a crawl");
+        add("weapon.steelstorm.voidreaver.legendary", "Hits tear at the void, pulling nearby enemies toward the target");
+        add("weapon.steelstorm.earthshaker.legendary", "Combo finishers send a shockwave through the ground");
+        add("weapon.steelstorm.bloodfang.legendary", "Hits cause Bleed; striking a bleeding enemy heals you");
+        add("weapon.steelstorm.skypiercer.legendary", "Double damage against enemies in the air");
+        add("weapon.steelstorm.moonveil.legendary", "Critical hits release a crescent of moonlight");
+        add("weapon.steelstorm.kingsbane.legendary", "+50% damage against enemies with more health than you");
         add("tooltip.steelstorm.legendary", "Legendary: ");
         add(ModItems.BANDIT_DUELIST_SPAWN_EGG.get(), "Bandit Duelist Spawn Egg");
         add(ModItems.BANDIT_ARCHER_SPAWN_EGG.get(), "Bandit Archer Spawn Egg");
@@ -76,33 +82,50 @@ public class ModLanguageProvider extends LanguageProvider {
         add("tooltip.steelstorm.throwing_knife", "Right-click to throw. 30% chance to cause Bleed.");
         add("tooltip.steelstorm.target_dummy", "Shows the damage of every hit. Sneak-punch with an empty hand to pick it up.");
 
-        weapon(WeaponType.LONGSWORD, "Every 3rd hit in a row deals +30% damage",
-                "Rising Slash", "Launches the enemy in front of you into the air");
-        weapon(WeaponType.GREATSWORD, "Wide sweeping strikes hit enemies around your target",
-                "Ground Cleave", "Smashes everything in a cone in front of you");
-        weapon(WeaponType.KATANA, "Critical hits cause Bleed",
-                "Flash Step", "Dash forward through enemies, cutting each one (stops at walls)");
-        weapon(WeaponType.DUAL_DAGGERS, "Double damage when striking from behind",
-                "Flurry", "Five lightning-fast strikes on the enemy in front of you");
-        weapon(WeaponType.SPEAR, "Sneak + hold Use to throw it",
-                "Impale", "Skewers the enemy in front of you and pins it in place");
-        weapon(WeaponType.WARHAMMER, "Hits cause Armor Break",
-                "Earthquake", "Slams the ground, launching every nearby enemy");
-        weapon(WeaponType.SCYTHE, "Heals you for 10% of the damage you deal",
-                "Reap", "A full 360 degree spin that cuts everything around you");
-        weapon(WeaponType.BATTLEAXE, "Bonus damage against blocking enemies, and breaks shields",
-                "Whirlwind", "Spin three times, hitting everything around you");
+        weapon(WeaponType.LONGSWORD, "Every 3rd hit in a row deals +30% damage");
+        weapon(WeaponType.GREATSWORD, "Wide sweeping strikes hit enemies around your target");
+        weapon(WeaponType.KATANA, "Critical hits cause Bleed");
+        weapon(WeaponType.DUAL_DAGGERS, "Double damage when striking from behind");
+        weapon(WeaponType.SPEAR, "Sneak + hold Use to throw it");
+        weapon(WeaponType.WARHAMMER, "Hits cause Armor Break");
+        weapon(WeaponType.SCYTHE, "Heals you for 10% of the damage you deal");
+        weapon(WeaponType.BATTLEAXE, "Bonus damage against blocking enemies, and breaks shields");
+
+        // Every weapon ability, straight from its definition.
+        Abilities.all().values().forEach(ability -> {
+            add(ability.nameKey(), ability.name());
+            add(ability.descKey(), ability.description());
+        });
 
         ModSounds.SUBTITLES.forEach((event, text) -> add("subtitles.steelstorm." + event, text));
         add("key.categories.steelstorm", "Steelstorm Arsenal");
         add("key.steelstorm.dodge", "Dodge Roll");
-        add("key.steelstorm.special", "Special Ability");
-        add("message.steelstorm.special_cooldown", "Special ready in %ss");
+        add("key.steelstorm.ability_1", "Ability 1");
+        add("key.steelstorm.ability_2", "Ability 2");
+        add("key.steelstorm.ability_3", "Ability 3");
+        add("key.steelstorm.ultimate", "Ultimate");
+        add("message.steelstorm.ability_cooldown", "%s ready in %ss");
+        add("message.steelstorm.ultimate_not_ready", "Ultimate charging: %s%%");
+        add("message.steelstorm.ultimate_ready", "Ultimate ready!");
+        add("message.steelstorm.riposte", "Riposte!");
+        add("message.steelstorm.backstab", "Backstab!");
         add("message.steelstorm.no_stamina", "Not enough stamina!");
         add("message.steelstorm.no_target", "No target in front of you");
         add("message.steelstorm.perfect_parry", "Perfect Parry!");
         add("message.steelstorm.guard_broken", "Guard broken!");
         add(ModEffects.STAGGER.get(), "Stagger");
+        add(ModEffects.FROZEN.get(), "Frozen");
+        add(ModEffects.BERSERK.get(), "Berserk");
+        add(ModEffects.RIPOSTE.get(), "Riposte Stance");
+        add(ModEffects.SHADOW_VEIL.get(), "Shadow Veil");
+        add(ModEffects.MARKED.get(), "Marked");
+        add(ModEntities.THROWN_HAMMER.get(), "Thrown Hammer");
+        add(ModEntities.GROUND_WAVE.get(), "Shockwave");
+        add(ModEntities.EARTH_CHUNK.get(), "Earth Chunk");
+        add(ModEntities.SLASH_WAVE.get(), "Slash Wave");
+        add(ModEntities.SPECTRAL_WEAPON.get(), "Spectral Weapon");
+        add(ModEntities.VORTEX.get(), "Vortex");
+        add(ModEntities.ORBIT_BLADES.get(), "Orbiting Blades");
 
         config("stamina", "Stamina");
         config("maxStamina", "Max Stamina");
@@ -111,16 +134,17 @@ public class ModLanguageProvider extends LanguageProvider {
         config("dodgeCost", "Dodge Cost");
         config("heavyAttackCost", "Heavy Attack Cost");
         config("guardCostPerDamage", "Guard Cost per Damage");
-        config("specialCostMultiplier", "Special Cost Multiplier");
+        config("specialCostMultiplier", "Ability Stamina Cost Multiplier");
         config("combat", "Combat");
         config("weaponDamageMultiplier", "Weapon Damage Multiplier");
         config("heavyAttackMultiplier", "Heavy Attack Multiplier");
-        config("specialDamageMultiplier", "Special Damage Multiplier");
+        config("specialDamageMultiplier", "Ability Damage Multiplier");
         config("guardDamageReduction", "Guard Damage Reduction");
         config("perfectParryTicks", "Perfect Parry Window (ticks)");
         config("dodgeCooldownTicks", "Dodge Cooldown (ticks)");
         config("dodgeInvulnerabilityTicks", "Dodge Invulnerability (ticks)");
-        config("specialCooldownMultiplier", "Special Cooldown Multiplier");
+        config("specialCooldownMultiplier", "Ability Cooldown Multiplier");
+        config("ultimateChargeMultiplier", "Ultimate Charge Multiplier");
         config("feedback", "Feedback");
         config("screenShake", "Screen Shake");
         config("screenShakeStrength", "Screen Shake Strength");
@@ -128,8 +152,10 @@ public class ModLanguageProvider extends LanguageProvider {
 
         add("tooltip.steelstorm.stats", "Damage %s | Speed %s | Reach %s");
         add("tooltip.steelstorm.passive", "Passive: ");
-        add("tooltip.steelstorm.special", "Special [%2$s]: %1$s");
-        add("tooltip.steelstorm.special_cost", "  Costs %s stamina, %ss cooldown");
+        add("tooltip.steelstorm.abilities", "Abilities:");
+        add("tooltip.steelstorm.ability_cost", " - %s stamina, %ss");
+        add("tooltip.steelstorm.ultimate_cost", " - ultimate, %ss");
+        add("tooltip.steelstorm.hold_shift", "Hold Shift for ability details");
         add("tooltip.steelstorm.stormsteel", "Stormsteel: hits sometimes zap a second nearby enemy");
         add("tooltip.steelstorm.controls", "Hold Use to guard and parry. Sneak + attack for a heavy attack.");
     }
@@ -143,9 +169,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add(SteelstormArsenal.MODID + ".configuration." + key, name);
     }
 
-    private void weapon(WeaponType type, String passive, String specialName, String specialDesc) {
+    private void weapon(WeaponType type, String passive) {
         add(type.passiveKey(), passive);
-        add(type.specialNameKey(), specialName);
-        add(type.specialDescKey(), specialDesc);
     }
 }

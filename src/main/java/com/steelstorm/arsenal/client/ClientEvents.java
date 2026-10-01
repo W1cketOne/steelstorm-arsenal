@@ -2,21 +2,37 @@ package com.steelstorm.arsenal.client;
 
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.ability.Abilities;
+import com.steelstorm.arsenal.network.AbilityPayload;
 import com.steelstorm.arsenal.network.DodgePayload;
-import com.steelstorm.arsenal.network.SpecialPayload;
+import com.steelstorm.arsenal.network.SwingPayload;
+import com.steelstorm.arsenal.registry.ModParticles;
+import com.steelstorm.arsenal.registry.ModSounds;
+import com.steelstorm.arsenal.weapon.WeaponItem;
+import com.steelstorm.arsenal.weapon.WeaponLooks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import net.neoforged.neoforge.client.event.ClientTickEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.ViewportEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 @EventBusSubscriber(modid = SteelstormArsenal.MODID, value = Dist.CLIENT)
 public final class ClientEvents {
+    /** Alternating swing directions so consecutive slashes don't look identical. */
+    private static final float[] SWING_ROLLS = {-25, 200, 15, 160};
+    private static int swingIndex;
+
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
@@ -25,17 +41,50 @@ public final class ClientEvents {
             return;
         }
         ClientCombatState.tick();
-        // Keys only send requests; the server checks stamina and cooldowns.
+        // Keys only send requests; the server checks stamina, cooldowns and charge.
         while (ModKeyMappings.DODGE.consumeClick()) {
             if (mc.screen == null && !player.isSpectator()) {
                 PacketDistributor.sendToServer(new DodgePayload(player.input.forwardImpulse, player.input.leftImpulse));
             }
         }
-        while (ModKeyMappings.SPECIAL.consumeClick()) {
-            if (mc.screen == null && !player.isSpectator()) {
-                PacketDistributor.sendToServer(SpecialPayload.INSTANCE);
+        for (int slot = 0; slot < ModKeyMappings.ABILITIES.length; slot++) {
+            while (ModKeyMappings.ABILITIES[slot].consumeClick()) {
+                if (mc.screen == null && !player.isSpectator() && Abilities.forStack(player.getMainHandItem()) != null) {
+                    PacketDistributor.sendToServer(new AbilityPayload(slot));
+                    ClientCombatState.pressAge[slot] = 0;
+                }
             }
         }
+    }
+
+    /**
+     * A full-strength swing with a Steelstorm weapon leaves a slash trail and a whoosh. They're
+     * shown right away here, and the server repeats them for everyone else nearby.
+     */
+    @SubscribeEvent
+    public static void onAttackKey(InputEvent.InteractionKeyMappingTriggered event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        if (!event.isAttack() || event.getHand() != InteractionHand.MAIN_HAND || player == null || mc.level == null) {
+            return;
+        }
+        ItemStack held = player.getMainHandItem();
+        if (!(held.getItem() instanceof WeaponItem weapon) || player.getAttackStrengthScale(0.5F) < 0.9F) {
+            return;
+        }
+        if (mc.hitResult != null && mc.hitResult.getType() == HitResult.Type.BLOCK) {
+            return;
+        }
+        boolean heavy = player.isShiftKeyDown();
+        float roll = SWING_ROLLS[swingIndex++ % SWING_ROLLS.length] + (player.getRandom().nextFloat() - 0.5F) * 20;
+        float scale = WeaponLooks.trailScale(weapon.type()) * (heavy ? 1.3F : 1.0F);
+        Vec3 at = player.getEyePosition().add(player.getLookAngle().scale(WeaponLooks.trailDistance(weapon.type()))).add(0, -0.3, 0);
+        mc.level.addParticle(ModParticles.SLASH.get().oriented(WeaponLooks.trailColor(held), scale, player.getYRot(), player.getXRot(),
+                Mth.wrapDegrees(roll)), at.x, at.y, at.z, 0, 0, 0);
+        mc.level.playLocalSound(player.getX(), player.getY(), player.getZ(),
+                (heavy ? ModSounds.WEAPON_SWING_HEAVY : ModSounds.WEAPON_SWING).get(), SoundSource.PLAYERS, heavy ? 1.0F : 0.8F,
+                0.9F + player.getRandom().nextFloat() * 0.2F, false);
+        PacketDistributor.sendToServer(new SwingPayload(heavy, roll));
     }
 
     @SubscribeEvent

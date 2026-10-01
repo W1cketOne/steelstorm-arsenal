@@ -1,6 +1,11 @@
 package com.steelstorm.arsenal.weapon;
 
+import com.steelstorm.arsenal.ability.AbilityTooltips;
+import com.steelstorm.arsenal.combat.CombatData;
+import com.steelstorm.arsenal.combat.Stamina;
 import com.steelstorm.arsenal.entity.ThrowingKnifeEntity;
+import com.steelstorm.arsenal.fx.Fx;
+import com.steelstorm.arsenal.registry.ModSounds;
 import java.util.List;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
@@ -30,8 +35,14 @@ public class ThrowingKnifeItem extends Item implements ThrowableWeapon {
             if (player.getAbilities().instabuild) {
                 knife.pickup = AbstractArrow.Pickup.CREATIVE_ONLY;
             }
+            CombatData data = Stamina.data(player);
+            if (data.venomKnives > 0) {
+                data.venomKnives--;
+                knife.coatInVenom();
+            }
             level.addFreshEntity(knife);
             level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundSource.PLAYERS, 0.8F, 1.7F);
+            Fx.sound(level, player.position(), ModSounds.WEAPON_THROW, 0.7F, 1.3F);
         }
         player.getCooldowns().addCooldown(this, 6);
         player.swing(hand);
@@ -44,5 +55,6 @@ public class ThrowingKnifeItem extends Item implements ThrowableWeapon {
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
         tooltip.add(Component.translatable("tooltip.steelstorm.throwing_knife").withStyle(ChatFormatting.YELLOW));
+        AbilityTooltips.append(stack, tooltip, flag);
     }
 }

@@ -2,7 +2,9 @@ package com.steelstorm.arsenal.client;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
+import com.steelstorm.arsenal.entity.ThrownHammerEntity;
 import com.steelstorm.arsenal.entity.ThrownWeaponEntity;
+import com.steelstorm.arsenal.weapon.ThrowingKnifeItem;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
@@ -13,8 +15,13 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.item.ItemDisplayContext;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.phys.Vec3;
 
-/** Draws a thrown weapon as its own item: point-first for spears and knives, spinning flat for the chakram. */
+/**
+ * Draws a thrown weapon with its 3D model: spears and knives fly point first, the chakram spins
+ * flat and the warhammer tumbles end over end.
+ */
 public class ThrownWeaponRenderer<T extends Entity & ThrownWeaponEntity> extends EntityRenderer<T> {
     private final ItemRenderer itemRenderer;
 
@@ -25,18 +32,28 @@ public class ThrownWeaponRenderer<T extends Entity & ThrownWeaponEntity> extends
 
     @Override
     public void render(T entity, float yaw, float partialTick, PoseStack pose, MultiBufferSource buffers, int light) {
+        ItemStack stack = entity.getRenderStack();
+        float age = entity.tickCount + partialTick;
         pose.pushPose();
         if (entity.spins()) {
+            pose.mulPose(Axis.YP.rotationDegrees(age * 40.0F));
             pose.mulPose(Axis.XP.rotationDegrees(90));
-            pose.mulPose(Axis.ZP.rotationDegrees((entity.tickCount + partialTick) * 40.0F));
-            pose.scale(0.9F, 0.9F, 0.9F);
+            pose.scale(0.75F, 0.75F, 0.75F);
+        } else if (entity instanceof ThrownHammerEntity) {
+            Vec3 m = entity.getDeltaMovement();
+            float heading = m.horizontalDistanceSqr() > 1e-6 ? (float) Math.toDegrees(Math.atan2(m.x, m.z)) : -entity.getYRot();
+            pose.mulPose(Axis.YP.rotationDegrees(heading));
+            pose.mulPose(Axis.XP.rotationDegrees(age * 48.0F));
+            pose.scale(0.7F, 0.7F, 0.7F);
+            // Spin around the hammer's balance point, near the head.
+            pose.translate(0, -0.4, 0);
         } else {
             pose.mulPose(Axis.YP.rotationDegrees(Mth.lerp(partialTick, entity.yRotO, entity.getYRot()) - 90.0F));
-            pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) - 45.0F));
-            pose.translate(-0.15, -0.15, 0);
-            pose.scale(1.1F, 1.1F, 1.1F);
+            pose.mulPose(Axis.ZP.rotationDegrees(Mth.lerp(partialTick, entity.xRotO, entity.getXRot()) - 90.0F));
+            float scale = stack.getItem() instanceof ThrowingKnifeItem ? 0.85F : 0.62F;
+            pose.scale(scale, scale, scale);
         }
-        itemRenderer.renderStatic(entity.getRenderStack(), ItemDisplayContext.FIXED, light, OverlayTexture.NO_OVERLAY, pose, buffers,
+        itemRenderer.renderStatic(stack, ItemDisplayContext.NONE, entity.glows() ? 0xF000F0 : light, OverlayTexture.NO_OVERLAY, pose, buffers,
                 entity.level(), entity.getId());
         pose.popPose();
         super.render(entity, yaw, partialTick, pose, buffers, light);

@@ -1,6 +1,7 @@
 package com.steelstorm.arsenal.weapon;
 
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.ability.AbilityTooltips;
 import java.util.List;
 import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
@@ -165,15 +166,7 @@ public class WeaponItem extends SwordItem {
                 .withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.steelstorm.passive").withStyle(ChatFormatting.GOLD)
                 .append(Component.translatable(type.passiveKey()).withStyle(ChatFormatting.YELLOW)));
-        tooltip.add(Component.translatable("tooltip.steelstorm.special",
-                        Component.translatable(type.specialNameKey()),
-                        Component.keybind("key.steelstorm.special"))
-                .withStyle(ChatFormatting.AQUA));
-        tooltip.add(Component.literal("  ").append(Component.translatable(type.specialDescKey()))
-                .withStyle(ChatFormatting.DARK_AQUA));
-        tooltip.add(Component.translatable("tooltip.steelstorm.special_cost",
-                        type.specialStaminaCost(), format(type.specialCooldownTicks() / 20.0F))
-                .withStyle(ChatFormatting.DARK_GRAY));
+        AbilityTooltips.append(stack, tooltip, flag);
         if (isStormsteel()) {
             tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel").withStyle(ChatFormatting.BLUE));
         }

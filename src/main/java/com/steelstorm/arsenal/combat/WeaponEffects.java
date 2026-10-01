@@ -1,6 +1,12 @@
 package com.steelstorm.arsenal.combat;
 
+import com.steelstorm.arsenal.ability.AbilityManager;
+import com.steelstorm.arsenal.ability.Shockwaves;
 import com.steelstorm.arsenal.effect.BleedEffect;
+import com.steelstorm.arsenal.entity.SlashWaveEntity;
+import com.steelstorm.arsenal.fx.Fx;
+import com.steelstorm.arsenal.registry.ModParticles;
+import com.steelstorm.arsenal.registry.ModSounds;
 import com.steelstorm.arsenal.registry.ModDamageTypes;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModEnchantments;
@@ -45,6 +51,25 @@ public final class WeaponEffects {
             default -> {
             }
         }
+        if (weapon instanceof LegendaryWeaponItem legendary) {
+            switch (legendary.legendary()) {
+                case SKYPIERCER -> {
+                    if (!target.onGround() && !target.isInWater() && target.getDeltaMovement().y != 0) {
+                        amount *= 2.0F;
+                        if (player.level() instanceof ServerLevel level) {
+                            Fx.sparks(level, 0x9AD8FF, target.getBoundingBox().getCenter(), 10, 0.6);
+                        }
+                    }
+                }
+                case KINGSBANE -> {
+                    if (target.getHealth() > player.getHealth()) {
+                        amount *= 1.5F;
+                    }
+                }
+                default -> {
+                }
+            }
+        }
         int executioner = ModEnchantments.level(player, player.getMainHandItem(), ModEnchantments.EXECUTIONER);
         if (executioner > 0 && target.getHealth() <= target.getMaxHealth() * 0.35F) {
             amount *= 1.0F + 0.2F * executioner;
@@ -70,10 +95,10 @@ public final class WeaponEffects {
             default -> {
             }
         }
-        data.critPending = false;
         if (weapon instanceof LegendaryWeaponItem legendary) {
             legendaryOnHit(player, legendary, target, data);
         }
+        data.critPending = false;
         applySharedOnHit(player, weapon, target);
     }
 
@@ -99,44 +124,47 @@ public final class WeaponEffects {
             case RIMECLEAVER -> {
                 target.setTicksFrozen(Math.max(target.getTicksFrozen(), target.getTicksRequiredToFreeze() + 100));
                 target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 80, 2));
-                level.sendParticles(ParticleTypes.SNOWFLAKE, target.getX(), target.getY(0.6), target.getZ(), 20, 0.4, 0.5, 0.4, 0.05);
-                level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.GLASS_BREAK, SoundSource.PLAYERS, 0.6F, 1.6F);
+                Fx.burst(level, ModParticles.FROST.get(), Fx.FROST, 1.3F, target.getBoundingBox().getCenter(), 12, 0.4, 0.04);
+                Fx.sound(level, target.position(), ModSounds.ABILITY_FROST, 0.5F, 1.6F);
             }
             case VOIDREAVER -> {
+                for (LivingEntity other : CombatUtil.around(player, target.position(), 4.5)) {
+                    if (other != target) {
+                        Vec3 to = target.position().subtract(other.position()).multiply(1, 0, 1);
+                        if (to.lengthSqr() > 1) {
+                            Vec3 pull = to.normalize().scale(0.45);
+                            other.setDeltaMovement(pull.x, Math.max(other.getDeltaMovement().y, 0.1), pull.z);
+                            other.hurtMarked = true;
+                        }
+                    }
+                }
+                Fx.burst(level, ModParticles.GLOW.get(), Fx.VOID, 1.4F, target.getBoundingBox().getCenter(), 10, 0.5, 0.05);
+            }
+            case EARTHSHAKER -> {
+                if (data.finisherPending) {
+                    float damage = (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.5F);
+                    Shockwaves.ring(level, player, target.position(), 3.5F, 0.8F, damage, 0.45, 0xFF9A3C, null);
+                    Fx.sound(level, target.position(), ModSounds.ABILITY_SHOCKWAVE, 0.9F, 1.3F);
+                    Stamina.shake(player, 0.5F, 6);
+                }
+            }
+            case BLOODFANG -> {
+                if (target.hasEffect(ModEffects.BLEED)) {
+                    heal(player, 1.0F);
+                }
+                BleedEffect.apply(target, 100);
+            }
+            case MOONVEIL -> {
+                if (data.critPending) {
+                    Vec3 start = player.getEyePosition().add(0, -0.4, 0).add(player.getLookAngle().scale(1.2));
+                    SlashWaveEntity.fire(player, start, player.getLookAngle(), 1.3F, 9, 1.3F, 0,
+                            (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.6F), 0xD6DEFF, false, null);
+                    Fx.sound(level, player.position(), ModSounds.ABILITY_SLASH_WAVE, 0.7F, 1.5F);
+                }
+            }
+            default -> {
             }
         }
-    }
-
-    /** Voidreaver's Reap: drags every nearby enemy into a swirling vortex around the wielder. */
-    public static void voidVortex(Player player) {
-        if (!(player.level() instanceof ServerLevel level)) {
-            return;
-        }
-        for (int i = 0; i < 12; i++) {
-            final int tick = i;
-            ServerScheduler.schedule(i * 2, () -> {
-                if (!player.isAlive()) {
-                    return;
-                }
-                Vec3 center = player.position();
-                for (LivingEntity e : CombatUtil.around(player, center, 8.0)) {
-                    Vec3 to = center.subtract(e.position());
-                    Vec3 swirl = new Vec3(-to.z, 0, to.x).normalize().scale(0.25);
-                    Vec3 pull = to.multiply(1, 0, 1).normalize().scale(0.35).add(swirl);
-                    e.setDeltaMovement(pull.x, Math.max(e.getDeltaMovement().y, 0.05), pull.z);
-                    e.hurtMarked = true;
-                }
-                for (int p = 0; p < 16; p++) {
-                    double angle = p * Math.PI / 8 + tick * 0.5;
-                    double r = 6.0 - tick * 0.4;
-                    level.sendParticles(ParticleTypes.PORTAL, center.x + Math.cos(angle) * r, center.y + 0.5, center.z + Math.sin(angle) * r,
-                            2, 0, 0.2, 0, 0.1);
-                }
-                level.sendParticles(ParticleTypes.REVERSE_PORTAL, center.x, center.y + 1, center.z, 6, 0.3, 0.5, 0.3, 0.05);
-            });
-        }
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENDERMAN_TELEPORT, SoundSource.PLAYERS, 1.0F, 0.5F);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.WITHER_SHOOT, SoundSource.PLAYERS, 0.5F, 0.6F);
     }
 
     /** A special ability hit a target; weapon passives that make sense for specials apply too. */

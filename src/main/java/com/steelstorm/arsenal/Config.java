@@ -27,6 +27,7 @@ public final class Config {
     public static final ModConfigSpec.IntValue DODGE_COOLDOWN_TICKS;
     public static final ModConfigSpec.IntValue DODGE_INVULNERABILITY_TICKS;
     public static final ModConfigSpec.DoubleValue SPECIAL_COOLDOWN_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue ULTIMATE_CHARGE_MULTIPLIER;
 
     // World
     public static final ModConfigSpec.DoubleValue ARMORY_CHANCE;
@@ -62,8 +63,10 @@ public final class Config {
         DODGE_COOLDOWN_TICKS = BUILDER.comment("Cooldown between dodge rolls, in ticks").defineInRange("dodgeCooldownTicks", 20, 0, 200);
         DODGE_INVULNERABILITY_TICKS = BUILDER.comment("Invulnerability window at the start of a dodge roll, in ticks")
                 .defineInRange("dodgeInvulnerabilityTicks", 8, 0, 40);
-        SPECIAL_COOLDOWN_MULTIPLIER = BUILDER.comment("Multiplier on every special ability's cooldown")
+        SPECIAL_COOLDOWN_MULTIPLIER = BUILDER.comment("Multiplier on every ability's cooldown")
                 .defineInRange("specialCooldownMultiplier", 1.0, 0.0, 10.0);
+        ULTIMATE_CHARGE_MULTIPLIER = BUILDER.comment("How fast the ultimate meter fills from dealing and taking damage (1.0 = normal)")
+                .defineInRange("ultimateChargeMultiplier", 1.0, 0.0, 10.0);
         BUILDER.pop();
 
         BUILDER.comment("Structures only generate in newly explored chunks.").push("structures");

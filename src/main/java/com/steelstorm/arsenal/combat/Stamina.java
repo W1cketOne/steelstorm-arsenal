@@ -1,9 +1,14 @@
 package com.steelstorm.arsenal.combat;
 
 import com.steelstorm.arsenal.Config;
+import com.steelstorm.arsenal.ability.Abilities;
+import com.steelstorm.arsenal.ability.Ability;
+import com.steelstorm.arsenal.ability.AbilitySet;
 import com.steelstorm.arsenal.network.CombatSyncPayload;
 import com.steelstorm.arsenal.network.FeedbackPayload;
 import com.steelstorm.arsenal.registry.ModAttachments;
+import java.util.ArrayList;
+import java.util.List;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.neoforged.neoforge.network.PacketDistributor;
@@ -72,19 +77,38 @@ public final class Stamina {
     /** Sends HUD state when something visible changed (or always when {@code force}). */
     public static void sync(ServerPlayer player, boolean force) {
         CombatData data = data(player);
+        long now = player.level().getGameTime();
+        AbilitySet set = Abilities.forStack(player.getMainHandItem());
+        String setId = set == null ? "" : set.id();
         int shown = (int) Math.floor(data.stamina);
-        if (!force && shown == data.syncedStamina && data.combo == data.syncedCombo
-                && data.specialCooldownEnd == data.syncedSpecialEnd && data.dodgeCooldownEnd == data.syncedDodgeEnd) {
+        int ultimate = (int) Math.floor(data.ultimate);
+        long cooldownHash = 17;
+        if (set != null) {
+            for (int slot = 0; slot < AbilitySet.SLOTS; slot++) {
+                cooldownHash = cooldownHash * 31 + data.cooldownEnd.getOrDefault(set.get(slot).id(), 0L);
+            }
+        }
+        if (!force && shown == data.syncedStamina && data.combo == data.syncedCombo && ultimate == data.syncedUltimate
+                && data.dodgeCooldownEnd == data.syncedDodgeEnd && setId.equals(data.syncedSet) && cooldownHash == data.syncedCooldownHash) {
             return;
         }
         data.syncedStamina = shown;
         data.syncedCombo = data.combo;
-        data.syncedSpecialEnd = data.specialCooldownEnd;
+        data.syncedUltimate = ultimate;
         data.syncedDodgeEnd = data.dodgeCooldownEnd;
-        long now = player.level().getGameTime();
-        PacketDistributor.sendToPlayer(player, new CombatSyncPayload(data.stamina, max(),
-                (int) Math.max(0, data.specialCooldownEnd - now), data.specialCooldownTotal,
-                (int) Math.max(0, data.dodgeCooldownEnd - now), data.combo));
+        data.syncedSet = setId;
+        data.syncedCooldownHash = cooldownHash;
+        List<Integer> left = new ArrayList<>(AbilitySet.SLOTS);
+        List<Integer> total = new ArrayList<>(AbilitySet.SLOTS);
+        if (set != null) {
+            for (int slot = 0; slot < AbilitySet.SLOTS; slot++) {
+                Ability ability = set.get(slot);
+                left.add((int) data.cooldownLeft(ability.id(), now));
+                total.add(data.cooldownTotal.getOrDefault(ability.id(), ability.cooldown()));
+            }
+        }
+        PacketDistributor.sendToPlayer(player, new CombatSyncPayload(data.stamina, max(), data.ultimate, data.combo,
+                (int) Math.max(0, data.dodgeCooldownEnd - now), setId, left, total));
     }
 
     public static void shake(Player player, float strength, int ticks) {

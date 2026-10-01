@@ -2,36 +2,46 @@ package com.steelstorm.arsenal.combat;
 
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.SteelstormArsenal;
+import com.steelstorm.arsenal.ability.AbilityManager;
+import com.steelstorm.arsenal.ability.sets.LongswordAbilities;
+import com.steelstorm.arsenal.entity.ChakramEntity;
+import com.steelstorm.arsenal.entity.ThrowingKnifeEntity;
+import com.steelstorm.arsenal.entity.ThrownSpear;
+import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModEffects;
+import com.steelstorm.arsenal.registry.ModParticles;
+import com.steelstorm.arsenal.registry.ModSounds;
 import com.steelstorm.arsenal.weapon.WeaponItem;
+import com.steelstorm.arsenal.weapon.WeaponLooks;
 import com.steelstorm.arsenal.weapon.WeaponType;
-import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.sounds.SoundEvents;
-import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.DamageTypeTags;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
-import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.EventPriority;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.neoforge.event.entity.living.LivingChangeTargetEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.living.LivingIncomingDamageEvent;
+import net.neoforged.neoforge.event.entity.living.MobEffectEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
 
 /**
- * Server-side combat rules: dodge invulnerability, parrying and guarding, heavy attacks, combos
- * and weapon passives. All of it runs on the logical server, so it works the same in single
- * player, LAN and on dedicated servers.
+ * Server-side combat rules: dodge invulnerability, parrying and guarding, heavy attacks, combos,
+ * weapon passives, ability states (riposte, backstab, berserk...) and the ultimate meter. All of
+ * it runs on the logical server, so it works the same in single player, LAN and on dedicated servers.
  */
 @EventBusSubscriber(modid = SteelstormArsenal.MODID)
 public final class CombatEvents {
@@ -47,6 +57,7 @@ public final class CombatEvents {
     @SubscribeEvent
     public static void onLogin(PlayerEvent.PlayerLoggedInEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
+            Stamina.data(player).forceSync();
             Stamina.sync(player, true);
         }
     }
@@ -54,7 +65,10 @@ public final class CombatEvents {
     @SubscribeEvent
     public static void onRespawn(PlayerEvent.PlayerRespawnEvent event) {
         if (event.getEntity() instanceof ServerPlayer player) {
-            Stamina.data(player).stamina = Stamina.max();
+            CombatData data = Stamina.data(player);
+            data.stamina = Stamina.max();
+            data.empoweredHits = 0;
+            data.backstabUntil = 0;
             Stamina.sync(player, true);
         }
     }
@@ -70,7 +84,7 @@ public final class CombatEvents {
     @SubscribeEvent
     public static void onAttack(AttackEntityEvent event) {
         Player player = event.getEntity();
-        if (player.hasEffect(ModEffects.STAGGER)) {
+        if (player.hasEffect(ModEffects.STAGGER) || player.hasEffect(ModEffects.FROZEN)) {
             event.setCanceled(true);
             return;
         }
@@ -96,16 +110,25 @@ public final class CombatEvents {
         }
         boolean bypass = source.is(DamageTypeTags.BYPASSES_INVULNERABILITY);
 
-        // Dodge roll invulnerability window.
+        // Dodge rolls and blink abilities make you briefly untouchable.
         if (!bypass && target instanceof ServerPlayer player && DodgeHandler.isInvulnerable(player)) {
             event.setCanceled(true);
             return;
         }
 
-        // Staggered attackers can't land melee hits.
+        // Staggered or frozen attackers can't land melee hits.
         if (CombatUtil.isDirectMelee(source) && source.getEntity() instanceof LivingEntity attacker
-                && attacker.hasEffect(ModEffects.STAGGER)) {
+                && (attacker.hasEffect(ModEffects.STAGGER) || attacker.hasEffect(ModEffects.FROZEN))) {
             event.setCanceled(true);
+            return;
+        }
+
+        // Longsword Riposte stance: turn the attack aside and strike back.
+        if (!bypass && target instanceof ServerPlayer player && player.hasEffect(ModEffects.RIPOSTE)
+                && source.getEntity() instanceof LivingEntity attacker && attacker != player
+                && !source.is(DamageTypeTags.IS_EXPLOSION)) {
+            event.setCanceled(true);
+            LongswordAbilities.counter(player, attacker);
             return;
         }
 
@@ -119,6 +142,11 @@ public final class CombatEvents {
                 return;
             }
             event.setAmount(guard(player, event.getAmount()));
+        }
+
+        // Marked enemies (Soul Harvest) take extra damage from players.
+        if (target.hasEffect(ModEffects.MARKED) && source.getEntity() instanceof Player) {
+            event.setAmount(event.getAmount() * 1.15F);
         }
 
         // Attacker bonuses for Steelstorm weapons.
@@ -139,10 +167,34 @@ public final class CombatEvents {
         long now = attacker.level().getGameTime();
         boolean full = data.lastAttackStrength >= FULL_STRENGTH;
         amount *= Config.WEAPON_DAMAGE_MULTIPLIER.get().floatValue();
+        ServerLevel level = (ServerLevel) attacker.level();
 
         if (attacker.isShiftKeyDown() && full && Stamina.tryConsume(attacker, Config.HEAVY_ATTACK_COST.get().floatValue())) {
             amount *= Config.HEAVY_ATTACK_MULTIPLIER.get().floatValue();
             data.heavyPending = true;
+        }
+        // Shadowstep: the first hit after stepping behind someone is a backstab.
+        if (now < data.backstabUntil) {
+            data.backstabUntil = 0;
+            amount *= 2.5F;
+            Vec3 at = target.getBoundingBox().getCenter();
+            Fx.slash(level, at, attacker.getYRot(), 0, 60, 0xA78BFA, 1.0F);
+            Fx.burst(level, ModParticles.BLOOD.get(), 0xFFFFFF, 1.3F, at, 14, 0.3, 0.2);
+            Fx.sound(level, at, ModSounds.ABILITY_BLOOD, 1.0F, 1.2F);
+            attacker.displayClientMessage(Component.translatable("message.steelstorm.backstab").withStyle(ChatFormatting.DARK_PURPLE), true);
+        }
+        // Death Blossom: a few empowered strikes.
+        if (data.empoweredHits > 0) {
+            data.empoweredHits--;
+            amount *= data.empoweredMultiplier;
+            Vec3 at = target.getBoundingBox().getCenter();
+            Fx.slash(level, at, attacker.getYRot(), 0, 45, 0xA78BFA, 1.1F);
+            Fx.slash(level, at, attacker.getYRot(), 0, -45, 0x3A2E5C, 1.1F);
+            Fx.burst(level, ModParticles.PETAL.get(), 0xA78BFA, 1.3F, at, 12, 0.4, 0.15);
+            Fx.sound(level, at, ModSounds.ABILITY_SMOKE, 0.8F, 1.5F);
+            if (data.empoweredHits == 0) {
+                attacker.removeEffect(ModEffects.SHADOW_VEIL);
+            }
         }
         int nextCombo = full ? data.comboAt(now) + 1 : 0;
         data.finisherPending = full && nextCombo % 3 == 0;
@@ -153,12 +205,10 @@ public final class CombatEvents {
         ServerLevel level = (ServerLevel) player.level();
         Vec3 at = source.getSourcePosition();
         Vec3 spark = player.getEyePosition().add(at.subtract(player.getEyePosition()).normalize().scale(0.8)).add(0, -0.3, 0);
-        level.sendParticles(ParticleTypes.ELECTRIC_SPARK, spark.x, spark.y, spark.z, 18, 0.15, 0.15, 0.15, 0.6);
-        level.sendParticles(ParticleTypes.CRIT, spark.x, spark.y, spark.z, 10, 0.1, 0.1, 0.1, 0.5);
-        level.sendParticles(ParticleTypes.FLASH, spark.x, spark.y, spark.z, 1, 0, 0, 0, 0);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ANVIL_PLACE, SoundSource.PLAYERS, 0.5F, 1.9F);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.TRIDENT_HIT, SoundSource.PLAYERS, 1.0F, 1.6F);
-        level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.AMETHYST_BLOCK_CHIME, SoundSource.PLAYERS, 1.2F, 1.6F);
+        Fx.impact(level, spark, Fx.GOLD, 1.3F);
+        Fx.sparks(level, Fx.GOLD, spark, 18, 0.7);
+        Fx.sparks(level, Fx.WHITE, spark, 8, 0.5);
+        Fx.sound(level, player.position(), ModSounds.WEAPON_PERFECT_PARRY, 1.2F, 1.0F);
         if (source.getEntity() instanceof LivingEntity attacker && source.getDirectEntity() == attacker) {
             attacker.addEffect(new MobEffectInstance(ModEffects.STAGGER, 40, 0));
             attacker.knockback(0.6, player.getX() - attacker.getX(), player.getZ() - attacker.getZ());
@@ -166,8 +216,10 @@ public final class CombatEvents {
         }
         Stamina.restore(player, 10.0F);
         Stamina.shake(player, 0.5F, 5);
-        player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.steelstorm.perfect_parry")
-                .withStyle(net.minecraft.ChatFormatting.GOLD), true);
+        if (player instanceof ServerPlayer serverPlayer) {
+            AbilityManager.addUltimate(serverPlayer, 15);
+        }
+        player.displayClientMessage(Component.translatable("message.steelstorm.perfect_parry").withStyle(ChatFormatting.GOLD), true);
     }
 
     /** Guarding after the parry window: absorb part of the hit, paid for with stamina. */
@@ -175,17 +227,19 @@ public final class CombatEvents {
         float absorbed = amount * Config.GUARD_DAMAGE_REDUCTION.get().floatValue();
         float cost = absorbed * Config.GUARD_COST_PER_DAMAGE.get().floatValue();
         float spent = Stamina.drain(player, cost);
-        Level level = player.level();
+        ServerLevel level = (ServerLevel) player.level();
+        Vec3 at = player.getEyePosition().add(player.getLookAngle().scale(0.7)).add(0, -0.3, 0);
         if (cost > 0 && spent < cost) {
             absorbed *= spent / cost;
             Item guardItem = player.getUseItem().getItem();
             player.stopUsingItem();
             player.getCooldowns().addCooldown(guardItem, 30);
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHIELD_BREAK, SoundSource.PLAYERS, 1.0F, 1.0F);
-            player.displayClientMessage(net.minecraft.network.chat.Component.translatable("message.steelstorm.guard_broken")
-                    .withStyle(net.minecraft.ChatFormatting.RED), true);
+            Fx.sound(level, player.position(), ModSounds.WEAPON_GUARD_BREAK, 1.1F, 1.0F);
+            Fx.sparks(level, 0xFF6B6B, at, 12, 0.6);
+            player.displayClientMessage(Component.translatable("message.steelstorm.guard_broken").withStyle(ChatFormatting.RED), true);
         } else {
-            level.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.SHIELD_BLOCK, SoundSource.PLAYERS, 1.0F, 0.8F);
+            Fx.sound(level, player.position(), ModSounds.WEAPON_PARRY, 1.0F, 0.9F + player.getRandom().nextFloat() * 0.2F);
+            Fx.sparks(level, Fx.STEEL, at, 6, 0.4);
         }
         return amount - absorbed;
     }
@@ -194,14 +248,39 @@ public final class CombatEvents {
     public static void onDamageDealt(LivingDamageEvent.Post event) {
         LivingEntity target = event.getEntity();
         DamageSource source = event.getSource();
-        if (target.level().isClientSide() || event.getNewDamage() <= 0) {
+        float damage = event.getNewDamage();
+        if (target.level().isClientSide() || damage <= 0) {
             return;
         }
-        // Getting hit breaks your own combo.
-        if (target instanceof Player hurt && source.getEntity() != hurt) {
+        float charge = Config.ULTIMATE_CHARGE_MULTIPLIER.get().floatValue();
+        // Getting hit breaks your own combo but builds your ultimate.
+        if (target instanceof ServerPlayer hurt && source.getEntity() != hurt) {
             Stamina.data(hurt).combo = 0;
+            AbilityManager.addUltimate(hurt, damage * 0.5F * charge);
         }
-        if (!CombatUtil.isDirectMelee(source) || !(source.getEntity() instanceof Player attacker)) {
+        if (!(source.getEntity() instanceof ServerPlayer attacker) || attacker == target) {
+            return;
+        }
+        // Soul Harvest marks heal whoever hits them.
+        if (target.hasEffect(ModEffects.MARKED) && attacker.getHealth() < attacker.getMaxHealth()) {
+            attacker.heal(1.5F);
+            Fx.shoot((ServerLevel) attacker.level(), ModParticles.GLOW.get(), 0xC084FC, 1.3F, target.getBoundingBox().getCenter(),
+                    attacker.getBoundingBox().getCenter().subtract(target.getBoundingBox().getCenter()).scale(0.1));
+        }
+        if (CombatUtil.isSpecialDamage()) {
+            WeaponItem weapon = CombatUtil.heldWeapon(attacker);
+            if (weapon != null) {
+                WeaponEffects.onSpecialHit(attacker, weapon, target, damage);
+            }
+            AbilityManager.addUltimate(attacker, damage * 0.4F * charge);
+            return;
+        }
+        Entity direct = source.getDirectEntity();
+        if (direct instanceof ThrowingKnifeEntity || direct instanceof ChakramEntity || direct instanceof ThrownSpear) {
+            AbilityManager.addUltimate(attacker, damage * 0.6F * charge);
+            return;
+        }
+        if (!CombatUtil.isDirectMelee(source)) {
             return;
         }
         WeaponItem weapon = CombatUtil.heldWeapon(attacker);
@@ -214,28 +293,74 @@ public final class CombatEvents {
         // Only well-timed swings build a combo; spam-clicking resets it.
         data.combo = full ? data.comboAt(now) + 1 : 0;
         data.lastHitTime = now;
+        AbilityManager.addUltimate(attacker, damage * (full ? 0.8F : 0.3F) * charge);
 
         ServerLevel level = (ServerLevel) attacker.level();
+        Vec3 at = target.getBoundingBox().getCenter();
+        int color = WeaponLooks.trailColor(attacker.getMainHandItem());
+        boolean armored = target.getArmorValue() >= 8;
+        Fx.sound(level, at, armored ? ModSounds.WEAPON_HIT_METAL : ModSounds.WEAPON_HIT, full ? 1.0F : 0.6F,
+                0.9F + level.random.nextFloat() * 0.2F);
+        if (full) {
+            Fx.impact(level, at, color, 0.8F);
+            Fx.sparks(level, armored ? 0xFFD166 : color, at, armored ? 6 : 3, 0.35);
+        }
         if (data.heavyPending) {
             data.heavyPending = false;
             Vec3 push = target.position().subtract(attacker.position()).multiply(1, 0, 1).normalize();
             target.knockback(0.9, -push.x, -push.z);
-            level.sendParticles(ParticleTypes.EXPLOSION, target.getX(), target.getY(0.5), target.getZ(), 1, 0, 0, 0, 0);
-            level.sendParticles(ParticleTypes.CRIT, target.getX(), target.getY(0.6), target.getZ(), 15, 0.4, 0.4, 0.4, 0.4);
-            level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.PLAYER_ATTACK_STRONG, SoundSource.PLAYERS, 1.0F, 0.6F);
-            level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.ANVIL_LAND, SoundSource.PLAYERS, 0.25F, 0.7F);
+            Fx.impact(level, at, Fx.WHITE, 1.6F);
+            Fx.sparks(level, color, at, 12, 0.6);
+            Fx.burst(level, ModParticles.SMOKE.get(), 0x8A8378, 1.2F, at, 6, 0.3, 0.03);
+            Fx.sound(level, at, ModSounds.WEAPON_SWING_HEAVY, 0.8F, 0.6F);
+            Fx.sound(level, at, ModSounds.ABILITY_SHOCKWAVE, 0.5F, 1.6F);
             Stamina.shake(attacker, 0.8F, 6);
-            if (target instanceof Player victim) {
+            if (target instanceof ServerPlayer victim) {
                 Stamina.shake(victim, 0.6F, 6);
             }
         }
         if (data.finisherPending && weapon.type() == WeaponType.LONGSWORD) {
-            level.sendParticles(ParticleTypes.ENCHANTED_HIT, target.getX(), target.getY(0.6), target.getZ(), 20, 0.4, 0.4, 0.4, 0.3);
-            level.playSound(null, target.getX(), target.getY(), target.getZ(), SoundEvents.PLAYER_ATTACK_CRIT, SoundSource.PLAYERS, 1.0F, 1.2F);
+            Fx.slash(level, at, attacker.getYRot(), 0, 30, Fx.GOLD, 1.0F);
+            Fx.sparks(level, Fx.GOLD, at, 10, 0.5);
+            Fx.sound(level, at, ModSounds.WEAPON_HIT_METAL, 1.0F, 1.4F);
         }
-        WeaponEffects.onMeleeHit(attacker, weapon, target, event.getNewDamage(), full, data);
+        if (attacker.hasEffect(ModEffects.BERSERK)) {
+            berserkHit(attacker, target, damage);
+        }
+        WeaponEffects.onMeleeHit(attacker, weapon, target, damage, full, data);
         data.finisherPending = false;
-        Stamina.sync((ServerPlayer) attacker, false);
+        Stamina.sync(attacker, false);
+    }
+
+    /** Berserker Rage: every blow heals and bursts into a wave of blood around the target. */
+    private static void berserkHit(ServerPlayer attacker, LivingEntity target, float damage) {
+        ServerLevel level = attacker.serverLevel();
+        attacker.heal(damage * 0.15F);
+        Vec3 at = target.getBoundingBox().getCenter();
+        Fx.burst(level, ModParticles.BLOOD.get(), 0xFFFFFF, 1.3F, at, 12, 0.4, 0.2);
+        Fx.ring(level, target.position(), 0xD0182C, 2.8F);
+        for (LivingEntity other : CombatUtil.around(attacker, target.position(), 2.8)) {
+            if (other != target) {
+                CombatUtil.specialHurt(attacker, other, damage * 0.4F);
+            }
+        }
+        Fx.sound(level, at, ModSounds.ABILITY_BLOOD, 0.7F, 0.9F);
+    }
+
+    /** Berserkers shrug off Stagger. */
+    @SubscribeEvent
+    public static void onEffectApplicable(MobEffectEvent.Applicable event) {
+        if (event.getEffectInstance().getEffect().is(ModEffects.STAGGER) && event.getEntity().hasEffect(ModEffects.BERSERK)) {
+            event.setResult(MobEffectEvent.Applicable.Result.DO_NOT_APPLY);
+        }
+    }
+
+    /** Monsters can't pick a Shadow Veiled player as a target. */
+    @SubscribeEvent
+    public static void onChangeTarget(LivingChangeTargetEvent event) {
+        if (event.getNewAboutToBeSetTarget() instanceof Player player && player.hasEffect(ModEffects.SHADOW_VEIL)) {
+            event.setCanceled(true);
+        }
     }
 
     private CombatEvents() {

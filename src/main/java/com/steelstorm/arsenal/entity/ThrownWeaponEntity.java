@@ -10,4 +10,9 @@ public interface ThrownWeaponEntity {
     default boolean spins() {
         return false;
     }
+
+    /** Spectral copies thrown by abilities are drawn fully lit, as if glowing. */
+    default boolean glows() {
+        return false;
+    }
 }

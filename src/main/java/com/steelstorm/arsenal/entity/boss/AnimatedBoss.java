@@ -202,6 +202,22 @@ public abstract class AnimatedBoss extends SteelstormBoss {
         }
     }
 
+    /** Defeating a lair's boss unlocks the coffers it guarded. */
+    @Override
+    public void die(net.minecraft.world.damagesource.DamageSource source) {
+        super.die(source);
+        if (level() instanceof net.minecraft.server.level.ServerLevel level) {
+            for (net.minecraft.core.BlockPos pos : net.minecraft.core.BlockPos.betweenClosed(blockPosition().offset(-24, -6, -24),
+                    blockPosition().offset(24, 6, 24))) {
+                net.minecraft.world.level.block.state.BlockState state = level.getBlockState(pos);
+                if (state.getBlock() instanceof com.steelstorm.arsenal.block.LockedChestBlock
+                        && state.getValue(com.steelstorm.arsenal.block.LockedChestBlock.LOCKED)) {
+                    com.steelstorm.arsenal.block.LockedChestBlock.unlock(level, pos.immutable(), state);
+                }
+            }
+        }
+    }
+
     @Override
     public void addAdditionalSaveData(CompoundTag tag) {
         super.addAdditionalSaveData(tag);

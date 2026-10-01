@@ -135,6 +135,11 @@ public class ModRecipeProvider extends RecipeProvider {
                 .define('G', Items.GOLD_INGOT).define('Q', Items.QUARTZ_BLOCK)
                 .unlockedBy(getHasName(Items.QUARTZ_BLOCK), has(Items.QUARTZ_BLOCK)).save(output);
 
+        ShapedRecipeBuilder.shaped(RecipeCategory.TOOLS, ModItems.EXPLORERS_COMPASS.get())
+                .pattern(" G ").pattern("GCG").pattern(" A ")
+                .define('G', Items.GOLD_INGOT).define('C', Items.COMPASS).define('A', Items.AMETHYST_SHARD)
+                .unlockedBy(getHasName(Items.COMPASS), has(Items.COMPASS)).save(output);
+
         // Runes: two amethyst shards, lapis, and the element.
         rune(output, Rune.EMBER, Items.BLAZE_POWDER);
         rune(output, Rune.FROST, Items.PACKED_ICE);

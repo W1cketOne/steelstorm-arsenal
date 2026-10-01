@@ -585,6 +585,22 @@ def armor_piece(kind):
     return img
 
 
+def explorers_compass():
+    cv = Canvas()
+    cv.fill(disc_test(16, 16, 12.5, sphere_shader(0.55)), R["gold"])
+    cv.fill(disc_test(16, 16, 9.8, lambda nx, ny, r: 0.25 + 0.15 * (1 - r)), R["obsidian"])
+    for k in range(8):
+        a = k * math.pi / 4
+        cv.dot(int(16 + math.cos(a) * 8.2), int(16 + math.sin(a) * 8.2), R["gold"].c[5])
+    cv.fill(poly_test([(16, 7), (18.2, 16), (16, 17.5), (13.8, 16)], lambda x, y: 0.75 - 0.05 * (x - 16)), R["ruby"])
+    cv.fill(poly_test([(16, 25), (18.2, 16), (16, 14.5), (13.8, 16)], lambda x, y: 0.7 - 0.05 * (x - 16)), R["silver"])
+    cv.fill(disc_test(16, 16, 1.6, sphere_shader(0.6)), R["amethyst"])
+    img = cv.render()
+    for x, y in ((9, 8), (23, 10), (24, 23)):
+        img.putpixel((x, y), hexc("#fff6c2"))
+    return img
+
+
 def main():
     for kind in WEAPONS:
         for tier in TIERS:
@@ -598,6 +614,7 @@ def main():
     for name in RUNE_GLYPHS:
         save(rune(name), "item", f"{name}_rune.png")
     save(vault_key(), "item", "vault_key.png")
+    save(explorers_compass(), "item", "explorers_compass.png")
     save(target_dummy(), "item", "target_dummy.png")
     for piece in ("helmet", "chestplate", "leggings", "boots"):
         save(armor_piece(piece), "item", f"stormsteel_{piece}.png")

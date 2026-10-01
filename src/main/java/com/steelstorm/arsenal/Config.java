@@ -39,6 +39,7 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue BLACKSMITH_CHANCE;
     public static final ModConfigSpec.DoubleValue WATCHTOWER_CHANCE;
     public static final ModConfigSpec.DoubleValue STORMSTEEL_MINE_CHANCE;
+    public static final ModConfigSpec.DoubleValue BOSS_LAIR_CHANCE;
     public static final ModConfigSpec.BooleanValue STARTER_OUTPOST;
 
     static {
@@ -94,6 +95,8 @@ public final class Config {
                 .defineInRange("watchtowerChance", 0.7, 0.0, 1.0);
         STORMSTEEL_MINE_CHANCE = BUILDER.comment("Chance (0-1) that a possible Stormsteel Mine location actually gets one")
                 .defineInRange("stormsteelMineChance", 0.7, 0.0, 1.0);
+        BOSS_LAIR_CHANCE = BUILDER.comment("Chance (0-1) that a possible boss lair (Colossus Forge, Moonlit Sanctum) location actually gets one")
+                .defineInRange("bossLairChance", 0.8, 0.0, 1.0);
         STARTER_OUTPOST = BUILDER.comment("Build the Warrior's Outpost next to spawn when a new world is created")
                 .define("starterOutpost", true);
         BUILDER.pop();

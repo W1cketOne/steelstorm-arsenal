@@ -95,6 +95,8 @@ public final class ModItems {
         }
     }
 
+    public static final DeferredItem<com.steelstorm.arsenal.item.ExplorersCompassItem> EXPLORERS_COMPASS = ITEMS.register("explorers_compass",
+            () -> new com.steelstorm.arsenal.item.ExplorersCompassItem(new Item.Properties().stacksTo(1)));
     public static final DeferredItem<HintItem> VAULT_KEY = ITEMS.register("vault_key",
             () -> new HintItem("tooltip.steelstorm.vault_key", new Item.Properties().stacksTo(16).rarity(Rarity.UNCOMMON)));
     public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_HELMET = armor("stormsteel_helmet", ArmorItem.Type.HELMET);

@@ -90,6 +90,7 @@ public class TelegraphedAttackGoal extends Goal {
             mob.setCharging(false);
             if (target != null && target.isAlive()) {
                 mob.swing(net.minecraft.world.InteractionHand.MAIN_HAND);
+                com.steelstorm.arsenal.network.PlayerAnimPayload.send(mob, com.steelstorm.arsenal.anim.CastPose.SLAM);
                 strike.accept(target);
             }
             recovery = Math.max(10, windup);

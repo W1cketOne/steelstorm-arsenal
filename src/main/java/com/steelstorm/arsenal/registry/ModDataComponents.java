@@ -27,6 +27,10 @@ public final class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Rune>> RUNE =
             COMPONENTS.registerComponentType("rune", b -> b.persistent(Rune.CODEC).networkSynchronized(Rune.STREAM_CODEC));
 
+    /** Which structure an Explorer's Compass searches for (an index into its list). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COMPASS_TARGET =
+            COMPONENTS.registerComponentType("compass_target", b -> b.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private ModDataComponents() {
     }
 }

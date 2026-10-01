@@ -8,7 +8,9 @@
     {"structure": "steelstorm:knights_crypt", "weight": 9},
     {"structure": "steelstorm:stormsteel_mine", "weight": 9},
     {"structure": "steelstorm:storm_shrine", "weight": 8},
-    {"structure": "steelstorm:ruined_colosseum", "weight": 5}
+    {"structure": "steelstorm:ruined_colosseum", "weight": 5},
+    {"structure": "steelstorm:colossus_forge", "weight": 4},
+    {"structure": "steelstorm:moonlit_sanctum", "weight": 4}
   ],
   "placement": {
     "type": "minecraft:random_spread",

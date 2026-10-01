@@ -389,6 +389,7 @@ public final class OutpostBuilder {
             items.add(new ItemStack(ModItems.weapon(WeaponType.DUAL_DAGGERS, WeaponTier.STONE).get()));
             items.add(new ItemStack(ModItems.THROWING_KNIFE.get(), 8));
             items.add(new ItemStack(Items.BREAD, 8));
+            items.add(new ItemStack(ModItems.EXPLORERS_COMPASS.get()));
             items.add(new ItemStack(Items.TORCH, 16));
             return items;
         }

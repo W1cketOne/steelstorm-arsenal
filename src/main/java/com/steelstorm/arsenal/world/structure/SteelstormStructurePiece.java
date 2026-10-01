@@ -81,6 +81,8 @@ public class SteelstormStructurePiece extends StructurePiece {
             case BLACKSMITH -> new BlacksmithBuilder(this, level, box, random).build();
             case WATCHTOWER -> new WatchtowerBuilder(this, level, box, random).build();
             case STORMSTEEL_MINE -> new MineBuilder(this, level, box, random).build();
+            case COLOSSUS_FORGE -> new com.steelstorm.arsenal.world.structure.build.ColossusForgeBuilder(this, level, box, random).build();
+            case MOONLIT_SANCTUM -> new com.steelstorm.arsenal.world.structure.build.MoonlitSanctumBuilder(this, level, box, random).build();
         }
     }
 

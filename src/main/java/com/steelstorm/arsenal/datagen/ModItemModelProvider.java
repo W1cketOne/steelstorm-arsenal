@@ -47,6 +47,7 @@ public class ModItemModelProvider extends ItemModelProvider {
             basicItem(ModItems.rune(rune).get());
         }
         basicItem(ModItems.VAULT_KEY.get());
+        basicItem(ModItems.EXPLORERS_COMPASS.get());
         basicItem(ModItems.STORMSTEEL_HELMET.get());
         basicItem(ModItems.STORMSTEEL_CHESTPLATE.get());
         basicItem(ModItems.STORMSTEEL_LEGGINGS.get());

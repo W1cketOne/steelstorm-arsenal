@@ -79,6 +79,7 @@ public class ModLanguageProvider extends LanguageProvider {
         config("blacksmithChance", "Blacksmith's Forge Chance");
         config("watchtowerChance", "Watchtower Chance");
         config("stormsteelMineChance", "Stormsteel Mine Chance");
+        config("bossLairChance", "Boss Lair Chance");
         config("starterOutpost", "Starter Outpost");
         add("death.attack.steelstorm.bleed", "%1$s bled out");
         add("death.attack.steelstorm.bleed.player", "%1$s bled out while fighting %2$s");
@@ -173,6 +174,22 @@ public class ModLanguageProvider extends LanguageProvider {
             add(rune.effectKey(), rune.effect());
         }
         add(ModItems.VAULT_KEY.get(), "Vault Key");
+        add(ModItems.EXPLORERS_COMPASS.get(), "Explorer's Compass");
+        add("tooltip.steelstorm.compass_target", "Searching for: %s");
+        add("tooltip.steelstorm.compass_use", "Use to search. Sneak + use to choose a structure.");
+        add("message.steelstorm.compass_target", "Now searching for: %s");
+        add("message.steelstorm.compass_none", "No %s found anywhere near");
+        add("message.steelstorm.compass_found", "%s: %s blocks %s (x %s, z %s)");
+        for (String[] d : new String[][]{{"north", "north"}, {"north_east", "north-east"}, {"east", "east"}, {"south_east", "south-east"},
+                {"south", "south"}, {"south_west", "south-west"}, {"west", "west"}, {"north_west", "north-west"}}) {
+            add("direction.steelstorm." + d[0], d[1]);
+        }
+        for (String[] st : new String[][]{{"knights_crypt", "Knight's Crypt"}, {"colossus_forge", "Colossus Forge (boss)"},
+                {"moonlit_sanctum", "Moonlit Sanctum (boss)"}, {"storm_shrine", "Storm Shrine"}, {"ruined_colosseum", "Ruined Colosseum"},
+                {"proving_grounds", "Proving Grounds"}, {"stormsteel_mine", "Stormsteel Mine"}, {"bandit_camp", "Bandit Camp"},
+                {"blacksmith", "Blacksmith's Forge"}, {"watchtower", "Watchtower"}, {"abandoned_armory", "Abandoned Armory"}}) {
+            add("structure.steelstorm." + st[0], st[1]);
+        }
         add(ModItems.STORMSTEEL_HELMET.get(), "Stormsteel Helmet");
         add(ModItems.STORMSTEEL_CHESTPLATE.get(), "Stormsteel Chestplate");
         add(ModItems.STORMSTEEL_LEGGINGS.get(), "Stormsteel Leggings");

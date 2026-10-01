@@ -29,7 +29,9 @@ public class SteelstormStructure extends Structure {
         STORM_SHRINE("storm_shrine", 19, 19, 10, 9),
         BLACKSMITH("blacksmith", 15, 13, 11, 7),
         WATCHTOWER("watchtower", 11, 11, 21, 8),
-        STORMSTEEL_MINE("stormsteel_mine", 27, 17, 10, 8);
+        STORMSTEEL_MINE("stormsteel_mine", 27, 17, 10, 8),
+        COLOSSUS_FORGE("colossus_forge", 27, 27, 14, 9),
+        MOONLIT_SANCTUM("moonlit_sanctum", 25, 25, 12, 8);
 
         public static final Codec<Kind> CODEC = StringRepresentable.fromEnum(Kind::values);
         private final String name;
@@ -64,6 +66,7 @@ public class SteelstormStructure extends Structure {
                 case BLACKSMITH -> Config.BLACKSMITH_CHANCE.get();
                 case WATCHTOWER -> Config.WATCHTOWER_CHANCE.get();
                 case STORMSTEEL_MINE -> Config.STORMSTEEL_MINE_CHANCE.get();
+                case COLOSSUS_FORGE, MOONLIT_SANCTUM -> Config.BOSS_LAIR_CHANCE.get();
             };
         }
     }

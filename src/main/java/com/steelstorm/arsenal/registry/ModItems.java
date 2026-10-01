@@ -124,6 +124,10 @@ public final class ModItems {
             () -> new DeferredSpawnEggItem(ModEntities.CRYPT_KNIGHT, 0x2A2E3A, 0x7FA7FF, new Item.Properties()));
     public static final DeferredItem<DeferredSpawnEggItem> STORM_HERALD_SPAWN_EGG = ITEMS.register("storm_herald_spawn_egg",
             () -> new DeferredSpawnEggItem(ModEntities.STORM_HERALD, 0x1B2A4A, 0x7FD8FF, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> FORGE_COLOSSUS_SPAWN_EGG = ITEMS.register("forge_colossus_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.FORGE_COLOSSUS, 0x3A3633, 0xFF7A1A, new Item.Properties()));
+    public static final DeferredItem<DeferredSpawnEggItem> MOONBLADE_REVENANT_SPAWN_EGG = ITEMS.register("moonblade_revenant_spawn_egg",
+            () -> new DeferredSpawnEggItem(ModEntities.MOONBLADE_REVENANT, 0x1D1A4D, 0x9CC4FF, new Item.Properties()));
 
     private static DeferredItem<StormsteelArmorItem> armor(String name, ArmorItem.Type type) {
         return ITEMS.register(name, () -> new StormsteelArmorItem(ModArmorMaterials.STORMSTEEL, type,

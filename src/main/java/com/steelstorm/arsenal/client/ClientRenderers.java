@@ -38,6 +38,12 @@ public final class ClientRenderers {
         event.registerEntityRenderer(ModEntities.IRON_REVENANT.get(), ctx -> new SteelstormMobRenderer<>(ctx, "iron_revenant", 1.05F, true));
         event.registerEntityRenderer(ModEntities.CRYPT_KNIGHT.get(), ctx -> new SteelstormMobRenderer<>(ctx, "crypt_knight", 1.15F, true));
         event.registerEntityRenderer(ModEntities.FALLEN_WARLORD.get(), ctx -> new SteelstormMobRenderer<>(ctx, "fallen_warlord", 1.4F, true));
+        event.registerEntityRenderer(ModEntities.FORGE_COLOSSUS.get(), ctx -> new com.steelstorm.arsenal.client.boss.BossRenderer<>(ctx,
+                new com.steelstorm.arsenal.client.boss.ForgeColossusModel(ctx.bakeLayer(com.steelstorm.arsenal.client.boss.BossModels.COLOSSUS)),
+                "forge_colossus", 1.6F));
+        event.registerEntityRenderer(ModEntities.MOONBLADE_REVENANT.get(), ctx -> new com.steelstorm.arsenal.client.boss.BossRenderer<>(ctx,
+                new com.steelstorm.arsenal.client.boss.MoonbladeModel(ctx.bakeLayer(com.steelstorm.arsenal.client.boss.BossModels.MOONBLADE)),
+                "moonblade_revenant", 0.6F));
         event.registerEntityRenderer(ModEntities.STORM_HERALD.get(), ctx -> new SteelstormMobRenderer<>(ctx, "storm_herald", 1.2F, true));
         event.registerBlockEntityRenderer(ModBlockEntities.WEAPON_RACK.get(), WeaponRackRenderer::new);
         event.registerBlockEntityRenderer(ModBlockEntities.ITEM_HOLDER.get(), ItemHolderRenderer::new);

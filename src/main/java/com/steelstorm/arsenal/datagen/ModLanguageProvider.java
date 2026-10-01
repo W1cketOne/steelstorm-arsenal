@@ -183,6 +183,10 @@ public class ModLanguageProvider extends LanguageProvider {
         add(ModEntities.BANDIT_CAPTAIN.get(), "Bandit Captain");
         add(ModEntities.CRYPT_KNIGHT.get(), "Crypt Knight");
         add(ModEntities.STORM_HERALD.get(), "The Storm Herald");
+        add(ModItems.FORGE_COLOSSUS_SPAWN_EGG.get(), "Forge Colossus Spawn Egg");
+        add(ModItems.MOONBLADE_REVENANT_SPAWN_EGG.get(), "Moonblade Revenant Spawn Egg");
+        add(ModEntities.FORGE_COLOSSUS.get(), "The Forge Colossus");
+        add(ModEntities.MOONBLADE_REVENANT.get(), "The Moonblade Revenant");
         add("tooltip.steelstorm.rune_use", "Place it on a Rune Forge, then use a weapon on the forge");
         add("tooltip.steelstorm.rune", "Rune: %s");
         add("tooltip.steelstorm.sharpened", "Sharpened: +2 damage for %s more hits");

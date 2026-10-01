@@ -108,6 +108,13 @@ public final class ModEntities {
     public static final Supplier<EntityType<StormHerald>> STORM_HERALD = ENTITIES.register("storm_herald",
             () -> EntityType.Builder.<StormHerald>of(StormHerald::new, MobCategory.MONSTER)
                     .sized(0.8F, 2.4F).fireImmune().clientTrackingRange(12).build("storm_herald"));
+    public static final Supplier<EntityType<com.steelstorm.arsenal.entity.boss.ForgeColossus>> FORGE_COLOSSUS = ENTITIES.register("forge_colossus",
+            () -> EntityType.Builder.<com.steelstorm.arsenal.entity.boss.ForgeColossus>of(com.steelstorm.arsenal.entity.boss.ForgeColossus::new,
+                    MobCategory.MONSTER).sized(2.2F, 3.3F).fireImmune().clientTrackingRange(14).build("forge_colossus"));
+    public static final Supplier<EntityType<com.steelstorm.arsenal.entity.boss.MoonbladeRevenant>> MOONBLADE_REVENANT = ENTITIES.register(
+            "moonblade_revenant", () -> EntityType.Builder.<com.steelstorm.arsenal.entity.boss.MoonbladeRevenant>of(
+                    com.steelstorm.arsenal.entity.boss.MoonbladeRevenant::new, MobCategory.MONSTER).sized(0.9F, 2.9F).clientTrackingRange(14)
+                    .build("moonblade_revenant"));
 
     @SubscribeEvent
     public static void registerAttributes(EntityAttributeCreationEvent event) {
@@ -119,6 +126,8 @@ public final class ModEntities {
         event.put(BANDIT_CAPTAIN.get(), BanditCaptain.createAttributes().build());
         event.put(CRYPT_KNIGHT.get(), CryptKnight.createAttributes().build());
         event.put(STORM_HERALD.get(), StormHerald.createAttributes().build());
+        event.put(FORGE_COLOSSUS.get(), com.steelstorm.arsenal.entity.boss.ForgeColossus.createAttributes().build());
+        event.put(MOONBLADE_REVENANT.get(), com.steelstorm.arsenal.entity.boss.MoonbladeRevenant.createAttributes().build());
     }
 
     @SubscribeEvent

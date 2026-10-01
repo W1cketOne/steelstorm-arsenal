@@ -135,13 +135,32 @@ public final class ModLootTableProvider {
                     .withPool(LootPool.lootPool().add(item(ModItems.STORMSTEEL_INGOT.get(), 1, 3, 6)))
                     .withPool(LootPool.lootPool().add(item(Items.DIAMOND, 1, 2, 4)))
                     .withPool(LootPool.lootPool().add(item(Items.NETHERITE_SCRAP, 1, 1, 2))));
+            LootPool.Builder colossusLegendary = LootPool.lootPool().setRolls(ConstantValue.exactly(1));
+            LootPool.Builder moonLegendary = LootPool.lootPool().setRolls(ConstantValue.exactly(1))
+                    .add(LootItem.lootTableItem(ModItems.legendary(LegendaryWeaponItem.Legendary.MOONVEIL).get()).setWeight(8));
+            for (LegendaryWeaponItem.Legendary l : LegendaryWeaponItem.Legendary.values()) {
+                colossusLegendary.add(LootItem.lootTableItem(ModItems.legendary(l).get()));
+                moonLegendary.add(LootItem.lootTableItem(ModItems.legendary(l).get()));
+            }
+            add(ModEntities.FORGE_COLOSSUS.get(), LootTable.lootTable()
+                    .withPool(colossusLegendary)
+                    .withPool(LootPool.lootPool().add(item(ModItems.STORMSTEEL_INGOT.get(), 1, 8, 14)))
+                    .withPool(LootPool.lootPool().add(item(Items.NETHERITE_SCRAP, 1, 2, 4)))
+                    .withPool(LootPool.lootPool().add(item(Items.DIAMOND, 1, 3, 6)))
+                    .withPool(runeChance(0.6F)));
+            add(ModEntities.MOONBLADE_REVENANT.get(), LootTable.lootTable()
+                    .withPool(moonLegendary)
+                    .withPool(LootPool.lootPool().add(item(Items.DIAMOND, 1, 3, 6)))
+                    .withPool(LootPool.lootPool().add(item(Items.AMETHYST_SHARD, 1, 6, 12)))
+                    .withPool(runeChance(0.8F))
+                    .withPool(runeChance(0.4F)));
         }
 
         @Override
         protected Stream<EntityType<?>> getKnownEntityTypes() {
             return Stream.of(ModEntities.BANDIT_DUELIST.get(), ModEntities.BANDIT_ARCHER.get(), ModEntities.IRON_REVENANT.get(),
                     ModEntities.FALLEN_WARLORD.get(), ModEntities.BANDIT_CAPTAIN.get(), ModEntities.CRYPT_KNIGHT.get(),
-                    ModEntities.STORM_HERALD.get());
+                    ModEntities.STORM_HERALD.get(), ModEntities.FORGE_COLOSSUS.get(), ModEntities.MOONBLADE_REVENANT.get());
         }
     }
 

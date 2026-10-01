@@ -136,7 +136,7 @@ public final class Shockwaves {
         Fx.burst(level, ModParticles.SMOKE.get(), 0x8A8378, 1.6F, at.add(0, 0.2, 0), (int) (radius * 4), radius * 0.4, 0.1, radius * 0.4, 0.03);
     }
 
-    static boolean canHit(LivingEntity source, LivingEntity e) {
+    public static boolean canHit(LivingEntity source, LivingEntity e) {
         if (source instanceof Player) {
             return CombatUtil.isEnemyOf(source, e);
         }

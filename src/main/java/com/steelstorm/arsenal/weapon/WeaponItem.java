@@ -6,7 +6,13 @@ import javax.annotation.Nullable;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlotGroup;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
@@ -50,6 +56,31 @@ public class WeaponItem extends SwordItem {
                     EquipmentSlotGroup.MAINHAND);
         }
         return builder.build();
+    }
+
+    /** Hold Use to guard; the first few ticks of the guard are the perfect parry window. */
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (hand != InteractionHand.MAIN_HAND || !canGuard()) {
+            return InteractionResultHolder.pass(stack);
+        }
+        player.startUsingItem(hand);
+        return InteractionResultHolder.consume(stack);
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack, LivingEntity entity) {
+        return 72000;
+    }
+
+    public boolean canGuard() {
+        return true;
     }
 
     public WeaponType type() {

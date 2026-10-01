@@ -1,0 +1,84 @@
+package com.steelstorm.arsenal;
+
+import net.neoforged.neoforge.common.ModConfigSpec;
+
+/**
+ * Common (server-authoritative) settings live in {@link #SPEC}; purely visual settings live in
+ * {@link #CLIENT_SPEC} so each player can change them without affecting the server.
+ */
+public final class Config {
+    private static final ModConfigSpec.Builder BUILDER = new ModConfigSpec.Builder();
+
+    // Stamina
+    public static final ModConfigSpec.DoubleValue MAX_STAMINA;
+    public static final ModConfigSpec.DoubleValue STAMINA_REGEN_PER_TICK;
+    public static final ModConfigSpec.IntValue STAMINA_REGEN_DELAY;
+    public static final ModConfigSpec.DoubleValue DODGE_COST;
+    public static final ModConfigSpec.DoubleValue HEAVY_ATTACK_COST;
+    public static final ModConfigSpec.DoubleValue GUARD_COST_PER_DAMAGE;
+    public static final ModConfigSpec.DoubleValue SPECIAL_COST_MULTIPLIER;
+
+    // Combat
+    public static final ModConfigSpec.DoubleValue WEAPON_DAMAGE_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue HEAVY_ATTACK_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue SPECIAL_DAMAGE_MULTIPLIER;
+    public static final ModConfigSpec.DoubleValue GUARD_DAMAGE_REDUCTION;
+    public static final ModConfigSpec.IntValue PERFECT_PARRY_TICKS;
+    public static final ModConfigSpec.IntValue DODGE_COOLDOWN_TICKS;
+    public static final ModConfigSpec.IntValue DODGE_INVULNERABILITY_TICKS;
+    public static final ModConfigSpec.DoubleValue SPECIAL_COOLDOWN_MULTIPLIER;
+
+    static {
+        BUILDER.push("stamina");
+        MAX_STAMINA = BUILDER.comment("Maximum stamina").defineInRange("maxStamina", 100.0, 10.0, 1000.0);
+        STAMINA_REGEN_PER_TICK = BUILDER.comment("Stamina regenerated per tick once regeneration starts (20 ticks = 1 second)")
+                .defineInRange("regenPerTick", 1.0, 0.0, 50.0);
+        STAMINA_REGEN_DELAY = BUILDER.comment("Ticks without spending stamina before it starts regenerating")
+                .defineInRange("regenDelayTicks", 20, 0, 200);
+        DODGE_COST = BUILDER.comment("Stamina cost of a dodge roll").defineInRange("dodgeCost", 20.0, 0.0, 1000.0);
+        HEAVY_ATTACK_COST = BUILDER.comment("Stamina cost of a heavy (sneak) attack").defineInRange("heavyAttackCost", 15.0, 0.0, 1000.0);
+        GUARD_COST_PER_DAMAGE = BUILDER.comment("Stamina spent per point of damage absorbed while guarding")
+                .defineInRange("guardCostPerDamage", 2.0, 0.0, 100.0);
+        SPECIAL_COST_MULTIPLIER = BUILDER.comment("Multiplier on every special ability's stamina cost")
+                .defineInRange("specialCostMultiplier", 1.0, 0.0, 10.0);
+        BUILDER.pop();
+
+        BUILDER.push("combat");
+        WEAPON_DAMAGE_MULTIPLIER = BUILDER.comment("Multiplier on all melee damage dealt with Steelstorm weapons")
+                .defineInRange("weaponDamageMultiplier", 1.0, 0.0, 10.0);
+        HEAVY_ATTACK_MULTIPLIER = BUILDER.comment("Damage multiplier of a heavy attack").defineInRange("heavyAttackMultiplier", 1.5, 1.0, 10.0);
+        SPECIAL_DAMAGE_MULTIPLIER = BUILDER.comment("Multiplier on damage dealt by special abilities")
+                .defineInRange("specialDamageMultiplier", 1.0, 0.0, 10.0);
+        GUARD_DAMAGE_REDUCTION = BUILDER.comment("Fraction of damage blocked while guarding outside the perfect parry window")
+                .defineInRange("guardDamageReduction", 0.5, 0.0, 1.0);
+        PERFECT_PARRY_TICKS = BUILDER.comment("How many ticks after raising your guard count as a perfect parry")
+                .defineInRange("perfectParryTicks", 5, 0, 40);
+        DODGE_COOLDOWN_TICKS = BUILDER.comment("Cooldown between dodge rolls, in ticks").defineInRange("dodgeCooldownTicks", 20, 0, 200);
+        DODGE_INVULNERABILITY_TICKS = BUILDER.comment("Invulnerability window at the start of a dodge roll, in ticks")
+                .defineInRange("dodgeInvulnerabilityTicks", 8, 0, 40);
+        SPECIAL_COOLDOWN_MULTIPLIER = BUILDER.comment("Multiplier on every special ability's cooldown")
+                .defineInRange("specialCooldownMultiplier", 1.0, 0.0, 10.0);
+        BUILDER.pop();
+    }
+
+    public static final ModConfigSpec SPEC = BUILDER.build();
+
+    private static final ModConfigSpec.Builder CLIENT_BUILDER = new ModConfigSpec.Builder();
+    public static final ModConfigSpec.BooleanValue SCREEN_SHAKE;
+    public static final ModConfigSpec.DoubleValue SCREEN_SHAKE_STRENGTH;
+    public static final ModConfigSpec.BooleanValue SHOW_COMBO_COUNTER;
+
+    static {
+        CLIENT_BUILDER.push("feedback");
+        SCREEN_SHAKE = CLIENT_BUILDER.comment("Shake the camera slightly on heavy hits, parries and specials")
+                .define("screenShake", true);
+        SCREEN_SHAKE_STRENGTH = CLIENT_BUILDER.comment("Screen shake strength").defineInRange("screenShakeStrength", 1.0, 0.0, 3.0);
+        SHOW_COMBO_COUNTER = CLIENT_BUILDER.comment("Show the combo counter next to the crosshair").define("showComboCounter", true);
+        CLIENT_BUILDER.pop();
+    }
+
+    public static final ModConfigSpec CLIENT_SPEC = CLIENT_BUILDER.build();
+
+    private Config() {
+    }
+}

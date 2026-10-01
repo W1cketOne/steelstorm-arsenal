@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "steelstorm:item/iron_dual_daggers"
+  }
+}

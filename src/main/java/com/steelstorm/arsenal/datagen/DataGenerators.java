@@ -10,7 +10,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.common.data.ExistingFileHelper;
 import net.neoforged.neoforge.data.event.GatherDataEvent;
 
-@EventBusSubscriber(modid = SteelstormArsenal.MODID, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = SteelstormArsenal.MODID)
 public final class DataGenerators {
     @SubscribeEvent
     public static void gatherData(GatherDataEvent event) {

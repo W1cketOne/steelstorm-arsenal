@@ -8,7 +8,7 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.event.level.LevelEvent;
 import net.neoforged.neoforge.event.server.ServerStartedEvent;
 
-@EventBusSubscriber(modid = SteelstormArsenal.MODID, bus = EventBusSubscriber.Bus.GAME)
+@EventBusSubscriber(modid = SteelstormArsenal.MODID)
 public final class OutpostEvents {
     /** Only fires while a brand-new world chooses its spawn point, never for existing worlds. */
     @SubscribeEvent

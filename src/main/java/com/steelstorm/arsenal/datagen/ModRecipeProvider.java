@@ -1,5 +1,6 @@
 package com.steelstorm.arsenal.datagen;
 
+import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.registry.ModItems;
 import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
@@ -10,6 +11,7 @@ import net.minecraft.data.recipes.RecipeCategory;
 import net.minecraft.data.recipes.RecipeOutput;
 import net.minecraft.data.recipes.RecipeProvider;
 import net.minecraft.data.recipes.ShapedRecipeBuilder;
+import net.minecraft.data.recipes.SmithingTransformRecipeBuilder;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Items;
@@ -38,7 +40,12 @@ public class ModRecipeProvider extends RecipeProvider {
                 Item result = ModItems.weapon(type, tier).get();
                 if (tier == WeaponTier.NETHERITE) {
                     // Netherite gear is upgraded from diamond at a smithing table, like vanilla.
-                    netheriteSmithing(output, ModItems.weapon(type, WeaponTier.DIAMOND).get(), RecipeCategory.COMBAT, result);
+                    SmithingTransformRecipeBuilder.smithing(
+                                    Ingredient.of(Items.NETHERITE_UPGRADE_SMITHING_TEMPLATE),
+                                    Ingredient.of(ModItems.weapon(type, WeaponTier.DIAMOND).get()),
+                                    Ingredient.of(Items.NETHERITE_INGOT), RecipeCategory.COMBAT, result)
+                            .unlocks("has_netherite_ingot", has(Items.NETHERITE_INGOT))
+                            .save(output, SteelstormArsenal.id(type.itemId(tier) + "_smithing"));
                     continue;
                 }
                 ShapedRecipeBuilder builder = ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result);

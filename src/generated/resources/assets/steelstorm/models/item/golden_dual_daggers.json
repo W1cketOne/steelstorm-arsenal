@@ -1,17 +1,6 @@
 {
   "base": {
-    "parent": "steelstorm:item/3d/dual_daggers",
-    "textures": {
-      "blade": "steelstorm:item/3d/blade_gold",
-      "collar": "steelstorm:item/3d/trim_gold",
-      "edge": "steelstorm:item/3d/edge_gold",
-      "fuller": "steelstorm:item/3d/fuller_gold",
-      "gem": "steelstorm:item/3d/gem_emerald",
-      "grip": "steelstorm:item/3d/grip_red_wrap",
-      "metal": "steelstorm:item/3d/metal_gold",
-      "shaft": "steelstorm:item/3d/shaft_wood",
-      "trim": "steelstorm:item/3d/trim_gold"
-    }
+    "parent": "steelstorm:item/3d/golden_dual_daggers"
   },
   "loader": "neoforge:separate_transforms",
   "perspectives": {

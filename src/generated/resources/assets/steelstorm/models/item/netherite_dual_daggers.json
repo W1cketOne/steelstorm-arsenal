@@ -1,17 +1,6 @@
 {
   "base": {
-    "parent": "steelstorm:item/3d/dual_daggers",
-    "textures": {
-      "blade": "steelstorm:item/3d/blade_netherite",
-      "collar": "steelstorm:item/3d/trim_gold",
-      "edge": "steelstorm:item/3d/edge_netherite",
-      "fuller": "steelstorm:item/3d/fuller_netherite",
-      "gem": "steelstorm:item/3d/gem_amethyst",
-      "grip": "steelstorm:item/3d/grip_dark_leather",
-      "metal": "steelstorm:item/3d/metal_netherite",
-      "shaft": "steelstorm:item/3d/shaft_black_iron",
-      "trim": "steelstorm:item/3d/trim_bronze"
-    }
+    "parent": "steelstorm:item/3d/netherite_dual_daggers"
   },
   "loader": "neoforge:separate_transforms",
   "perspectives": {

@@ -66,6 +66,10 @@ R = {
     "dark_leather": Ramp("#0a0809", "#1a1517", "#292225", "#393034", "#4a3f44", "#5c5056", "#73666c"),
     "red_wrap": Ramp("#1f060a", "#470c13", "#73131e", "#9e1d2a", "#c4303d", "#de5660", "#f0898f"),
     "blue_wrap": Ramp("#060a1f", "#0d1747", "#152573", "#1f369e", "#3050c4", "#5677de", "#8aa6f0"),
+    "violet_wrap": Ramp("#140620", "#2e0d4a", "#4a1675", "#6a22a3", "#8c3ccc", "#b06ee6", "#d6a8f7"),
+    "ember_wrap": Ramp("#1a0703", "#3d1206", "#66200b", "#922f10", "#c24818", "#e8722d", "#ffab66"),
+    "green_wrap": Ramp("#04170b", "#0a361a", "#12592b", "#1c7e3d", "#2ba454", "#55c87a", "#97e8ad"),
+    "teal_wrap": Ramp("#031a1c", "#073c40", "#0c6064", "#11878a", "#1cafae", "#4fd4cf", "#9cf2ec"),
     "wood": Ramp("#1a0f07", "#3a2311", "#58381b", "#784e28", "#966735", "#b48045", "#cd9d5f"),
     "birch": Ramp("#2a241c", "#5c5446", "#8a8170", "#b3aa96", "#d2cab6", "#e8e2d2", "#fbf8f0"),
     "bronze": Ramp("#211208", "#4a2b12", "#77461d", "#a3652a", "#c6873d", "#deaa5a", "#f4d08a"),
@@ -94,12 +98,16 @@ R = {
 
 TIER_BLADE = {"stone": "stone", "iron": "iron", "golden": "gold", "diamond": "diamond",
               "netherite": "netherite", "stormsteel": "stormsteel"}
-TIER_TRIM = {"stone": "wood", "iron": "bronze", "golden": "gold", "diamond": "brass",
-             "netherite": "bronze", "stormsteel": "brass"}
-TIER_GEM = {"stone": None, "iron": "ruby", "golden": "emerald", "diamond": "aqua",
-            "netherite": "amethyst", "stormsteel": "sapphire"}
-TIER_GRIP = {"stone": "leather", "iron": "leather", "golden": "red_wrap", "diamond": "blue_wrap",
-             "netherite": "dark_leather", "stormsteel": "dark_leather"}
+TIER_TRIM = {"stone": "wood", "iron": "bronze", "golden": "gold", "diamond": "silver",
+             "netherite": "black_iron", "stormsteel": "gold"}
+TIER_GEM = {"stone": "emerald", "iron": "ruby", "golden": "sapphire", "diamond": "amethyst",
+            "netherite": "topaz", "stormsteel": "aqua"}
+TIER_GRIP = {"stone": "green_wrap", "iron": "red_wrap", "golden": "blue_wrap", "diamond": "violet_wrap",
+             "netherite": "ember_wrap", "stormsteel": "teal_wrap"}
+# The glowing inlay and cloth tassel colours each tier's 3D model carries.
+TIER_GLOW = {"stone": None, "iron": None, "golden": "royal", "diamond": "frost", "netherite": "ember", "stormsteel": "lightning"}
+TIER_CLOTH = {"stone": "straw", "iron": "red_wrap", "golden": "blue_wrap", "diamond": "violet_wrap",
+              "netherite": "ember_wrap", "stormsteel": "teal_wrap"}
 TIERS = ["stone", "iron", "golden", "diamond", "netherite", "stormsteel"]
 
 

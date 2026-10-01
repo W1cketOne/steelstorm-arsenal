@@ -277,12 +277,27 @@ def tier_icon(kind, tier):
     if kind in ("spear", "warhammer", "scythe", "battleaxe"):
         kwargs["shaft"] = "black_iron" if tier == "netherite" else ("birch" if tier == "stormsteel" else "wood")
     cv = WEAPONS[kind](blade, trim, grip, gem_r, **kwargs)
+    inlay = INLAY_COLOR.get(tier)
+    if inlay and kind in INLAY_PATH:
+        glow_line(cv, INLAY_PATH[kind], hexc(inlay))
     if tier == "stone":
         noise_dither(cv, ["stone"], 0.18, hash(kind) & 0xFFFF)
     img = cv.render()
     if tier == "stormsteel":
         sparks(img, kind)
     return img
+
+
+# A bright inlay down the middle of the blade (or head) for the richer tiers.
+INLAY_COLOR = {"golden": "#fff2a8", "diamond": "#e6fbff", "netherite": "#ff8a2a", "stormsteel": "#a6f6ff"}
+INLAY_PATH = {
+    "longsword": [P((4.2, 27.8), 11.0), P((4.2, 27.8), 29.0)],
+    "greatsword": [P((3.6, 28.4), 12.5), P((3.6, 28.4), 31.0)],
+    "katana": [(13.5, 19.5), (20.5, 11.5), (26.5, 5.0)],
+    "spear": [P((2.6, 29.4), 29.5), P((2.6, 29.4), 37.0)],
+    "scythe": [(15.6 + 12.3 * 1.05 * math.cos(math.radians(a)), 18.6 + 12.3 * 0.98 * math.sin(math.radians(a)))
+               for a in range(-68, -160, -8)],
+}
 
 
 def sparks(img, kind):

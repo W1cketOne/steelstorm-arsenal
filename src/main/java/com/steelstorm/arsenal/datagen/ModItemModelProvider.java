@@ -5,9 +5,6 @@ import com.steelstorm.arsenal.registry.ModItems;
 import com.steelstorm.arsenal.weapon.Rune;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
 import com.steelstorm.arsenal.weapon.WeaponItem;
-import com.steelstorm.arsenal.weapon.WeaponTier;
-import com.steelstorm.arsenal.weapon.WeaponType;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -34,7 +31,8 @@ public class ModItemModelProvider extends ItemModelProvider {
     protected void registerModels() {
         for (DeferredItem<WeaponItem> weapon : ModItems.tieredWeapons()) {
             WeaponItem item = weapon.get();
-            weapon3d(item, item.type().id(), tierTextures(item.type(), item.weaponTier()));
+            // Every tier has its own 3D model (tools/gen_tier_models.py) with its textures built in.
+            weapon3d(item, BuiltInRegistries.ITEM.getKey(item).getPath(), Map.of());
         }
         for (LegendaryWeaponItem.Legendary legendary : LegendaryWeaponItem.Legendary.values()) {
             weapon3d(ModItems.legendary(legendary).get(), legendary.id(), Map.of());
@@ -76,47 +74,4 @@ public class ModItemModelProvider extends ItemModelProvider {
         return nested().parent(getExistingFile(mcLoc("item/generated"))).texture("layer0", modLoc("item/" + name));
     }
 
-    /** Mirrors tier_textures() in tools/gen_models.py. */
-    static Map<String, String> tierTextures(WeaponType type, WeaponTier tier) {
-        String blade = switch (tier) {
-            case STONE -> "stone";
-            case IRON -> "iron";
-            case GOLD -> "gold";
-            case DIAMOND -> "diamond";
-            case NETHERITE -> "netherite";
-            case STORMSTEEL -> "stormsteel";
-        };
-        String trim = switch (tier) {
-            case STONE -> "wood";
-            case IRON, NETHERITE -> "bronze";
-            case GOLD -> "gold";
-            case DIAMOND, STORMSTEEL -> "brass";
-        };
-        String gem = switch (tier) {
-            case STONE -> "topaz";
-            case IRON -> "ruby";
-            case GOLD -> "emerald";
-            case DIAMOND -> "aqua";
-            case NETHERITE -> "amethyst";
-            case STORMSTEEL -> "sapphire";
-        };
-        String grip = switch (tier) {
-            case STONE, IRON -> "leather";
-            case GOLD -> "red_wrap";
-            case DIAMOND -> "blue_wrap";
-            case NETHERITE, STORMSTEEL -> "dark_leather";
-        };
-        String shaft = tier == WeaponTier.NETHERITE ? "black_iron" : tier == WeaponTier.STORMSTEEL ? "birch" : "wood";
-        Map<String, String> t = new LinkedHashMap<>();
-        t.put("blade", "item/3d/blade_" + blade);
-        t.put("edge", "item/3d/edge_" + blade);
-        t.put("fuller", "item/3d/fuller_" + blade);
-        t.put("metal", "item/3d/metal_" + blade);
-        t.put("trim", "item/3d/trim_" + trim);
-        t.put("gem", "item/3d/gem_" + gem);
-        t.put("grip", type == WeaponType.KATANA ? "item/3d/grip_ito" : "item/3d/grip_" + grip);
-        t.put("shaft", "item/3d/shaft_" + shaft);
-        t.put("collar", "item/3d/trim_gold");
-        return t;
-    }
 }

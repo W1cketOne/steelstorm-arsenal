@@ -77,12 +77,20 @@ public final class Fx {
     public static void impact(ServerLevel level, Vec3 at, int color, float scale) {
         level.sendParticles(ModParticles.IMPACT.get().with(color, scale), at.x, at.y, at.z, 1, 0, 0, 0, 0);
         if (scale >= 1.8F) {
+            cracks(level, at, color, scale * 1.4F);
             AuraFxEntity.spawn(level, AuraFxEntity.Style.SUNBURST, at, color, WHITE, scale * 1.6F, 10, 12, 0, null);
             sparkles(level, at, color, 10 + (int) (scale * 4), scale * 0.5);
         }
     }
 
     // ------------------------------------------------------------------ big glowing effects
+
+    /** Glowing cracks splitting the ground under a heavy impact; they cool and fade over a few seconds. */
+    public static void cracks(ServerLevel level, Vec3 at, int color, float radius) {
+        net.minecraft.core.BlockPos g = com.steelstorm.arsenal.ability.Shockwaves.ground(level, at.x, at.y + 0.5, at.z);
+        Vec3 floor = g != null ? new Vec3(at.x, g.getY() + 1, at.z) : at;
+        AuraFxEntity.spawn(level, AuraFxEntity.Style.CRACKS, floor, color, color, radius, 80, 0, 0, null);
+    }
 
     /** An expanding ground shockwave halo. */
     public static void halo(ServerLevel level, Vec3 at, int color, int color2, float radius, int ticks) {

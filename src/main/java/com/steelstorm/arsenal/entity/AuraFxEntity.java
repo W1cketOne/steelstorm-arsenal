@@ -20,7 +20,7 @@ import net.neoforged.neoforge.entity.IEntityWithComplexSpawn;
  * then animated by the client, so it costs no network traffic while it plays.
  */
 public class AuraFxEntity extends Entity implements IEntityWithComplexSpawn {
-    public enum Style { HALO, GYRO, ORBIT, PILLAR, SUNBURST, CIRCLE }
+    public enum Style { HALO, GYRO, ORBIT, PILLAR, SUNBURST, CIRCLE, CRACKS }
 
     private Style style = Style.HALO;
     private int color = 0xFFFFFF;

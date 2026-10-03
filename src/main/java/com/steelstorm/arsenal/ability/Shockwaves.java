@@ -73,6 +73,8 @@ public final class Shockwaves {
         BlockPos g = ground(level, center.x, center.y, center.z);
         Vec3 base = g != null ? new Vec3(center.x, g.getY() + 1, center.z) : center;
         GroundWaveEntity.ring(level, base, radius, speed, 0.7F + Math.min(0.6F, radius * 0.05F), color);
+        Fx.cracks(level, base, color, Math.min(6.0F, 1.5F + radius * 0.45F));
+        debris(level, base, Math.min(5.0F, radius * 0.5F));
         Fx.ring(level, base, color, radius);
         Set<Integer> hit = new HashSet<>();
         int steps = Math.max(1, (int) Math.ceil(radius / speed));
@@ -123,6 +125,25 @@ public final class Shockwaves {
                 }
             });
         }
+    }
+
+    /** Chunks of the ground flung into the air, spinning (block particles fired upward). */
+    public static void debris(ServerLevel level, Vec3 at, float power) {
+        BlockPos g = ground(level, at.x, at.y + 0.5, at.z);
+        if (g == null) {
+            return;
+        }
+        BlockState state = level.getBlockState(g);
+        if (state.isAir()) {
+            return;
+        }
+        for (int i = 0; i < 18 + (int) (power * 6); i++) {
+            double a = level.random.nextDouble() * Math.PI * 2;
+            double r = level.random.nextDouble() * power * 0.6;
+            level.sendParticles(new BlockParticleOption(ParticleTypes.BLOCK, state), at.x + Math.cos(a) * r, g.getY() + 1.1,
+                    at.z + Math.sin(a) * r, 0, Math.cos(a) * 0.25, 0.5 + level.random.nextDouble() * 0.6, Math.sin(a) * 0.25, 1.0);
+        }
+        level.sendParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, at.x, g.getY() + 1.2, at.z, 3, power * 0.3, 0.1, power * 0.3, 0.01);
     }
 
     /** A burst of debris and dust at a point, without damage. */

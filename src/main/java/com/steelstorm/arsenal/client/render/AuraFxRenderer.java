@@ -20,6 +20,8 @@ public class AuraFxRenderer extends EntityRenderer<AuraFxEntity> {
     private static final ResourceLocation ORB = SteelstormArsenal.id("textures/entity/orb.png");
     private static final ResourceLocation SPARKLE = SteelstormArsenal.id("textures/entity/sparkle.png");
     private static final ResourceLocation RAY = SteelstormArsenal.id("textures/entity/ray.png");
+    private static final ResourceLocation CRACKS = SteelstormArsenal.id("textures/entity/cracks.png");
+    private static final ResourceLocation CRACKS_GLOW = SteelstormArsenal.id("textures/entity/cracks_glow.png");
 
     public AuraFxRenderer(EntityRendererProvider.Context context) {
         super(context);
@@ -48,6 +50,7 @@ public class AuraFxRenderer extends EntityRenderer<AuraFxEntity> {
             case PILLAR -> pillar(fx, p, time, pose, buffers);
             case SUNBURST -> sunburst(fx, p, time, pose, buffers);
             case CIRCLE -> circle(fx, p, time, pose, buffers);
+            case CRACKS -> cracks(fx, p, pose, buffers, light);
         }
         pose.popPose();
     }
@@ -182,6 +185,22 @@ public class AuraFxRenderer extends EntityRenderer<AuraFxEntity> {
         pose.mulPose(Axis.YP.rotationDegrees(time * 2));
         pose.mulPose(Axis.XP.rotationDegrees(90));
         FxRender.halo(star, pose.last(), r * 0.45F, fx.color2(), fade);
+    }
+
+    /** Scorched cracks split the ground, glowing hot at first, then cool and fade away. */
+    private void cracks(AuraFxEntity fx, float p, PoseStack pose, MultiBufferSource buffers, int light) {
+        float open = AuraFxEntity.easeOut(Math.min(1, p * 8));
+        float fade = p < 0.7F ? 1 : (1 - p) / 0.3F;
+        float r = fx.radius() * (0.6F + 0.4F * open);
+        pose.translate(0, 0.03, 0);
+        pose.mulPose(Axis.YP.rotationDegrees(fx.getId() * 47 % 360));
+        pose.mulPose(Axis.XP.rotationDegrees(90));
+        FxRender.halo(buffers.getBuffer(RenderType.entityTranslucent(CRACKS)), pose.last(), r, 0xFFFFFF, fade);
+        float hot = Math.max(0, 1 - p * 2.2F);
+        if (hot > 0) {
+            pose.translate(0, 0, -0.01);
+            FxRender.halo(buffers.getBuffer(RenderType.eyes(CRACKS_GLOW)), pose.last(), r, fx.color(), hot);
+        }
     }
 
     @Override

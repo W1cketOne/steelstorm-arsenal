@@ -90,10 +90,13 @@ public final class AnimationEvents {
         pose.pushPose();
         drawArm(mc, player, pose, event, side, 0);
         pose.popPose();
-        mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, stack,
-                side > 0 ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
-                        : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
-                side < 0, pose, event.getMultiBufferSource(), event.getPackedLight());
+        net.minecraft.world.item.ItemDisplayContext ctx = side > 0 ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
+        mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, stack, ctx, side < 0, pose,
+                event.getMultiBufferSource(), event.getPackedLight());
+        float progress = SwingClock.progress(player, player.getAttackAnim(event.getPartialTick()), weapon.type(), event.getPartialTick());
+        BladeTrail.renderFirstPerson(pose, event.getMultiBufferSource(), player, stack, weapon.type(), ctx, side < 0,
+                progress > 0.1F && progress < 0.7F, com.steelstorm.arsenal.weapon.WeaponLooks.trailColor(stack));
         pose.popPose();
     }
 

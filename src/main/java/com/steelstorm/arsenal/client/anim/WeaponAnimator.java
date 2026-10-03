@@ -375,6 +375,13 @@ public final class WeaponAnimator {
                 return;
             }
             (SwingClock.finisher(player) ? FINISHER_FP : SWING_FP.get(type)[SwingClock.cut(player)]).sample(progress, v);
+            // Keep swings close to the hand: a short, firm cut instead of the weapon sailing across the screen.
+            for (int i = 0; i < 3; i++) {
+                v[i] *= 0.3F;
+            }
+            for (int i = 3; i < 6; i++) {
+                v[i] *= 0.55F;
+            }
         }
         pose.translate(side * v[0], v[1], v[2]);
         pose.mulPose(Axis.XP.rotationDegrees(v[3]));

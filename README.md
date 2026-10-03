@@ -191,7 +191,13 @@ There are six runes:
 
 - **Finding it:** Stormsteel ore generates in mountain and windswept biomes, from deep underground up to the peaks. Smelt raw Stormsteel into ingots.
 - **Weapons:** the tier between diamond and netherite. Stormsteel weapons sometimes zap a second nearby enemy.
-- **Armour:** crafted like iron armour. The full set gives the **Stormcaller** bonus:
+- **Armour:** crafted like iron armour. Every piece has its own power:
+  - **Helmet, Storm Sight:** hostile mobs within 24 blocks glow through walls (only you see the outline).
+  - **Chestplate, Static Barrier:** every 20 seconds the next hit is fully absorbed and nearby attackers are zapped and blasted away.
+  - **Leggings, Lightning Sprint:** sprint for 1.5 seconds to surge to Speed II, leaving a spark trail.
+  - **Boots, Thunder Step:** press jump in mid-air to **double jump**. Landing from 4+ blocks sends out a damaging shockwave instead of hurting you.
+
+  The full set also gives the **Stormcaller** bonus:
   - 10% faster movement
   - immunity to lightning
   - enemies that hit you in melee may get zapped
@@ -356,6 +362,7 @@ Settings in `steelstorm-client.toml`:
 - [ ] A whetstone gives a weapon +2 damage for 20 hits, shown in its tooltip.
 - [ ] Craft a rune and burn it into a weapon at a Rune Forge. Its on-hit effect works.
 - [ ] Find Stormsteel ore in mountains. Craft the armour and check the Stormcaller set bonus.
+- [ ] Stormsteel boots: double jump in mid-air; jump off a ledge and land to see the shockwave. Helmet: mobs glow through walls.
 
 **Structures and bosses**
 - [ ] `/locate structure steelstorm:<name>` for each of the nine structures, then visit them.

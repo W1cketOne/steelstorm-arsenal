@@ -27,6 +27,9 @@ public class StormsteelArmorItem extends ArmorItem {
 
     @Override
     public void appendHoverText(ItemStack stack, TooltipContext context, List<Component> tooltip, TooltipFlag flag) {
+        String piece = getType().getName();
+        tooltip.add(Component.translatable("tooltip.steelstorm.armor." + piece).withStyle(ChatFormatting.AQUA));
+        tooltip.add(Component.translatable("tooltip.steelstorm.armor." + piece + ".desc").withStyle(ChatFormatting.DARK_AQUA));
         tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel_set").withStyle(ChatFormatting.BLUE));
         tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel_set.desc").withStyle(ChatFormatting.DARK_AQUA));
     }

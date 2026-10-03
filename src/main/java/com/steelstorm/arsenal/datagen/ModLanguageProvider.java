@@ -208,6 +208,14 @@ public class ModLanguageProvider extends LanguageProvider {
         add("tooltip.steelstorm.rune", "Rune: %s");
         add("tooltip.steelstorm.sharpened", "Sharpened: +2 damage for %s more hits");
         add("tooltip.steelstorm.vault_key", "Opens a Bandit Vault. Carried by Bandit Captains.");
+        add("tooltip.steelstorm.armor.helmet", "Storm Sight");
+        add("tooltip.steelstorm.armor.helmet.desc", " Hostile mobs within 24 blocks glow through walls");
+        add("tooltip.steelstorm.armor.chestplate", "Static Barrier");
+        add("tooltip.steelstorm.armor.chestplate.desc", " Every 20 s, absorbs a hit and blasts attackers away");
+        add("tooltip.steelstorm.armor.leggings", "Lightning Sprint");
+        add("tooltip.steelstorm.armor.leggings.desc", " Sprint for 1.5 s to surge to Speed II");
+        add("tooltip.steelstorm.armor.boots", "Thunder Step");
+        add("tooltip.steelstorm.armor.boots.desc", " Jump again in mid-air; hard landings send out a shockwave");
         add("tooltip.steelstorm.stormsteel_set", "Stormcaller (full set):");
         add("tooltip.steelstorm.stormsteel_set.desc", " 10% faster, immune to lightning, melee attackers may be zapped");
         add("message.steelstorm.sharpened", "Sharpened! +2 damage for the next %s hits");

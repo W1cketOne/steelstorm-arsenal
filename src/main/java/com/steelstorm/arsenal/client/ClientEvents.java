@@ -78,6 +78,7 @@ public final class ClientEvents {
                 || ClientCombatState.ultimateCharge > com.steelstorm.arsenal.ability.AbilityManager.FULL_CHARGE + 60)) {
             ClientCombatState.ultimateCharge = -1;
             PacketDistributor.sendToServer(new AbilityPayload(3, AbilityPayload.CHARGE_RELEASE));
+            UltimateCinematic.start();
             if (chargeSound != null) {
                 mc.getSoundManager().stop(chargeSound);
                 chargeSound = null;

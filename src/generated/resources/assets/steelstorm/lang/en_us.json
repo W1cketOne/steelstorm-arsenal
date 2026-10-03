@@ -332,6 +332,7 @@
   "steelstorm.configuration.stormsteelMineChance": "Stormsteel Mine Chance",
   "steelstorm.configuration.structures": "Structures",
   "steelstorm.configuration.ultimateChargeMultiplier": "Ultimate Charge Multiplier",
+  "steelstorm.configuration.ultimateCinematic": "Cinematic Ultimate Camera",
   "steelstorm.configuration.watchtowerChance": "Watchtower Chance",
   "steelstorm.configuration.weaponDamageMultiplier": "Weapon Damage Multiplier",
   "structure.steelstorm.abandoned_armory": "Abandoned Armory",

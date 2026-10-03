@@ -159,6 +159,7 @@ public class ModLanguageProvider extends LanguageProvider {
         config("screenShakeStrength", "Screen Shake Strength");
         config("showComboCounter", "Show Combo Counter");
         config("showDamageNumbers", "Show Damage Numbers");
+        config("ultimateCinematic", "Cinematic Ultimate Camera");
 
         // Stage 3: interactive blocks, runes, armour and new enemies.
         add(ModBlocks.WHETSTONE.get(), "Whetstone");

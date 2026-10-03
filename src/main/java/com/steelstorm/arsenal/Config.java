@@ -109,6 +109,7 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue SCREEN_SHAKE_STRENGTH;
     public static final ModConfigSpec.BooleanValue SHOW_COMBO_COUNTER;
     public static final ModConfigSpec.BooleanValue SHOW_DAMAGE_NUMBERS;
+    public static final ModConfigSpec.BooleanValue ULTIMATE_CINEMATIC;
 
     static {
         CLIENT_BUILDER.push("feedback");
@@ -116,6 +117,7 @@ public final class Config {
                 .define("screenShake", true);
         SCREEN_SHAKE_STRENGTH = CLIENT_BUILDER.comment("Screen shake strength").defineInRange("screenShakeStrength", 1.0, 0.0, 3.0);
         SHOW_COMBO_COUNTER = CLIENT_BUILDER.comment("Show the combo counter next to the crosshair").define("showComboCounter", true);
+        ULTIMATE_CINEMATIC = CLIENT_BUILDER.comment("Swing the camera out for a cinematic view when you use an ultimate").define("ultimateCinematic", true);
         SHOW_DAMAGE_NUMBERS = CLIENT_BUILDER.comment("Show damage numbers popping off enemies you hit").define("showDamageNumbers", true);
         CLIENT_BUILDER.pop();
     }

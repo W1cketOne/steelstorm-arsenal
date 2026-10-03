@@ -406,15 +406,9 @@ def spear(s):
         m.box((7.4, 28, 7.65), (8.6, 29.5, 8.35), "edge", uvy=g)
         return m
     m.box((7.4, 21.8, 6.9), (8.6, 22.8, 9.1), "gem", glow=bool(s["glow"]))
-    m.box((6.6, 23.5, 7.6), (9.4, 26, 8.4), "blade", "edge", "edge", uvy=g, glow=em)
-    m.box((6.1, 26, 7.62), (9.9, 28.4, 8.38), "blade", "edge", "edge", uvy=g, glow=em)
-    m.box((6.6, 28.4, 7.65), (9.4, 30, 8.35), "blade", "edge", "edge", uvy=g, glow=em)
-    m.box((7.2, 30, 7.7), (8.8, 31.2, 8.3), "blade", "edge", "edge", uvy=g, glow=em)
-    m.box((7.65, 31.2, 7.75), (8.35, 32, 8.25), "edge", uvy=g, glow=em)
-    if s["glow"]:
-        inlay(m, s, 7.75, 8.25, 24, 30, 7.52, 8.48)
-    else:
-        m.box((7.75, 24, 7.52), (8.25, 30, 8.48), "fuller", uvy=g)
+    # A leaf-shaped head: swells out of the socket, then narrows to a long point.
+    m.box((7.0, 23.2, 7.62), (9.0, 24.4, 8.38), "blade", "edge", "edge", uvy=g, glow=em)
+    blade(m, s, 1.75, 24.4, 28.2, 3.7, th=0.38)
     if sil == "iron":
         m.box((5, 22.5, 7.6), (11, 23.2, 8.4), "trim")
     elif sil == "golden":
@@ -440,60 +434,60 @@ def spear(s):
     return m
 
 
+def octagon_x(m, x0, x1, cy, cz, h, tex, side=None, glow=False):
+    """An eight-sided prism along x: a box plus the same box turned 45 degrees."""
+    for rot in (None, ((x0, cy, cz), "x", 45)):
+        m.box((x0, cy - h, cz - h), (x1, cy + h, cz + h), tex, side or tex, side or tex, rot=rot, glow=glow)
+
+
 def warhammer(s):
     m = Model()
     tier = s["sil"]
+    glowing = bool(s["glow"])
     m.box((7, -11.5, 7), (9, -9.5, 9), "trim")
     m.box((7.3, -9.5, 7.3), (8.7, 17, 8.7), "shaft", "shaft", "trim")
     m.box((7.15, -8, 7.15), (8.85, 2, 8.85), "grip")
+    cy, h = 19.0, (3.5 if tier == "stone" else 3.1)
+    # Two chamfered striking halves, each with a rimmed face.
+    for (x0, x1) in ((2.4, 6.6), (9.4, 13.6)):
+        octagon_x(m, x0, x1, cy, 8, h, "metal")
+    if tier != "stone":
+        for (x0, x1) in ((1.6, 2.5), (13.5, 14.4)):
+            octagon_x(m, x0, x1, cy, 8, h + 0.35, "trim")
+    # The socket where head meets haft, jewelled on both faces.
+    octagon_x(m, 6.4, 9.6, cy, 8, h + 0.45, "trim")
+    if tier != "stone":
+        m.box((7.25, cy - 0.75, 4.0), (8.75, cy + 0.75, 12.0), "gem", glow=glowing, rot=((8, cy, 8), "z", 45))
+    # Langets: steel straps riveted down the haft.
+    for x0 in (6.95, 8.65):
+        m.box((x0, 10.5, 7.55), (x0 + 0.4, 15.6, 8.45), "metal")
+    m.box((7.1, 10.0, 7.1), (8.9, 10.6, 8.9), "trim")
+    # Top spike.
+    m.box((7.25, cy + h, 7.25), (8.75, cy + h + 3.0, 8.75), "metal", rot=((8, cy + h, 8), "y", 45))
+    m.box((7.6, cy + h + 3.0, 7.6), (8.4, cy + h + 4.6, 8.4), "edge", rot=((8, cy + h + 3, 8), "y", 45))
     if tier == "stone":
-        m.box((2.5, 15, 4.8), (13.5, 22.5, 11.2), "metal")
-        m.box((7, 14, 7), (9, 15, 9), "cloth")
-        m.box((7.6, 22.5, 7.6), (8.4, 23.5, 8.4), "metal")
-        return m
-    if tier == "iron":
-        m.box((2, 15.5, 5), (14, 22.5, 11), "metal")
-        m.box((1, 16, 5.5), (2, 22, 10.5), "metal")
-        m.box((14, 16, 5.5), (15, 22, 10.5), "metal")
-        m.box((6.5, 15, 4.6), (9.5, 23, 11.4), "trim")
-        m.box((7.3, 17.8, 4.3), (8.7, 20.2, 11.7), "gem")
-        m.box((7.2, 22.5, 7.2), (8.8, 25, 8.8), "metal")
-        return m
-    if tier == "golden":
-        m.box((3, 15.5, 5.5), (13, 22.5, 10.5), "metal")
-        for x in (2.2, 13.0):
-            m.box((x, 15, 5), (x + 0.8, 23, 11), "trim")
-        m.box((6.5, 14.5, 4.8), (9.5, 23.5, 11.2), "trim")
-        m.box((7.1, 17.6, 4.4), (8.9, 20.4, 11.6), "gem")
-        m.box((7.3, 23.5, 7.3), (8.7, 27.5, 8.7), "trim")
-        m.box((7.0, 27.5, 7.0), (9.0, 29.0, 9.0), "gem")
+        m.box((7, 14.4, 7), (9, 15.6, 9), "cloth")
+    elif tier == "golden":
+        for x in (4.5, 11.5):
+            octagon_x(m, x - 0.3, x + 0.3, cy, 8, h + 0.15, "trim")
         tassel(m, 8, 14.5, 8, 3.0)
-        return m
-    if tier == "diamond":
-        m.box((3, 15.5, 5), (13, 22.5, 11), "metal")
+    elif tier == "diamond":
         for sgn in (-1, 1):
-            x = 8 + sgn * 5.0
-            m.box((x - 1.6, 16.5, 6.4), (x + 1.6, 21.5, 9.6), "gem", glow=True, rot=((x, 19, 8), "x", 45))
-        m.box((6.5, 15, 4.6), (9.5, 23, 11.4), "trim")
-        m.box((7.2, 22.5, 7.2), (8.8, 27, 8.8), "edge", rot=((8, 22.5, 8), "y", 45))
-        return m
-    if tier == "netherite":
-        m.box((2.5, 15.5, 5), (13.5, 22.5, 11), "metal")
-        for (y, z) in ((16.5, 4.2), (20.5, 4.2), (16.5, 11.0), (20.5, 11.0)):
-            m.box((1.0, y, z), (2.5, y + 1.2, z + 0.8), "edge")
-            m.box((13.5, y, z), (15.0, y + 1.2, z + 0.8), "edge")
-        m.box((7.4, 15.4, 4.7), (8.6, 22.6, 11.3), "glow", glow=True)
-        m.box((7.4, 22.5, 7.4), (8.6, 27.5, 8.6), "metal")
-        m.box((7.7, 27.5, 7.7), (8.3, 29, 8.3), "edge")
-        return m
-    # stormsteel: a head like a storm-cloud anvil with a glowing core and lightning-rod prongs
-    m.box((2, 15.5, 5.2), (14, 22.5, 10.8), "metal")
-    m.box((1, 17, 6), (2, 21, 10), "trim")
-    m.box((14, 17, 6), (15, 21, 10), "trim")
-    m.box((4.5, 17.5, 4.8), (11.5, 20.5, 11.2), "glow", glow=True)
-    for x in (5.5, 10.5):
-        m.box((x - 0.35, 22.5, 7.65), (x + 0.35, 26.5, 8.35), "trim")
-    m.box((7.6, 22.5, 7.6), (8.4, 28, 8.4), "trim")
+            x = 8 + sgn * 6.4
+            for dy in (-2.2, 2.2):
+                m.box((x - 0.4, cy + dy - 0.4, 7.6), (x + 0.4 + sgn * 1.6, cy + dy + 0.4, 8.4), "edge", glow=True,
+                      rot=((x, cy + dy, 8), "z", 22.5 * sgn * (1 if dy > 0 else -1)))
+    elif tier == "netherite":
+        # The back half becomes a hooked pick; molten seams run round the head.
+        m.box((9.4, cy - 1.2, 7.3), (15.4, cy + 1.2, 8.7), "metal", rot=((9.4, cy, 8), "z", -22.5))
+        m.box((14.0, cy - 3.6, 7.5), (15.0, cy - 0.6, 8.5), "edge", rot=((14.5, cy - 0.6, 8), "z", -22.5))
+        for x in (4.2, 11.6):
+            octagon_x(m, x - 0.2, x + 0.2, cy, 8, h + 0.05, "glow", glow=True)
+    elif tier == "stormsteel":
+        for x in (4.4, 11.6):
+            octagon_x(m, x - 0.35, x + 0.35, cy, 8, h + 0.1, "glow", glow=True)
+        for x in (5.6, 10.4):
+            m.box((x - 0.3, cy + h - 0.2, 7.7), (x + 0.3, cy + h + 3.2, 8.3), "trim", rot=((x, cy + h, 8), "z", 22.5 if x < 8 else -22.5))
     return m
 
 
@@ -597,9 +591,6 @@ def warhammer_legend(s):
             m.box((x0, y0, 4.85), (x0 + 1.6, y0 + 0.6, 11.15), "glow", glow=True)
         m.box((2.6, 18.7, 4.85), (5.2, 19.2, 11.15), "glow", glow=True)
         m.box((10.6, 18, 4.85), (13.4, 18.5, 11.15), "glow", glow=True)
-    # Studded bands around the head make it read as forged steel.
-    m.box((1.8, 15.1, 4.7), (14.2, 15.7, 11.3), "trim")
-    m.box((1.8, 22.3, 4.7), (14.2, 22.9, 11.3), "trim")
     return m
 
 

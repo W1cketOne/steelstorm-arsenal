@@ -5,10 +5,14 @@ import net.minecraft.world.item.ItemStack;
 
 /** Colours and sizes for a weapon's slash trails and ability effects. Shared by client and server. */
 public final class WeaponLooks {
-    /** The colour of a weapon's trails: its element for legendaries, Stormsteel blue, otherwise its metal. */
+    /** The colour of a weapon's trails: its element for legendaries, its rune if it has one, otherwise its metal. */
     public static int trailColor(ItemStack stack) {
         if (stack.getItem() instanceof LegendaryWeaponItem legendary) {
             return legendaryColor(legendary.legendary());
+        }
+        Rune rune = stack.get(com.steelstorm.arsenal.registry.ModDataComponents.RUNE);
+        if (rune != null) {
+            return rune.color();
         }
         if (stack.getItem() instanceof WeaponItem weapon && weapon.weaponTier() != null) {
             return switch (weapon.weaponTier()) {

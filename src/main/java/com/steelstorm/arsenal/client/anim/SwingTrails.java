@@ -98,7 +98,8 @@ public final class SwingTrails {
         }
         float head = s;
         float tail = Math.max(0, s - 0.55F);
-        int color = WeaponLooks.trailColor(stack);
+        com.steelstorm.arsenal.weapon.Rune rune = stack.get(com.steelstorm.arsenal.registry.ModDataComponents.RUNE);
+        int color = rune != null ? rune.color() : WeaponLooks.trailColor(stack);
         float r = (color >> 16 & 255) / 255F;
         float g = (color >> 8 & 255) / 255F;
         float b = (color & 255) / 255F;
@@ -142,6 +143,32 @@ public final class SwingTrails {
         vc.addVertex(m, (float) c.x, (float) c.y, (float) c.z).setColor(Math.min(1, r + 0.5F), Math.min(1, g + 0.5F), Math.min(1, bl + 0.5F), alphaC);
         vc.addVertex(m, (float) b.x, (float) b.y, (float) b.z).setColor(Math.min(1, r + 0.5F), Math.min(1, g + 0.5F), Math.min(1, bl + 0.5F), alphaA);
         vc.addVertex(m, (float) a.x, (float) a.y, (float) a.z).setColor(r, g, bl, alphaA * 0.15F);
+    }
+
+    /** Runed weapons shed motes of their rune's colour from the hand holding them. */
+    @SubscribeEvent
+    public static void onTick(net.neoforged.neoforge.client.event.ClientTickEvent.Post event) {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.level == null || mc.isPaused()) {
+            return;
+        }
+        for (Player p : mc.level.players()) {
+            if (p.tickCount % 3 != 0 || p.isInvisible() || (p == mc.player && mc.options.getCameraType().isFirstPerson())) {
+                continue;
+            }
+            ItemStack stack = p.getMainHandItem();
+            com.steelstorm.arsenal.weapon.Rune rune = stack.get(com.steelstorm.arsenal.registry.ModDataComponents.RUNE);
+            if (rune == null || !(stack.getItem() instanceof WeaponItem)) {
+                continue;
+            }
+            float yaw = p.yBodyRot * Mth.DEG_TO_RAD;
+            double side = p.getMainArm() == net.minecraft.world.entity.HumanoidArm.RIGHT ? -1 : 1;
+            double hx = p.getX() + Mth.cos(yaw) * 0.4 * side - Mth.sin(yaw) * 0.45;
+            double hz = p.getZ() + Mth.sin(yaw) * 0.4 * side + Mth.cos(yaw) * 0.45;
+            double hy = p.getY() + 0.9 + p.getRandom().nextDouble() * 0.9;
+            mc.level.addParticle(com.steelstorm.arsenal.registry.ModParticles.GLOW.get().with(rune.color(), 0.7F), hx, hy, hz,
+                    (p.getRandom().nextDouble() - 0.5) * 0.02, 0.02, (p.getRandom().nextDouble() - 0.5) * 0.02);
+        }
     }
 
     /** A quick zoom-in punch when a hit lands (bigger on every third). */

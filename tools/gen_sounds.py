@@ -635,7 +635,61 @@ def build():
     x = (osc(220, d) + osc(331, d) * 0.6) * (0.5 + 0.5 * np.sin(2 * np.pi * 26 * t)) * env_exp(d, 3.0, 0.01) * 0.6
     x += bell(rng, 1760, d, 0.5, 0.5) + thump(d, 160, 60, 10) * 0.8 + crackle(rng, d, 25, 1500, 7000, 2.0) * 0.5
     add("armor.barrier", "armor/barrier", reverb(x, 0.9, 0.3, rng))
+    add("music.boss", "music/boss_battle", boss_theme())
     return lib
+
+
+def boss_theme():
+    """A 27-second loop at 140 bpm in D minor: war drums, a driving low-string ostinato, brass stabs and a choir pad."""
+    rng = np.random.default_rng(301)
+    bpm = 140.0
+    beat = 60.0 / bpm
+    bars = 16
+    d = bars * 4 * beat
+    out = np.zeros(n_of(d))
+    t_all = times(d)
+
+    def note(f, dur, kind="saw", cutoff=1800, amp=0.2, attack=0.01, release=0.08):
+        n = n_of(dur)
+        t = np.arange(n) / SR
+        x = osc(f * (1 + 0.003 * np.sin(2 * np.pi * 5 * t)), dur, kind) + 0.5 * osc(f * 1.005, dur, kind)
+        env = np.clip(t / attack, 0, 1) * np.clip((dur - t) / release, 0, 1)
+        return lowpass(x * env, cutoff) * amp
+
+    # D minor progression, one chord per 2 bars: Dm Bb F C | Dm Bb Gm A
+    roots = [73.42, 58.27, 87.31, 65.41, 73.42, 58.27, 49.0, 55.0]
+    thirds = [1.189, 1.26, 1.26, 1.26, 1.189, 1.26, 1.189, 1.26]
+    for c, root in enumerate(roots):
+        start = c * 8 * beat
+        # Ostinato: driving eighth notes on root/octave.
+        for k in range(16):
+            f = root * (2 if k % 4 == 3 else 1)
+            place(out, note(f, beat * 0.45, cutoff=900, amp=0.16), start + k * beat / 2)
+        # Choir/string pad.
+        pad = sum(note(root * 2 * r, 8 * beat, "saw", 1400, 0.05, attack=0.6, release=0.6) for r in (1, thirds[c], 1.498))
+        place(out, pad, start)
+        # Brass stabs on beats 1 and the "and" of 3 of the first bar of each chord.
+        for off in (0, 2.5 * beat, 4 * beat):
+            stab = sum(note(root * 4 * r, beat * 0.6, "saw", 2600, 0.07, attack=0.02, release=0.2) for r in (1, thirds[c], 1.498))
+            place(out, saturate(stab * 2, 1.5) * 0.5, start + off)
+    # War drums: big taiko hits and a snare-ish crack.
+    for b in range(bars * 4):
+        at = b * beat
+        if b % 4 in (0, 2) or (b % 8 == 7):
+            place(out, thump(0.6, 120, 45, 7) * 0.9 + lowpass(white(0.6, rng), 400) * env_exp(0.6, 9) * 0.3, at)
+        if b % 4 == 3:
+            place(out, thump(0.4, 180, 70, 10) * 0.5, at + beat / 2)
+        if b % 2 == 1:
+            place(out, bandpass(white(0.25, rng), 900, 5000) * env_exp(0.25, 18) * 0.35, at)
+        if b % 16 == 15:
+            for k in range(4):
+                place(out, thump(0.3, 160, 60, 12) * 0.6, at + k * beat / 4)
+    out = reverb(out, 1.4, 0.22, rng, 4000)[: n_of(d)]
+    # Make the loop seamless: crossfade the tail into the head.
+    fade = n_of(0.05)
+    out[:fade] *= np.linspace(0, 1, fade)
+    out[-fade:] *= np.linspace(1, 0, fade)
+    return saturate(out * 1.2, 1.2)
 
 
 
@@ -696,6 +750,7 @@ SUBTITLES = {
     "ultimate.charge": "Power gathers",
     "armor.double_jump": "Thunder Step",
     "armor.barrier": "Static Barrier absorbs a hit",
+    "music.boss": "Battle music",
 }
 
 
@@ -710,6 +765,8 @@ def main():
             sf.write(path, finish(np.asarray(data, dtype=np.float64)), SR, format="OGG", subtype="VORBIS")
             entries.append("steelstorm:" + name)
         sounds_json[event] = {"sounds": entries, "subtitle": "subtitles.steelstorm." + event}
+        if event.startswith("music."):
+            sounds_json[event] = {"sounds": [{"name": e, "stream": True} for e in entries]}
     with open(os.path.join(ROOT, "sounds.json"), "w") as f:
         json.dump(sounds_json, f, indent=2)
     missing = set(lib) - set(SUBTITLES)

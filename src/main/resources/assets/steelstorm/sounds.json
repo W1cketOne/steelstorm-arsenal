@@ -347,5 +347,13 @@
       "steelstorm:armor/barrier"
     ],
     "subtitle": "subtitles.steelstorm.armor.barrier"
+  },
+  "music.boss": {
+    "sounds": [
+      {
+        "name": "steelstorm:music/boss_battle",
+        "stream": true
+      }
+    ]
   }
 }

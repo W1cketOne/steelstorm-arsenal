@@ -30,6 +30,7 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_READY = register("ability.ready", "Ability ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_READY = register("ultimate.ready", "Ultimate ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_CAST = register("ultimate.cast", "Ultimate unleashed");
+    public static final DeferredHolder<SoundEvent, SoundEvent> MUSIC_BOSS = register("music.boss", "Battle music");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_RELEASE = register("ultimate.release", "Ultimate unleashed");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_CHARGE = register("ultimate.charge", "Power gathers");
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_EPIC_IMPACT = register("ability.epic_impact", "Earth-shattering impact");

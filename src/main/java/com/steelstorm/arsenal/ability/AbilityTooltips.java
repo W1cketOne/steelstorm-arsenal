@@ -17,6 +17,9 @@ public final class AbilityTooltips {
     public static void append(ItemStack stack, List<Component> tooltip, TooltipFlag flag) {
         AbilitySet set = Abilities.forStack(stack);
         if (set == null) {
+            if (stack.getItem() instanceof com.steelstorm.arsenal.weapon.WeaponItem) {
+                tooltip.add(Component.translatable("tooltip.steelstorm.no_abilities").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
+            }
             return;
         }
         boolean details = flag.hasShiftDown();

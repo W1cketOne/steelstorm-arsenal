@@ -398,6 +398,7 @@
   "tooltip.steelstorm.controls": "Hold Use to guard and parry. Sneak + attack for a heavy attack.",
   "tooltip.steelstorm.hold_shift": "Hold Shift for ability details",
   "tooltip.steelstorm.legendary": "Legendary: ",
+  "tooltip.steelstorm.no_abilities": "Abilities unlock at Netherite and Stormsteel tier",
   "tooltip.steelstorm.passive": "Passive: ",
   "tooltip.steelstorm.rune": "Rune: %s",
   "tooltip.steelstorm.rune_use": "Place it on a Rune Forge, then use a weapon on the forge",

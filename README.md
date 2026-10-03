@@ -2,7 +2,7 @@
 
 A skill-based combat mod for **Minecraft Java 1.21.1** on **NeoForge 21.1.252**.
 
-- **8 weapon types** in 6 tiers. Each tier of each weapon has its own 3D model and colours, and every weapon has its own swing animations, 3 abilities and an ultimate.
+- **8 weapon types** in 6 tiers. Each tier of each weapon has its own 3D model and colours, and every weapon has its own swing animations. Netherite, Stormsteel and legendary weapons also get 3 abilities and an ultimate.
 - **8 legendary weapons**, each with its own passive and ultimate.
 - **Stamina** that dodge rolls, parries and heavy attacks all draw on.
 - **Smithing**: runes, whetstones and Stormsteel armour.
@@ -105,7 +105,7 @@ The jar is written to **`build/libs/steelstorm-1.0.0.jar`**.
 
 ## 5. Weapons and abilities
 
-There are six tiers: Stone, Iron, Gold, Diamond, Netherite and Stormsteel. Netherite weapons are made at a smithing table from diamond ones. Every weapon has a **passive** that is always on, three **abilities** and an **ultimate**.
+There are six tiers: Stone, Iron, Gold, Diamond, Netherite and Stormsteel. Netherite weapons are made at a smithing table from diamond ones. Every weapon has a **passive** that is always on. **Abilities and the ultimate unlock only on Netherite, Stormsteel and legendary (purple-named) weapons**; lower tiers keep the passive and the swing animations.
 
 | Weapon | Passive | R | G | V | Ultimate (Z) |
 | --- | --- | --- | --- | --- | --- |
@@ -118,13 +118,7 @@ There are six tiers: Stone, Iron, Gold, Diamond, Netherite and Stormsteel. Nethe
 | **Scythe** | Heals you for 10% of damage dealt | Reap: a full-circle life-draining sweep | Soul Harvest: drag and Mark everything within 9 blocks | Death's Crescent: a returning crescent of death | **Death Mark**: doom everything near; 3 s later it takes heavy damage plus half of what it took meanwhile |
 | **Battleaxe** | Breaks shields, bonus against blocking | Whirlwind: spin while moving | Chain Hook: drag an enemy to your feet, staggered and armour-broken | War Cry: weaken, slow and stagger enemies | **Berserker Rage**: 8 s of faster, harder, life-stealing hits |
 
-**Thrown weapons** also have abilities:
-- **Chakram:**
-  - Abilities: Sawblade, Twin Throw, Guard Ring (blocks arrows).
-  - Ultimate: **Blade Tempest**.
-- **Throwing Knives:**
-  - Abilities: Volley, Blink Knife (teleports you to where it lands), Venom Coat.
-  - Ultimate: **Knife Storm**, forty knives raining down.
+**Thrown weapons** (the chakram and throwing knives) have no abilities; they are thrown with right click.
 
 ### Legendary weapons
 
@@ -350,7 +344,7 @@ Settings in `steelstorm-client.toml`:
 
 **Combat basics**
 - [ ] The stamina bar sits above hunger. The ability bar sits right of the hotbar.
-- [ ] With each weapon type, R/G/V use three different abilities. Cooldowns count down on the bar.
+- [ ] With each Netherite or Stormsteel weapon type, R/G/V use three different abilities (lower tiers show "Abilities unlock at Netherite..."). Cooldowns count down on the bar.
 - [ ] Hold Shift over a weapon to read its abilities.
 - [ ] Fight until the ultimate meter is full, then press Z.
 - [ ] Warhammer abilities make the ground ripple outward in a shockwave.

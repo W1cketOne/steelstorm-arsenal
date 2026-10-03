@@ -10,10 +10,9 @@ import com.steelstorm.arsenal.ability.sets.LongswordAbilities;
 import com.steelstorm.arsenal.ability.sets.ScytheAbilities;
 import com.steelstorm.arsenal.ability.sets.SpearAbilities;
 import com.steelstorm.arsenal.ability.sets.ThrownAbilities;
-import com.steelstorm.arsenal.weapon.ChakramItem;
 import com.steelstorm.arsenal.weapon.LegendaryWeaponItem;
-import com.steelstorm.arsenal.weapon.ThrowingKnifeItem;
 import com.steelstorm.arsenal.weapon.WeaponItem;
+import com.steelstorm.arsenal.weapon.WeaponTier;
 import com.steelstorm.arsenal.weapon.WeaponType;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,16 +70,15 @@ public final class Abilities {
         if (stack.getItem() instanceof LegendaryWeaponItem legendary) {
             return BY_LEGENDARY.get(legendary.legendary());
         }
-        if (stack.getItem() instanceof WeaponItem weapon) {
+        if (stack.getItem() instanceof WeaponItem weapon && hasAbilities(weapon)) {
             return BY_TYPE.get(weapon.type());
         }
-        if (stack.getItem() instanceof ChakramItem) {
-            return CHAKRAM;
-        }
-        if (stack.getItem() instanceof ThrowingKnifeItem) {
-            return THROWING_KNIFE;
-        }
         return null;
+    }
+
+    /** Only the top tiers unlock abilities: Netherite and Stormsteel weapons (legendaries always have them). */
+    public static boolean hasAbilities(WeaponItem weapon) {
+        return weapon.weaponTier() == WeaponTier.NETHERITE || weapon.weaponTier() == WeaponTier.STORMSTEEL;
     }
 
     public static AbilitySet forType(WeaponType type) {

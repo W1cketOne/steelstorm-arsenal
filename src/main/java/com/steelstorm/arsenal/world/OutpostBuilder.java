@@ -397,7 +397,7 @@ public final class OutpostBuilder {
         public static ItemStack controlsBook() {
             List<Filterable<Component>> pages = new ArrayList<>();
             pages.add(page(Component.literal("§lSteelstorm Arsenal§r\n\nWelcome, warrior. Fighting here takes skill, not spam-clicking.\n\nWatch your §9stamina§r bar above your hunger bar: dodging, heavy attacks and abilities all spend it.")));
-            pages.add(page(Component.literal("§lAbilities§r\nEvery weapon has three abilities:\n")
+            pages.add(page(Component.literal("§lAbilities§r\nNetherite, Stormsteel and legendary weapons have three abilities:\n")
                     .append(Component.keybind("key.steelstorm.ability_1")).append(", ")
                     .append(Component.keybind("key.steelstorm.ability_2")).append(" and ")
                     .append(Component.keybind("key.steelstorm.ability_3"))

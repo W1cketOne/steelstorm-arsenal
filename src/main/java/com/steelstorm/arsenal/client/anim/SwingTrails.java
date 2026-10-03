@@ -30,10 +30,12 @@ import org.joml.Matrix4f;
 @EventBusSubscriber(modid = SteelstormArsenal.MODID, value = Dist.CLIENT)
 public final class SwingTrails {
     private static final int SEGMENTS = 14;
+    /** The old arc-in-the-air ribbon; replaced by the blade trail. */
+    private static final boolean ENABLED = false;
 
     @SubscribeEvent
     public static void onRender(RenderLevelStageEvent event) {
-        if (event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
+        if (!ENABLED || event.getStage() != RenderLevelStageEvent.Stage.AFTER_TRANSLUCENT_BLOCKS) {
             return;
         }
         Minecraft mc = Minecraft.getInstance();

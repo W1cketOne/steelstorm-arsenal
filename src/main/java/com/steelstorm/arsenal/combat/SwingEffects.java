@@ -28,16 +28,6 @@ public final class SwingEffects {
             return;
         }
         data.lastSwingFx = now;
-        ServerLevel level = player.serverLevel();
-        float scale = WeaponLooks.trailScale(weapon.type()) * (heavy ? 1.3F : 1.0F);
-        Vec3 at = player.getEyePosition().add(player.getLookAngle().scale(WeaponLooks.trailDistance(weapon.type()))).add(0, -0.3, 0);
-        ParticleOptions slash = ModParticles.SLASH.get().oriented(WeaponLooks.trailColor(player.getMainHandItem()), scale,
-                player.getYRot(), player.getXRot(), Mth.wrapDegrees(roll));
-        for (ServerPlayer other : level.players()) {
-            if (other != player && other.distanceToSqr(at) < 48 * 48) {
-                level.sendParticles(other, slash, false, at.x, at.y, at.z, 1, 0, 0, 0, 0);
-            }
-        }
         Fx.soundForOthers(player, heavy ? ModSounds.WEAPON_SWING_HEAVY : ModSounds.WEAPON_SWING, heavy ? 1.0F : 0.8F,
                 0.9F + player.getRandom().nextFloat() * 0.2F);
     }

@@ -106,10 +106,6 @@ public final class ClientEvents {
         }
         boolean heavy = player.isShiftKeyDown();
         float roll = SWING_ROLLS[swingIndex++ % SWING_ROLLS.length] + (player.getRandom().nextFloat() - 0.5F) * 20;
-        float scale = WeaponLooks.trailScale(weapon.type()) * (heavy ? 1.3F : 1.0F);
-        Vec3 at = player.getEyePosition().add(player.getLookAngle().scale(WeaponLooks.trailDistance(weapon.type()))).add(0, -0.3, 0);
-        mc.level.addParticle(ModParticles.SLASH.get().oriented(WeaponLooks.trailColor(held), scale, player.getYRot(), player.getXRot(),
-                Mth.wrapDegrees(roll)), at.x, at.y, at.z, 0, 0, 0);
         mc.level.playLocalSound(player.getX(), player.getY(), player.getZ(),
                 (heavy ? ModSounds.WEAPON_SWING_HEAVY : ModSounds.WEAPON_SWING).get(), SoundSource.PLAYERS, heavy ? 1.0F : 0.8F,
                 0.9F + player.getRandom().nextFloat() * 0.2F, false);

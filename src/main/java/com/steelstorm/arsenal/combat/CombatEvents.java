@@ -272,6 +272,13 @@ public final class CombatEvents {
         if (!(source.getEntity() instanceof ServerPlayer attacker) || attacker == target) {
             return;
         }
+        boolean melee = CombatUtil.isDirectMelee(source);
+        boolean crit = melee && attacker.fallDistance > 0 && !attacker.onGround();
+        net.minecraft.world.phys.Vec3 toward = attacker.position().subtract(target.position()).multiply(1, 0, 1);
+        toward = toward.lengthSqr() < 1e-4 ? net.minecraft.world.phys.Vec3.ZERO : toward.normalize().scale(target.getBbWidth() * 0.6 + 0.2);
+        net.neoforged.neoforge.network.PacketDistributor.sendToPlayer(attacker, new com.steelstorm.arsenal.network.DamageNumberPayload(
+                (float) (target.getX() + toward.x), (float) (target.getY() + target.getBbHeight() * 0.9), (float) (target.getZ() + toward.z), damage,
+                crit ? 1 : (melee ? 0 : 2)));
         // Soul Harvest marks heal whoever hits them.
         if (target.hasEffect(ModEffects.MARKED) && attacker.getHealth() < attacker.getMaxHealth()) {
             attacker.heal(1.5F);

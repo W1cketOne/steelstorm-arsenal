@@ -318,6 +318,7 @@
   "steelstorm.configuration.screenShake": "Screen Shake",
   "steelstorm.configuration.screenShakeStrength": "Screen Shake Strength",
   "steelstorm.configuration.showComboCounter": "Show Combo Counter",
+  "steelstorm.configuration.showDamageNumbers": "Show Damage Numbers",
   "steelstorm.configuration.specialCooldownMultiplier": "Ability Cooldown Multiplier",
   "steelstorm.configuration.specialCostMultiplier": "Ability Stamina Cost Multiplier",
   "steelstorm.configuration.specialDamageMultiplier": "Ability Damage Multiplier",

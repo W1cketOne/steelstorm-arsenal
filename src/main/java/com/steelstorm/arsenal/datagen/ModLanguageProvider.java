@@ -158,6 +158,7 @@ public class ModLanguageProvider extends LanguageProvider {
         config("screenShake", "Screen Shake");
         config("screenShakeStrength", "Screen Shake Strength");
         config("showComboCounter", "Show Combo Counter");
+        config("showDamageNumbers", "Show Damage Numbers");
 
         // Stage 3: interactive blocks, runes, armour and new enemies.
         add(ModBlocks.WHETSTONE.get(), "Whetstone");

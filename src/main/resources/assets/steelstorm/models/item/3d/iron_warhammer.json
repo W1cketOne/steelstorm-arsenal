@@ -5,8 +5,8 @@
   16
  ],
  "textures": {
-  "blade": "steelstorm:item/3d/blade_iron",
-  "edge": "steelstorm:item/3d/edge_iron",
+  "blade": "steelstorm:item/3d/grad_iron",
+  "edge": "steelstorm:item/3d/gedge_iron",
   "fuller": "steelstorm:item/3d/fuller_iron",
   "metal": "steelstorm:item/3d/metal_iron",
   "trim": "steelstorm:item/3d/trim_bronze",
@@ -630,6 +630,142 @@
      "texture": "#metal"
     }
    }
+  },
+  {
+   "from": [
+    1.8,
+    15.1,
+    4.7
+   ],
+   "to": [
+    14.2,
+    15.7,
+    11.3
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    1.8,
+    22.3,
+    4.7
+   ],
+   "to": [
+    14.2,
+    22.9,
+    11.3
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    }
+   }
   }
  ],
  "display": {
@@ -637,34 +773,34 @@
    "rotation": [
     0,
     90,
-    50
+    15
    ],
    "translation": [
-    0,
-    10.1845,
-    0.5
+    -0.0,
+    9.018,
+    2.588
    ],
    "scale": [
-    0.62,
-    0.62,
-    0.62
+    0.64,
+    0.64,
+    0.64
    ]
   },
   "thirdperson_lefthand": {
    "rotation": [
     0,
     -90,
-    -50
+    -15
    ],
    "translation": [
-    0,
-    10.1845,
-    0.5
+    -0.0,
+    9.018,
+    2.588
    ],
    "scale": [
-    0.62,
-    0.62,
-    0.62
+    0.64,
+    0.64,
+    0.64
    ]
   },
   "firstperson_righthand": {
@@ -674,14 +810,14 @@
     25
    ],
    "translation": [
-    1.0,
-    4.3783,
-    1.13
+    1.1,
+    5.185,
+    -1.631
    ],
    "scale": [
-    0.42,
-    0.42,
-    0.42
+    0.44,
+    0.44,
+    0.44
    ]
   },
   "firstperson_lefthand": {
@@ -691,14 +827,14 @@
     -25
    ],
    "translation": [
-    1.0,
-    4.3783,
-    1.13
+    1.1,
+    5.185,
+    -1.631
    ],
    "scale": [
-    0.42,
-    0.42,
-    0.42
+    0.44,
+    0.44,
+    0.44
    ]
   },
   "ground": {

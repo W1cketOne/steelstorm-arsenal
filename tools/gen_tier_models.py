@@ -15,24 +15,27 @@ Models are written to models/item/3d/<tier>_<type>.json with their textures fill
 import json
 import os
 
-from gen_models import MODELS, TYPE_MODELS, Model, blade_column, tex_grip, write_textures
-from texlib import R, TIERS, TIER_BLADE, TIER_CLOTH, TIER_GEM, TIER_GLOW, TIER_GRIP, TIER_TRIM, save
+from gen_models import LEGENDARY_MODELS, MODELS, TYPE_MODELS, Model, tex_grip, write_textures
+from PIL import Image
+
+from texlib import R, TIERS, TIER_BLADE, TIER_CLOTH, TIER_GEM, TIER_GLOW, TIER_GRIP, TIER_TRIM, hexc, mix, save
 
 # ----------------------------------------------------------------------------- shared parts
 
 
 def tassel(m, x, y, z, length=4.5):
-    """A cloth tassel hanging below a pommel."""
+    """A cloth tassel hanging below a pommel (shortened to stay inside the model bounds)."""
+    length = min(length, y - 1.6 + 15.9)
     m.box((x - 0.35, y - 1.0, z - 0.35), (x + 0.35, y, z + 0.35), "trim")
     m.box((x - 0.55, y - 1.0 - length, z - 0.55), (x + 0.55, y - 1.0, z + 0.55), "cloth")
     m.box((x - 0.7, y - 1.6 - length, z - 0.7), (x + 0.7, y - 1.0 - length, z + 0.7), "cloth")
 
 
-def inlay(m, tier, x0, x1, y0, y1, z0=7.45, z1=8.55):
+def inlay(m, s, x0, x1, y0, y1, z0=7.45, z1=8.55):
     """A glowing strip set into a blade (zig-zagging for lightning)."""
-    if not TIER_GLOW[tier]:
+    if not s["glow"]:
         return
-    if tier == "stormsteel":
+    if s["glow"] in ("lightning", "royal") and s["sil"] == "stormsteel":
         h = (y1 - y0) / 4
         for k in range(4):
             dx = 0.35 if k % 2 == 0 else -0.35
@@ -116,142 +119,302 @@ def notches(m, x0, x1, y0, y1, step=2.6, z0=7.65, z1=8.35):
         y += step
 
 
+# ----------------------------------------------------------------------------- styles
+#
+# A style is a tier (or a legendary weapon): `sil` picks the silhouette branch the builders use,
+# `grad` is the blade gradient from hilt to tip, and `emissive` makes the whole blade glow.
+
+GRADIENTS = {
+    "stone": ["#4a4a4a", "#7a7a7a", "#b0b0b0"],
+    "iron": ["#5d6773", "#a9b3bf", "#f2f6fa"],
+    "golden": ["#8a5a0c", "#e2b23a", "#fff3b8"],
+    "diamond": ["#0e5f66", "#36d6c6", "#e0fffb"],
+    "netherite": ["#231a1f", "#4a3b42", "#b2502a"],
+    "stormsteel": ["#1a2a8a", "#3d7cff", "#7fe8ff", "#f4ffff"],
+    "tempest_edge": ["#1d2a73", "#4f86ff", "#b9e6ff", "#fff6a0"],
+    "rimecleaver": ["#1b5f80", "#6fd4ff", "#ffffff"],
+    "voidreaver": ["#2a0f45", "#8a3cff", "#ff9cf2"],
+    "earthshaker": ["#4f4031", "#8a6a3a", "#ffb347"],
+    "bloodfang": ["#45060e", "#c4182e", "#ff9a9a"],
+    "skypiercer": ["#a99245", "#fff1a8", "#ffffff"],
+    "moonveil": ["#33405e", "#9cb8ff", "#ffffff"],
+    "kingsbane": ["#1a1424", "#5a2d80", "#ffcc33"],
+}
+
+LEGEND_SIL = {"tempest_edge": "stormsteel", "rimecleaver": "diamond", "voidreaver": "netherite", "earthshaker": "golden",
+              "bloodfang": "netherite", "skypiercer": "golden", "moonveil": "stormsteel", "kingsbane": "golden"}
+
+
+def tier_style(tier):
+    return {"name": tier, "sil": tier, "legend": None, "glow": TIER_GLOW[tier], "emissive": tier == "stormsteel"}
+
+
+def legend_style(name, spec):
+    return {"name": name, "sil": LEGEND_SIL[name], "legend": name, "glow": spec["glow"], "emissive": True}
+
+
+def _stops(colors, t):
+    cs = [hexc(c) for c in colors]
+    t = max(0.0, min(1.0, t)) * (len(cs) - 1)
+    i = min(int(t), len(cs) - 2)
+    return mix(cs[i], cs[i + 1], t - i)
+
+
+def _shade(c, f):
+    if f >= 1:
+        return mix(c, (255, 255, 255, 255), min(1.0, (f - 1) * 1.6))
+    return mix(c, (0, 0, 0, 255), (1 - f) * 1.2)
+
+
+# Cross-section of a bevelled blade: bright cutting edge, dark bevel, lit central ridge, shadowed far side.
+PROFILE = [1.42, 1.22, 0.86, 0.8, 0.86, 0.96, 1.12, 1.3, 1.24, 1.06, 0.92, 0.84, 0.76, 0.7, 0.6, 0.5]
+
+
+def tex_grad_blade(colors, seed):
+    import random
+    rng = random.Random(seed)
+    img = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        base = _stops(colors, 1 - y / 15)
+        for x in range(16):
+            f = PROFILE[x] + 0.035 * ((x * 7 + y * 3) % 5 - 2) / 2
+            if rng.random() < 0.035:
+                f += 0.25
+            img.putpixel((x, y), _shade(base, f))
+    return img
+
+
+def tex_grad_edge(colors):
+    img = Image.new("RGBA", (16, 16))
+    for y in range(16):
+        base = _stops(colors, 1 - y / 15)
+        for x in range(16):
+            img.putpixel((x, y), _shade(base, 1.38 - 0.25 * x / 15))
+    return img
+
+
+# ----------------------------------------------------------------------------- ornate parts
+
+
+def grip(m, y0, y1, r=0.75, every=2.0):
+    """A wrapped grip with thin bands."""
+    m.box((8 - r, y0, 8 - r), (8 + r, y1, 8 + r), "grip")
+    y = y0 + every * 0.6
+    while y < y1 - 0.5:
+        m.box((8 - r - 0.1, y, 8 - r - 0.1), (8 + r + 0.1, y + 0.3, 8 + r + 0.1), "trim")
+        y += every
+
+
+def ornate_guard(m, s, y, half, th=1.4, depth=(7, 9)):
+    """A crossguard with a jewelled centre block and a langet climbing onto the blade."""
+    sil = s["sil"]
+    sword_guard(m, sil, y, half, th, depth)
+    z0, z1 = depth
+    glow = bool(s["glow"])
+    m.box((8 - 1.8, y - 0.7, z0 - 0.35), (8 + 1.8, y + th + 0.9, z1 + 0.35), "trim")
+    m.box((8 - 0.9, y - 0.25, z0 - 0.6), (8 + 0.9, y + th + 0.45, z1 + 0.6), "gem", glow=glow)
+    m.box((8 - 1.15, y + th + 0.9, 8 - 0.62), (8 + 1.15, y + th + 2.1, 8 + 0.62), "trim")
+    m.box((8 - 0.6, y + th + 2.1, 8 - 0.58), (8 + 0.6, y + th + 2.9, 8 + 0.58), "trim", rot=((8, y + th + 2.1, 8), "z", 0))
+    if sil != "stone":
+        for sgn in (-1, 1):
+            x = 8 + sgn * (half + 0.1)
+            m.box((x - 0.55, y + 0.2, z0 - 0.25), (x + 0.55, y + th - 0.2, z1 + 0.25), "gem", glow=glow)
+
+
+def blade(m, s, hw, y0, y1, tip, th=0.42, steps=4, ridge=True):
+    """A bevelled blade with a gradient running from hilt to tip; returns the tip height."""
+    top = y1 + tip
+    g = (y0, top)
+    em = s["emissive"]
+    m.box((8 - hw, y0, 8 - th), (8 + hw, y1, 8 + th), "blade", "edge", "edge", uvy=g, glow=em)
+    for sgn in (-1, 1):
+        xa, xb = sorted((8 + sgn * hw, 8 + sgn * (hw + 0.45)))
+        m.box((xa, y0 + 0.6, 8 - th * 0.4), (xb, y1, 8 + th * 0.4), "edge", uvy=g, glow=em)
+    if s["glow"]:
+        inlay(m, s, 7.7, 8.3, y0 + 1.0, y1 + tip * 0.3, 8 - th - 0.1, 8 + th + 0.1)
+    elif ridge:
+        m.box((7.7, y0 + 0.6, 8 - th - 0.08), (8.3, y1, 8 + th + 0.08), "fuller", uvy=g)
+    y = y1
+    for k in range(steps):
+        frac = 1 - (k + 1) / (steps + 0.5)
+        h = tip / steps
+        w = (hw + 0.45) * frac
+        tz = th * (0.95 - 0.12 * k)
+        m.box((8 - w, y, 8 - tz), (8 + w, y + h, 8 + tz), "blade", "edge", "edge", uvy=g, glow=em)
+        y += h
+    return top
+
+
+def mirror_x(m):
+    """Mirrors a model across x = 8 (used to turn a blade to face the other way)."""
+    for el in m.elements:
+        a, b = el["from"][0], el["to"][0]
+        el["from"][0], el["to"][0] = round(16 - b, 3), round(16 - a, 3)
+        f = el["faces"]
+        if "east" in f and "west" in f:
+            f["east"], f["west"] = f["west"], f["east"]
+        r = el.get("rotation")
+        if r:
+            r["origin"][0] = round(16 - r["origin"][0], 3)
+            if r["axis"] in ("y", "z"):
+                r["angle"] = -r["angle"]
+    return m
+
+
 # ----------------------------------------------------------------------------- weapon types
 
-def longsword(tier):
-    m = Model()
-    wide = {"stone": 1.9, "iron": 1.6, "golden": 1.55, "diamond": 1.5, "netherite": 1.75, "stormsteel": 1.45}[tier]
-    top = {"stone": 24.0, "iron": 26.0, "golden": 26.0, "diamond": 26.5, "netherite": 25.5, "stormsteel": 27.0}[tier]
-    tip = {"stone": 3.2, "iron": 4.6, "golden": 4.4, "diamond": 5.0, "netherite": 4.0, "stormsteel": 4.8}[tier]
-    sword_pommel(m, tier, 0.5)
-    m.box((7.25, 0.5, 7.25), (8.75, 8, 8.75), "grip")
-    sword_guard(m, tier, 8, 5.0)
-    m.box((8 - wide - 0.2, 9.5, 7.6), (8 + wide + 0.2, 11, 8.4), "blade", "edge", "edge")
-    blade_column(m, 8 - wide, 8 + wide, 7.6 if tier != "stone" else 7.45, 8.4 if tier != "stone" else 8.55, 11, top, tip)
-    if tier in ("iron", "golden"):
-        m.box((7.6, 11.5, 7.5), (8.4, top - 2, 8.5), "fuller")
-    inlay(m, tier, 7.65, 8.35, 11.5, top - 2)
-    if tier == "netherite":
-        notches(m, 8 - wide, 8 + wide, 13, top - 3)
-    if tier == "golden":
-        m.box((8 - wide - 0.4, 11.5, 7.5), (8 + wide + 0.4, 12.3, 8.5), "trim")
-    return m
 
-
-def greatsword(tier):
+def longsword(s):
     m = Model()
-    wide = {"stone": 3.1, "iron": 2.75, "golden": 2.6, "diamond": 2.5, "netherite": 3.0, "stormsteel": 2.45}[tier]
-    top = {"stone": 25.0, "iron": 27.4, "golden": 27.0, "diamond": 27.8, "netherite": 27.0, "stormsteel": 27.8}[tier]
-    sword_pommel(m, tier, -1.5, 1.35)
-    m.box((7, -1.5, 7), (9, 9, 9), "grip")
-    m.box((6.7, 3.5, 6.7), (9.3, 4.5, 9.3), "trim")
-    sword_guard(m, tier, 9, 6.6, th=2.0, depth=(6.8, 9.2))
-    m.box((8 - wide - 0.6, 11, 6.8), (8 + wide + 0.6, 12.2, 9.2), "trim")
-    blade_column(m, 8 - wide, 8 + wide, 7.4, 8.6, 12.2, top, 4.0)
-    if tier in ("iron", "golden"):
-        m.box((7.3, 12.8, 7.3), (8.7, top - 1.5, 8.7), "fuller")
-    inlay(m, tier, 7.4, 8.6, 13, top - 1.5, 7.3, 8.7)
-    if tier == "netherite":
-        notches(m, 8 - wide, 8 + wide, 14, top - 3, 3.0)
-    if tier == "diamond":
+    sil = s["sil"]
+    hw = {"stone": 1.9, "iron": 1.55, "golden": 1.5, "diamond": 1.45, "netherite": 1.7, "stormsteel": 1.45}[sil]
+    sword_pommel(m, sil, -4.5)
+    grip(m, -4.5, 2.5)
+    ornate_guard(m, s, 2.5, 5.8)
+    blade(m, s, hw, 3.9, 28.0, 4.0)
+    if sil == "netherite":
+        notches(m, 8 - hw - 0.45, 8 + hw + 0.45, 9, 26, 2.8)
+    if sil == "golden":
+        m.box((8 - hw - 0.5, 8.0, 7.45), (8 + hw + 0.5, 8.8, 8.55), "trim")
+    if s["legend"] == "tempest_edge":
         for sgn in (-1, 1):
-            m.box((8 + sgn * wide - 0.5, 15, 7.5), (8 + sgn * wide + 0.5, 19, 8.5), "edge", rot=((8 + sgn * wide, 15, 8), "z", -22.5 * sgn))
-    if tier == "stone":
-        m.box((8 - wide, 18.5, 7.35), (8 - wide + 1.2, 20.0, 8.65), "trim")
+            m.box((8 + sgn * 6.6 - 0.6, 3.0, 7.3), (8 + sgn * 6.6 + 0.6, 8.0, 8.7), "trim", rot=((8 + sgn * 6.6, 3.0, 8), "z", -22.5 * sgn))
+            m.box((8 + sgn * 6.6 - 0.35, 3.5, 7.2), (8 + sgn * 6.6 + 0.35, 6.5, 8.8), "glow", glow=True,
+                  rot=((8 + sgn * 6.6, 3.0, 8), "z", -45 * sgn))
     return m
 
 
-def katana(tier):
+def greatsword(s):
     m = Model()
-    sword_pommel(m, tier, -2, 0.8) if tier in ("golden", "diamond", "stormsteel", "stone") else \
-        m.box((7.2, -3, 7.2), (8.8, -2, 8.8), "trim")
-    m.box((7.25, -2, 7.25), (8.75, 8, 8.75), "grip")
-    # The tsuba (hand guard).
-    if tier == "stone":
-        m.box((5.8, 8, 5.8), (10.2, 8.8, 10.2), "trim")
-    elif tier == "iron":
-        m.box((5.4, 8, 5.4), (10.6, 8.6, 10.6), "trim")
-        m.box((5.4, 8, 5.4), (10.6, 8.6, 10.6), "trim", rot=((8, 8.3, 8), "y", 45))
-    elif tier == "golden":
-        for a in (0, 22.5, 45, 67.5):
-            m.box((5.6, 8, 5.6), (10.4, 8.6, 10.4), "trim", rot=((8, 8.3, 8), "y", a if a <= 45 else -22.5))
-        m.box((7.1, 7.9, 4.8), (8.9, 8.7, 5.6), "gem")
-    elif tier == "diamond":
-        m.box((5.2, 8, 7.0), (10.8, 8.7, 9.0), "trim")
-        m.box((7.0, 8, 5.2), (9.0, 8.7, 10.8), "trim")
-        for (x, z) in ((5.2, 8), (10.8, 8), (8, 5.2), (8, 10.8)):
-            m.box((x - 0.5, 8.1, z - 0.5), (x + 0.5, 9.3, z + 0.5), "gem", glow=True)
-    elif tier == "netherite":
-        m.box((5.6, 8, 5.6), (10.4, 8.6, 10.4), "metal", rot=((8, 8.3, 8), "y", 45))
-        for (x, z) in ((4.6, 8), (11.4, 8), (8, 4.6), (8, 11.4)):
-            m.box((x - 0.4, 8.0, z - 0.4), (x + 0.4, 8.6, z + 0.4), "metal")
-        m.box((7.4, 7.9, 5.9), (8.6, 8.7, 10.1), "glow", glow=True)
+    sil = s["sil"]
+    hw = {"stone": 3.0, "iron": 2.65, "golden": 2.55, "diamond": 2.45, "netherite": 2.9, "stormsteel": 2.4}[sil]
+    sword_pommel(m, sil, -9.5, 1.3)
+    grip(m, -9.5, 3, 1.0, 2.4)
+    m.box((6.8, -3.4, 6.8), (9.2, -2.6, 9.2), "trim")
+    ornate_guard(m, s, 3, 7.2, th=2.0, depth=(6.8, 9.2))
+    m.box((8 - hw - 0.8, 5.0, 7.0), (8 + hw + 0.8, 6.4, 9.0), "trim")
+    blade(m, s, hw, 6.4, 27.5, 4.5, th=0.6)
+    if sil == "netherite":
+        notches(m, 8 - hw - 0.45, 8 + hw + 0.45, 10, 26, 3.0)
+    if sil == "diamond":
+        for sgn in (-1, 1):
+            m.box((8 + sgn * hw - 0.5, 9, 7.5), (8 + sgn * hw + 0.5, 13, 8.5), "edge", rot=((8 + sgn * hw, 9, 8), "z", -22.5 * sgn))
+    if s["legend"] == "rimecleaver":
+        for sgn in (-1, 1):
+            m.box((8 + sgn * 7.4 - 0.7, 4, 7.2), (8 + sgn * 7.4 + 0.7, 9, 8.8), "edge", glow=True, rot=((8 + sgn * 7.4, 4, 8), "z", -22.5 * sgn))
+            m.box((8 + sgn * 5.2 - 0.5, 4.5, 7.4), (8 + sgn * 5.2 + 0.5, 7.5, 8.6), "edge", glow=True,
+                  rot=((8 + sgn * 5.2, 4.5, 8), "z", -45 * sgn))
+    return m
+
+
+def katana(s):
+    m = Model()
+    sil = s["sil"]
+    m.box((7.15, -10.2, 7.15), (8.85, -9, 8.85), "trim")
+    m.box((7.25, -9, 7.25), (8.75, 3, 8.75), "grip")
+    for y in (-7.5, -4.5, -1.5, 1.2):
+        m.box((7.1, y, 7.1), (8.9, y + 0.5, 8.9), "cloth")
+    y = 3
+    if sil == "stone":
+        m.box((5.6, y, 5.6), (10.4, y + 0.8, 10.4), "trim")
+    elif sil == "iron":
+        m.box((5.3, y, 5.3), (10.7, y + 0.6, 10.7), "trim")
+        m.box((5.3, y, 5.3), (10.7, y + 0.6, 10.7), "trim", rot=((8, y + 0.3, 8), "y", 45))
+    elif sil == "golden":
+        for a in (0, 22.5, 45, -22.5):
+            m.box((5.4, y, 5.4), (10.6, y + 0.6, 10.6), "trim", rot=((8, y + 0.3, 8), "y", a))
+        m.box((7.1, y - 0.1, 4.7), (8.9, y + 0.7, 5.5), "gem")
+    elif sil == "diamond":
+        m.box((5.0, y, 7.0), (11.0, y + 0.7, 9.0), "trim")
+        m.box((7.0, y, 5.0), (9.0, y + 0.7, 11.0), "trim")
+        for (x, z) in ((5.0, 8), (11.0, 8), (8, 5.0), (8, 11.0)):
+            m.box((x - 0.5, y + 0.1, z - 0.5), (x + 0.5, y + 1.3, z + 0.5), "gem", glow=True)
+    elif sil == "netherite":
+        m.box((5.4, y, 5.4), (10.6, y + 0.6, 10.6), "metal", rot=((8, y + 0.3, 8), "y", 45))
+        for (x, z) in ((4.4, 8), (11.6, 8), (8, 4.4), (8, 11.6)):
+            m.box((x - 0.4, y, z - 0.4), (x + 0.4, y + 0.6, z + 0.4), "metal")
+        m.box((7.4, y - 0.1, 5.8), (8.6, y + 0.7, 10.2), "glow", glow=True)
     else:
-        m.box((5.4, 8, 5.4), (10.6, 8.6, 10.6), "trim", rot=((8, 8.3, 8), "y", 45))
-        m.box((6.4, 8.6, 6.4), (9.6, 8.9, 9.6), "glow", glow=True, rot=((8, 8.75, 8), "y", 45))
-    m.box((7.1, 8.6, 7.4), (8.9, 9.6, 8.6), "collar")
-    curve = {"stone": 0.6, "iron": 1.0, "golden": 1.1, "diamond": 0.8, "netherite": 1.3, "stormsteel": 1.2}[tier]
-    segs = [(9.6, 16, 0.0, 1.6), (16, 21, -0.2, 1.55), (21, 25, -0.45, 1.5), (25, 28, -0.75, 1.4)]
+        m.box((5.3, y, 5.3), (10.7, y + 0.6, 10.7), "trim", rot=((8, y + 0.3, 8), "y", 45))
+        m.box((6.3, y + 0.6, 6.3), (9.7, y + 0.9, 9.7), "glow", glow=True, rot=((8, y + 0.75, 8), "y", 45))
+    m.box((7.05, 3.6, 7.35), (8.95, 4.8, 8.65), "collar")
+    curve = {"stone": 0.6, "iron": 1.0, "golden": 1.1, "diamond": 0.8, "netherite": 1.3, "stormsteel": 1.2}[sil]
+    g = (4.8, 32)
+    em = s["emissive"]
+    segs = [(4.8, 11, 0.0, 1.75), (11, 17, -0.2, 1.7), (17, 22, -0.45, 1.62), (22, 26, -0.8, 1.52), (26, 29, -1.2, 1.38)]
     for (y0, y1, dx, w) in segs:
-        m.box((8 - w / 2 + dx * curve, y0, 7.75), (8 + w / 2 + dx * curve, y1, 8.25), "blade", "edge", "edge")
-        if TIER_GLOW[tier]:
-            m.box((8 + w / 2 + dx * curve - 0.3, y0, 7.7), (8 + w / 2 + dx * curve + 0.05, y1, 8.3), "glow", glow=True)
-    m.box((8 - 0.55 - 1.1 * curve, 28, 7.78), (8 + 0.55 - 1.1 * curve, 29.6, 8.22), "blade", "edge", "edge")
-    m.box((8 - 0.3 - 1.45 * curve, 29.6, 7.8), (8 + 0.3 - 1.45 * curve, 30.6, 8.2), "edge")
+        x0 = 8 - w / 2 + dx * curve
+        m.box((x0, y0, 7.72), (x0 + w, y1, 8.28), "blade", "edge", "edge", uvy=g, glow=em)
+        # The hamon: a bright tempered line along the cutting edge.
+        m.box((x0 + w - 0.4, y0, 7.68), (x0 + w + 0.08, y1, 8.32), "glow" if s["glow"] else "edge", uvy=g,
+              glow=bool(s["glow"]))
+        m.box((x0 - 0.12, y0, 7.85), (x0 + 0.3, y1, 8.15), "fuller", uvy=g)
+    m.box((8 - 0.6 - 1.65 * curve, 29, 7.76), (8 + 0.6 - 1.65 * curve, 30.8, 8.24), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((8 - 0.3 - 2.0 * curve, 30.8, 7.8), (8 + 0.3 - 2.0 * curve, 32, 8.2), "edge", uvy=g, glow=em)
+    if s["legend"] == "moonveil":
+        m.box((4.4, 3.05, 7.5), (6.2, 3.55, 8.5), "trim", rot=((5.3, 3.3, 8), "y", 45))
+        m.box((9.8, 3.05, 7.5), (11.6, 3.55, 8.5), "trim", rot=((10.7, 3.3, 8), "y", 45))
     return m
 
 
-def dagger(tier):
+def dagger(s):
     m = Model()
-    length = {"stone": 13.0, "iron": 15.0, "golden": 14.5, "diamond": 16.0, "netherite": 14.0, "stormsteel": 16.0}[tier]
-    m.box((7.2, -1.5, 7.6), (8.8, 0, 8.4), "trim")
-    if tier in ("golden", "stormsteel"):
-        tassel(m, 8, -1.5, 8, 2.5)
-    m.box((7.4, 0, 7.4), (8.6, 5, 8.6), "grip")
-    sword_guard(m, tier, 5, 3.0, th=1.0, depth=(7.2, 8.8))
-    wide = 1.25 if tier != "stone" else 1.5
-    blade_column(m, 8 - wide, 8 + wide, 7.65, 8.35, 6, length - 2.8, 2.8)
-    inlay(m, tier, 7.75, 8.25, 6.5, length - 3.5, 7.6, 8.4)
-    if tier == "netherite":
-        m.box((8 + wide - 0.2, 8, 7.7), (8 + wide + 1.6, 9.0, 8.3), "edge", rot=((8 + wide, 8, 8), "z", 45))
-        notches(m, 8 - wide, 8 + wide, 9, length - 4, 2.2)
-    if tier == "diamond":
-        m.box((8 - 0.9, length - 4, 7.55), (8 + 0.9, length - 2.5, 8.45), "gem", glow=True, rot=((8, length - 3.2, 8), "z", 45))
+    sil = s["sil"]
+    length = {"stone": 15.5, "iron": 17.0, "golden": 16.5, "diamond": 18.0, "netherite": 16.5, "stormsteel": 18.0}[sil]
+    m.box((7.1, -3.5, 7.5), (8.9, -2, 8.5), "trim")
+    m.box((7.5, -3.2, 7.2), (8.5, -2.3, 8.8), "gem", glow=bool(s["glow"]))
+    if sil in ("golden", "stormsteel"):
+        tassel(m, 8, -3.5, 8, 2.5)
+    grip(m, -2, 3, 0.62, 1.6)
+    ornate_guard(m, s, 3, 3.3, th=1.0, depth=(7.2, 8.8))
+    hw = 1.2 if sil != "stone" else 1.45
+    blade(m, s, hw, 4.0, length - 3.0, 3.0, th=0.36, steps=3)
+    if sil == "netherite":
+        notches(m, 8 - hw - 0.45, 8 + hw + 0.45, 7, length - 4, 2.2)
+    if s["legend"] == "bloodfang":
+        for y in (6.5, 8.5, 10.5, 12.5):
+            m.box((9.6, y, 7.75), (10.4, y + 1, 8.25), "edge", glow=True, rot=((9.6, y, 8), "z", 45))
     return m
 
 
-def spear(tier):
+def spear(s):
     m = Model()
+    sil = s["sil"]
     m.box((7.2, -15, 7.2), (8.8, -13, 8.8), "trim")
     m.box((7.4, -13, 7.4), (8.6, 22, 8.6), "shaft", "shaft", "trim")
     m.box((7.25, 2, 7.25), (8.75, 10, 8.75), "grip")
+    for y in (-6, 12, 17):
+        m.box((7.25, y, 7.25), (8.75, y + 0.6, 8.75), "trim")
     m.box((7.1, 21, 7.1), (8.9, 23.5, 8.9), "trim")
-    if tier == "stone":
-        # A knapped flint point lashed on with twine.
+    g = (23.5, 32)
+    em = s["emissive"]
+    if sil == "stone":
         m.box((7.2, 20.5, 7.2), (8.8, 22.5, 8.8), "cloth")
-        m.box((6.4, 23.5, 7.55), (9.6, 26, 8.45), "blade", "edge", "edge")
-        m.box((6.9, 26, 7.6), (9.1, 28, 8.4), "blade", "edge", "edge")
-        m.box((7.4, 28, 7.65), (8.6, 29.5, 8.35), "edge")
+        m.box((6.4, 23.5, 7.55), (9.6, 26, 8.45), "blade", "edge", "edge", uvy=g)
+        m.box((6.9, 26, 7.6), (9.1, 28, 8.4), "blade", "edge", "edge", uvy=g)
+        m.box((7.4, 28, 7.65), (8.6, 29.5, 8.35), "edge", uvy=g)
         return m
-    m.box((7.4, 21.8, 6.9), (8.6, 22.8, 9.1), "gem")
-    reach = {"iron": 0, "golden": 0, "diamond": 0.8, "netherite": 0, "stormsteel": 0.6}[tier]
-    m.box((6.6, 23.5, 7.6), (9.4, 26, 8.4), "blade", "edge", "edge")
-    m.box((6.2, 26, 7.62), (9.8, 28 + reach * 0.5, 8.38), "blade", "edge", "edge")
-    m.box((6.7, 28 + reach * 0.5, 7.65), (9.3, 29.8 + reach, 8.35), "blade", "edge", "edge")
-    m.box((7.2, 29.8 + reach, 7.7), (8.8, 31 + reach, 8.3), "blade", "edge", "edge")
-    m.box((7.65, 31 + reach, 7.75), (8.35, 32, 8.25), "edge")
-    inlay(m, tier, 7.75, 8.25, 24, 30 + reach, 7.55, 8.45)
-    if tier == "iron":
+    m.box((7.4, 21.8, 6.9), (8.6, 22.8, 9.1), "gem", glow=bool(s["glow"]))
+    m.box((6.6, 23.5, 7.6), (9.4, 26, 8.4), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((6.1, 26, 7.62), (9.9, 28.4, 8.38), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((6.6, 28.4, 7.65), (9.4, 30, 8.35), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((7.2, 30, 7.7), (8.8, 31.2, 8.3), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((7.65, 31.2, 7.75), (8.35, 32, 8.25), "edge", uvy=g, glow=em)
+    if s["glow"]:
+        inlay(m, s, 7.75, 8.25, 24, 30, 7.52, 8.48)
+    else:
+        m.box((7.75, 24, 7.52), (8.25, 30, 8.48), "fuller", uvy=g)
+    if sil == "iron":
         m.box((5, 22.5, 7.6), (11, 23.2, 8.4), "trim")
-    elif tier == "golden":
+    elif sil == "golden":
         for sgn in (-1, 1):
             m.box((8 + sgn * 2.4 - 0.8, 21.5, 7.6), (8 + sgn * 2.4 + 0.8, 25.0, 8.4), "trim", rot=((8 + sgn * 1.5, 22, 8), "z", -22.5 * sgn))
         m.box((7.3, 17.5, 7.3), (8.7, 21, 8.7), "cloth")
         m.box((7.0, 15.5, 7.0), (9.0, 17.5, 9.0), "cloth")
-    elif tier == "diamond":
+    elif sil == "diamond":
         for sgn in (-1, 1):
             m.box((8 + sgn * 2.0 - 0.45, 23, 7.65), (8 + sgn * 2.0 + 0.45, 27.5, 8.35), "edge", rot=((8 + sgn * 2, 23, 8), "z", -22.5 * sgn))
-    elif tier == "netherite":
+    elif sil == "netherite":
         for sgn in (-1, 1):
             m.box((8 + sgn * 2.2 - 0.5, 22, 7.65), (8 + sgn * 2.2 + 0.5, 26.0, 8.35), "metal", rot=((8 + sgn * 2.2, 26, 8), "z", 22.5 * sgn))
             m.box((8 + sgn * 3.4 - 0.4, 21, 7.7), (8 + sgn * 3.4 + 0.4, 23.5, 8.3), "edge", rot=((8 + sgn * 3.4, 23.5, 8), "z", 45 * sgn))
@@ -259,11 +422,16 @@ def spear(tier):
         for sgn in (-1, 1):
             m.box((8 + sgn * 2.6 - 0.35, 21.5, 7.75), (8 + sgn * 2.6 + 0.35, 26.5, 8.25), "trim", rot=((8 + sgn * 1.2, 22, 8), "z", -45 * sgn))
         m.box((7.5, 15, 7.95), (8.5, 21, 8.05), "cloth", rot=((8, 21, 8), "x", 22.5))
+    if s["legend"] == "skypiercer":
+        for sgn in (-1, 1):
+            m.box((8 + sgn * 2.5 - 1.6, 19, 7.9), (8 + sgn * 2.5 + 1.6, 24, 8.1), "wing", rot=((8 + sgn * 1, 22, 8), "z", -22.5 * sgn))
+            m.box((8 + sgn * 3.8 - 1.2, 17.5, 7.95), (8 + sgn * 3.8 + 1.2, 22, 8.05), "wing", rot=((8 + sgn * 2, 21, 8), "z", -45 * sgn))
     return m
 
 
-def warhammer(tier):
+def warhammer(s):
     m = Model()
+    tier = s["sil"]
     m.box((7, -11.5, 7), (9, -9.5, 9), "trim")
     m.box((7.3, -9.5, 7.3), (8.7, 17, 8.7), "shaft", "shaft", "trim")
     m.box((7.15, -8, 7.15), (8.85, 2, 8.85), "grip")
@@ -318,19 +486,20 @@ def warhammer(tier):
     return m
 
 
-def scythe(tier):
+def scythe(s):
     m = Model()
+    tier = s["sil"]
     m.box((7.4, -14, 7.4), (8.6, 26, 8.6), "shaft", "shaft", "trim")
     m.box((7.25, -12, 7.25), (8.75, -4, 8.75), "grip")
     m.box((8.6, 8, 7.5), (12, 9, 8.5), "grip")
     m.box((7, 23, 7), (9, 26.5, 9), "trim")
-    m.box((7.3, 24, 6.8), (8.7, 25.4, 9.2), "gem", glow=tier in ("diamond", "stormsteel"))
+    m.box((7.3, 24, 6.8), (8.7, 25.4, 9.2), "gem", glow=bool(s["glow"]))
     reach = {"stone": 0.7, "iron": 1.0, "golden": 1.05, "diamond": 1.0, "netherite": 1.0, "stormsteel": 1.1}[tier]
     steps = [(2.0, 8.0, 23.4, 27.0), (-3.0, 2.0, 22.0, 25.6), (-7.0, -3.0, 20.2, 23.6), (-10.0, -7.0, 18.4, 21.2),
              (-12.0, -10.0, 16.8, 18.9), (-13.4, -12.0, 15.8, 17.2)]
     if reach < 1:
         steps = steps[:4]
-    glowing = TIER_GLOW[tier] is not None
+    glowing = bool(s["glow"])
     for (x0, x1, y0, y1) in steps:
         m.box((x0, y0, 7.75), (x1, y1, 8.25), "blade", "edge", "edge")
         m.box((x0, y0 - 0.3, 7.8), (x1, y0 + 0.35, 8.2), "glow" if glowing else "edge", glow=glowing)
@@ -351,13 +520,14 @@ def scythe(tier):
     return m
 
 
-def battleaxe(tier):
+def battleaxe(s):
     m = Model()
+    tier = s["sil"]
     m.box((7, -9.5, 7), (9, -8, 9), "trim")
     m.box((7.3, -8, 7.3), (8.7, 22, 8.7), "shaft", "shaft", "trim")
     m.box((7.15, -6, 7.15), (8.85, 3, 8.85), "grip")
     m.box((6.6, 13, 6.6), (9.4, 21, 9.4), "trim")
-    m.box((7.4, 16, 6.3), (8.6, 18, 9.7), "gem", glow=tier in ("diamond", "stormsteel"))
+    m.box((7.4, 16, 6.3), (8.6, 18, 9.7), "gem", glow=bool(s["glow"]))
     sides = (1,) if tier == "stone" else (-1, 1)
     size = {"stone": 1.1, "iron": 1.0, "golden": 1.15, "diamond": 1.0, "netherite": 1.05, "stormsteel": 1.1}[tier]
     for sgn in sides:
@@ -369,7 +539,7 @@ def battleaxe(tier):
         x0, x1 = X(4.0, 6.5)
         m.box((x0, 12.5 - (size - 1) * 6, 7.65), (x1, 21.5 + (size - 1) * 6, 8.35), "metal")
         x0, x1 = X(6.5, 7.6)
-        glowing = TIER_GLOW[tier] is not None
+        glowing = bool(s["glow"])
         m.box((x0, 11 - (size - 1) * 8, 7.7), (x1, 23 + (size - 1) * 8, 8.3), "glow" if glowing else "edge", glow=glowing)
         if tier == "netherite":
             ex = 8 + sgn * 7.4
@@ -390,8 +560,45 @@ def battleaxe(tier):
     return m
 
 
+def warhammer_legend(s):
+    m = warhammer(s)
+    if s["legend"] == "earthshaker":
+        for x0, y0 in ((3, 17), (4.5, 19.5), (11, 16.5), (10, 19.8)):
+            m.box((x0, y0, 4.85), (x0 + 1.6, y0 + 0.6, 11.15), "glow", glow=True)
+        m.box((2.6, 18.7, 4.85), (5.2, 19.2, 11.15), "glow", glow=True)
+        m.box((10.6, 18, 4.85), (13.4, 18.5, 11.15), "glow", glow=True)
+    # Studded bands around the head make it read as forged steel.
+    m.box((1.8, 15.1, 4.7), (14.2, 15.7, 11.3), "trim")
+    m.box((1.8, 22.3, 4.7), (14.2, 22.9, 11.3), "trim")
+    return m
+
+
+# The scythe's blade is built pointing toward -x; flip it so it sweeps out in front of the player.
+SCYTHE_FLIP = True
+
+
+def scythe_legend(s):
+    m = scythe(s)
+    if s["legend"] == "voidreaver":
+        m.box((8.6, 24.5, 7.75), (11.5, 26, 8.25), "blade", "edge", "edge")
+        m.box((11.5, 22.5, 7.8), (12.8, 26, 8.2), "blade", "edge", "edge")
+    for y in (-2, 4, 14):
+        m.box((7.25, y, 7.25), (8.75, y + 0.6, 8.75), "trim")
+    return mirror_x(m) if SCYTHE_FLIP else m
+
+
+def battleaxe_legend(s):
+    m = battleaxe(s)
+    if s["legend"] == "kingsbane":
+        for x in (6.2, 8.0, 9.8):
+            m.box((x - 0.4, 21, 7.6), (x + 0.4, 23.5 if x != 8.0 else 27, 8.4), "trim")
+    for y in (5, 9):
+        m.box((7.15, y, 7.15), (8.85, y + 0.6, 8.85), "trim")
+    return m
+
+
 BUILDERS = {"longsword": longsword, "greatsword": greatsword, "katana": katana, "dual_daggers": dagger, "spear": spear,
-            "warhammer": warhammer, "scythe": scythe, "battleaxe": battleaxe}
+            "warhammer": warhammer_legend, "scythe": scythe_legend, "battleaxe": battleaxe_legend}
 
 SHAFT = {"stone": "wood", "iron": "wood", "golden": "birch", "diamond": "birch", "netherite": "black_iron", "stormsteel": "black_iron"}
 
@@ -400,7 +607,7 @@ def textures(kind, tier):
     blade = {"golden": "gold"}.get(tier, TIER_BLADE[tier])
     glow = TIER_GLOW[tier] or "ember"
     return {
-        "blade": f"steelstorm:item/3d/blade_{blade}", "edge": f"steelstorm:item/3d/edge_{blade}",
+        "blade": f"steelstorm:item/3d/grad_{tier}", "edge": f"steelstorm:item/3d/gedge_{tier}",
         "fuller": f"steelstorm:item/3d/fuller_{blade}", "metal": f"steelstorm:item/3d/metal_{blade}",
         "trim": f"steelstorm:item/3d/trim_{TIER_TRIM[tier]}", "gem": f"steelstorm:item/3d/gem_{TIER_GEM[tier]}",
         "grip": "steelstorm:item/3d/grip_ito" if kind == "katana" and tier == "iron" else f"steelstorm:item/3d/grip_{TIER_GRIP[tier]}",
@@ -410,21 +617,42 @@ def textures(kind, tier):
     }
 
 
+def legend_textures(kind, name, spec):
+    b = spec["blade"]
+    return {
+        "blade": f"steelstorm:item/3d/grad_{name}", "edge": f"steelstorm:item/3d/gedge_{name}",
+        "fuller": f"steelstorm:item/3d/glow_{spec['glow']}", "metal": f"steelstorm:item/3d/metal_{b}",
+        "trim": f"steelstorm:item/3d/trim_{spec['trim']}", "gem": f"steelstorm:item/3d/gem_{spec['gem']}",
+        "grip": "steelstorm:item/3d/grip_ito" if kind == "katana" else f"steelstorm:item/3d/grip_{spec['grip']}",
+        "shaft": f"steelstorm:item/3d/shaft_{spec.get('shaft', 'wood')}", "collar": "steelstorm:item/3d/trim_gold",
+        "glow": f"steelstorm:item/3d/glow_{spec['glow']}", "cloth": f"steelstorm:item/3d/grip_{spec['grip']}",
+        "wing": "steelstorm:item/3d/trim_cloth_white", "particle": f"steelstorm:item/3d/blade_{b}",
+    }
+
+
+def write(name, kind, m, tex):
+    data = {"credit": "Steelstorm Arsenal (generated)", "texture_size": [16, 16], "textures": tex,
+            "elements": m.elements, "display": TYPE_MODELS[kind][1]}
+    with open(os.path.join(MODELS, f"{name}.json"), "w") as f:
+        json.dump(data, f, indent=1)
+
+
 def main():
     write_textures()
     for name in ("violet_wrap", "ember_wrap", "green_wrap", "teal_wrap", "straw", "red_wrap", "blue_wrap"):
         save(tex_grip(R[name], 5), "item", "3d", f"grip_{name}.png")
+    for i, (name, colors) in enumerate(GRADIENTS.items()):
+        save(tex_grad_blade(colors, i), "item", "3d", f"grad_{name}.png")
+        save(tex_grad_edge(colors), "item", "3d", f"gedge_{name}.png")
     count = 0
     for kind, build in BUILDERS.items():
-        disp = TYPE_MODELS[kind][1]
         for tier in TIERS:
-            m = build(tier)
-            data = {"credit": "Steelstorm Arsenal (generated)", "texture_size": [16, 16], "textures": textures(kind, tier),
-                    "elements": m.elements, "display": disp}
-            with open(os.path.join(MODELS, f"{tier}_{kind}.json"), "w") as f:
-                json.dump(data, f, indent=1)
+            write(f"{tier}_{kind}", kind, build(tier_style(tier)), textures(kind, tier))
             count += 1
-    print(f"{count} tier models written")
+    for name, (kind, spec) in LEGENDARY_MODELS.items():
+        write(name, kind, BUILDERS[kind](legend_style(name, spec)), legend_textures(kind, name, spec))
+        count += 1
+    print(f"{count} weapon models written")
 
 
 if __name__ == "__main__":

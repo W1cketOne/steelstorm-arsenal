@@ -195,8 +195,12 @@ class Model:
     def __init__(self):
         self.elements = []
 
-    def box(self, frm, to, tex, side=None, ends=None, rot=None, glow=False, faces=FACES):
-        """Adds a cuboid. `tex` covers north/south, `side` east/west, `ends` up/down."""
+    def box(self, frm, to, tex, side=None, ends=None, rot=None, glow=False, faces=FACES, uvy=None):
+        """Adds a cuboid. `tex` covers north/south, `side` east/west, `ends` up/down.
+
+        `uvy=(y_bottom, y_top)` maps the texture's height onto that span of model y instead of
+        stretching it over each face, so a gradient runs smoothly along a blade made of many boxes.
+        """
         side = side or tex
         ends = ends or side
         face_tex = {"north": tex, "south": tex, "east": side, "west": side, "up": ends, "down": ends}
@@ -205,6 +209,14 @@ class Model:
                 raise ValueError(f"Model coordinate {v} outside Minecraft's -16..32 range: {frm} -> {to}")
         el = {"from": [round(v, 3) for v in frm], "to": [round(v, 3) for v in to],
               "faces": {f: {"uv": [0, 0, 16, 16], "texture": "#" + face_tex[f]} for f in faces}}
+        if uvy:
+            ya, yb = uvy
+
+            def v(y):
+                return round(max(0.0, min(16.0, 16 * (yb - y) / (yb - ya))), 3)
+            for f in ("north", "south", "east", "west"):
+                if f in el["faces"]:
+                    el["faces"][f]["uv"] = [0, v(to[1]), 16, v(frm[1])]
         if rot:
             origin, axis, angle = rot
             el["rotation"] = {"origin": [round(v, 3) for v in origin], "axis": axis, "angle": angle}
@@ -434,14 +446,38 @@ def knife_model():
 # Display transforms for a model built with the blade along +Y, centred on x = z = 8.
 # `grip` is the model y where the hand should hold it; the pivot is the model centre (y = 8),
 # so the model is slid along its own axis by (8 - grip) to put that point in the hand.
+# Hand anchors (in model pixels): where the hold point of a weapon should end up in each view.
+HAND_TP = (0.0, 1.6, 0.6)
+HAND_FP = (1.1, 0.4, 0.6)
+
+
+def _offset(d, scale, tilt, yaw):
+    """Where model offset (0, d, 0) from the centre lands after rotation [0, yaw, tilt] and scale."""
+    t, f = math.radians(tilt), math.radians(yaw)
+    x, y = -d * math.sin(t), d * math.cos(t)
+    return (x * math.cos(f) * scale, y * scale, -x * math.sin(f) * scale)
+
+
 def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25):
-    off_tp = (8 - grip) * scale_tp * 0.95
-    off_fp = (8 - grip) * scale_fp * 0.9
+    """Display transforms for a model built along +Y and centred on x = z = 8.
+
+    `grip` is the model y the hand closes around. The translation is solved so that this point,
+    after the tilt and scale, lands exactly on the hand anchor, so long-hafted weapons sit in
+    the fist instead of floating beside it however far they are tilted.
+    """
+    d = grip - 8
+
+    def solve(anchor, scale, tilt, yaw):
+        o = _offset(d, scale, tilt, yaw)
+        return [round(anchor[i] - o[i], 3) for i in range(3)]
+
+    tp = solve(HAND_TP, scale_tp, tilt, 90)
+    fp = solve(HAND_FP, scale_fp, fp_tilt, -90)
     return {
-        "thirdperson_righthand": {"rotation": [0, 90, tilt], "translation": [0, 4 + off_tp, 0.5], "scale": [scale_tp] * 3},
-        "thirdperson_lefthand": {"rotation": [0, -90, -tilt], "translation": [0, 4 + off_tp, 0.5], "scale": [scale_tp] * 3},
-        "firstperson_righthand": {"rotation": [0, -90, fp_tilt], "translation": [1.0, 1.6 + off_fp * 0.7, 1.13], "scale": [scale_fp] * 3},
-        "firstperson_lefthand": {"rotation": [0, 90, -fp_tilt], "translation": [1.0, 1.6 + off_fp * 0.7, 1.13], "scale": [scale_fp] * 3},
+        "thirdperson_righthand": {"rotation": [0, 90, tilt], "translation": tp, "scale": [scale_tp] * 3},
+        "thirdperson_lefthand": {"rotation": [0, -90, -tilt], "translation": tp, "scale": [scale_tp] * 3},
+        "firstperson_righthand": {"rotation": [0, -90, fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
+        "firstperson_lefthand": {"rotation": [0, 90, -fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
         "ground": {"translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
         "gui": {"rotation": [30, 225, 0], "scale": [0.6] * 3},
         "fixed": {"rotation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]},
@@ -450,14 +486,14 @@ def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25):
 
 
 TYPE_MODELS = {
-    "longsword": (longsword_model, display(0.62, 0.46, 4.25, 10)),
-    "greatsword": (greatsword_model, display(0.66, 0.46, 5.0, 25)),
-    "katana": (katana_model, display(0.62, 0.46, 4.0, 10)),
-    "dual_daggers": (dagger_model, display(0.72, 0.56, 2.5, 0)),
-    "spear": (spear_model, display(0.62, 0.42, 6.0, 5)),
-    "warhammer": (warhammer_model, display(0.62, 0.42, -2.5, 50)),
-    "scythe": (scythe_model, display(0.6, 0.4, -6.0, 65)),
-    "battleaxe": (battleaxe_model, display(0.62, 0.42, -1.5, 45)),
+    "longsword": (longsword_model, display(0.7, 0.44, -1.0, 10)),
+    "greatsword": (greatsword_model, display(0.74, 0.44, -3.0, 15)),
+    "katana": (katana_model, display(0.7, 0.44, -2.5, 10)),
+    "dual_daggers": (dagger_model, display(0.75, 0.58, 0.5, 0)),
+    "spear": (spear_model, display(0.64, 0.44, 6.0, 5)),
+    "warhammer": (warhammer_model, display(0.64, 0.44, -4.0, 15)),
+    "scythe": (scythe_model, display(0.62, 0.42, -8.0, 20)),
+    "battleaxe": (battleaxe_model, display(0.64, 0.44, -2.5, 15)),
 }
 
 TYPE_VARS = ["blade", "edge", "fuller", "metal", "trim", "gem", "grip", "shaft", "collar"]
@@ -518,12 +554,7 @@ def write_models():
         data["textures"] = {"particle": "#blade"}
         with open(os.path.join(MODELS, f"{kind}.json"), "w") as f:
             json.dump(data, f, indent=1)
-    for name, (kind, spec) in LEGENDARY_MODELS.items():
-        fn, disp = TYPE_MODELS[kind]
-        m = fn(legend=name)
-        data = m.json(legendary_textures(spec, kind), disp, f"steelstorm:item/3d/blade_{spec['blade']}")
-        with open(os.path.join(MODELS, f"{name}.json"), "w") as f:
-            json.dump(data, f, indent=1)
+    # Legendary models are built by gen_tier_models.py alongside the tier models.
     for name, m, tex in (("chakram", chakram_model(), {"blade": "steelstorm:item/3d/blade_iron", "edge": "steelstorm:item/3d/edge_iron",
                                                            "grip": "steelstorm:item/3d/grip_leather", "trim": "steelstorm:item/3d/trim_gold"}),
                          ("throwing_knife", knife_model(), {"blade": "steelstorm:item/3d/blade_iron", "edge": "steelstorm:item/3d/edge_iron",

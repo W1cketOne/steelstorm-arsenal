@@ -5,8 +5,8 @@
   16
  ],
  "textures": {
-  "blade": "steelstorm:item/3d/blade_gold",
-  "edge": "steelstorm:item/3d/edge_gold",
+  "blade": "steelstorm:item/3d/grad_golden",
+  "edge": "steelstorm:item/3d/gedge_golden",
   "fuller": "steelstorm:item/3d/fuller_gold",
   "metal": "steelstorm:item/3d/metal_gold",
   "trim": "steelstorm:item/3d/trim_gold",
@@ -357,6 +357,10 @@
      ],
      "texture": "#gem"
     }
+   },
+   "neoforge_data": {
+    "block_light": 15,
+    "sky_light": 15
    }
   },
   {
@@ -1114,6 +1118,142 @@
      "texture": "#cloth"
     }
    }
+  },
+  {
+   "from": [
+    7.15,
+    5,
+    7.15
+   ],
+   "to": [
+    8.85,
+    5.6,
+    8.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    }
+   }
+  },
+  {
+   "from": [
+    7.15,
+    9,
+    7.15
+   ],
+   "to": [
+    8.85,
+    9.6,
+    8.85
+   ],
+   "faces": {
+    "north": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "south": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "east": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "west": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "up": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    },
+    "down": {
+     "uv": [
+      0,
+      0,
+      16,
+      16
+     ],
+     "texture": "#trim"
+    }
+   }
   }
  ],
  "display": {
@@ -1121,34 +1261,34 @@
    "rotation": [
     0,
     90,
-    45
+    15
    ],
    "translation": [
-    0,
-    9.5955,
-    0.5
+    -0.0,
+    8.091,
+    2.339
    ],
    "scale": [
-    0.62,
-    0.62,
-    0.62
+    0.64,
+    0.64,
+    0.64
    ]
   },
   "thirdperson_lefthand": {
    "rotation": [
     0,
     -90,
-    -45
+    -15
    ],
    "translation": [
-    0,
-    9.5955,
-    0.5
+    -0.0,
+    8.091,
+    2.339
    ],
    "scale": [
-    0.62,
-    0.62,
-    0.62
+    0.64,
+    0.64,
+    0.64
    ]
   },
   "firstperson_righthand": {
@@ -1158,14 +1298,14 @@
     25
    ],
    "translation": [
-    1.0,
-    4.1137,
-    1.13
+    1.1,
+    4.587,
+    -1.352
    ],
    "scale": [
-    0.42,
-    0.42,
-    0.42
+    0.44,
+    0.44,
+    0.44
    ]
   },
   "firstperson_lefthand": {
@@ -1175,14 +1315,14 @@
     -25
    ],
    "translation": [
-    1.0,
-    4.1137,
-    1.13
+    1.1,
+    4.587,
+    -1.352
    ],
    "scale": [
-    0.42,
-    0.42,
-    0.42
+    0.44,
+    0.44,
+    0.44
    ]
   },
   "ground": {

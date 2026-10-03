@@ -88,26 +88,41 @@ public final class AnimationEvents {
         WeaponAnimator.poseFirstPerson(pose, player, arm, weapon.type(), event.getPartialTick(), event.getEquipProgress(),
                 event.getSwingProgress());
         pose.pushPose();
-        // Close the fist exactly on the weapon's grip point (where the item model's hold point is
-        // placed, see gen_models.HAND_FP) with the forearm running back to the corner of the screen.
-        pose.translate(side * 1.13F / 16.0F, 2.0F / 16.0F, 0.15F / 16.0F);
-        org.joml.Vector3f along = new org.joml.Vector3f(side * -0.22F, 0.72F, -0.66F).normalize();
-        pose.mulPose(new org.joml.Quaternionf().rotationTo(new org.joml.Vector3f(0, 1, 0), along));
-        pose.mulPose(Axis.YP.rotationDegrees(side * 90));
-        pose.translate(side * 6.0F / 16.0F, -10.5F / 16.0F, 0);
-        net.minecraft.client.renderer.entity.EntityRenderer<? super LocalPlayer> r = mc.getEntityRenderDispatcher().getRenderer(player);
-        if (r instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
-            if (side > 0) {
-                pr.renderRightHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
-            } else {
-                pr.renderLeftHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
-            }
-        }
+        drawArm(mc, player, pose, event, side, 0);
         pose.popPose();
         mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, stack,
                 side > 0 ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
                         : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
                 side < 0, pose, event.getMultiBufferSource(), event.getPackedLight());
+        pose.popPose();
+    }
+
+    /**
+     * Draws one arm with its fist closed on the grip point, or `down` blocks further down the
+     * weapon's haft, the forearm running back toward that arm's side of the screen.
+     */
+    private static void drawArm(Minecraft mc, LocalPlayer player, PoseStack pose, net.neoforged.neoforge.client.event.RenderHandEvent event,
+                                int armSide, float down) {
+        int hand = player.getMainArm() == HumanoidArm.RIGHT ? 1 : -1;
+        pose.pushPose();
+        // Grip point (gen_models.HAND_FP), then down the weapon's axis in first person.
+        pose.translate(hand * 1.13F / 16.0F, 2.0F / 16.0F, 0.15F / 16.0F);
+        pose.translate(hand * 0.211F * down, -0.906F * down, 0.366F * down);
+        org.joml.Vector3f along = armSide == hand
+                ? new org.joml.Vector3f(hand * -0.22F, 0.72F, -0.66F)
+                : new org.joml.Vector3f(hand * 0.55F, 0.62F, -0.56F);
+        along.normalize();
+        pose.mulPose(new org.joml.Quaternionf().rotationTo(new org.joml.Vector3f(0, 1, 0), along));
+        pose.mulPose(Axis.YP.rotationDegrees(armSide * 90));
+        pose.translate(armSide * 6.0F / 16.0F, -10.5F / 16.0F, 0);
+        net.minecraft.client.renderer.entity.EntityRenderer<? super LocalPlayer> r = mc.getEntityRenderDispatcher().getRenderer(player);
+        if (r instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
+            if (armSide > 0) {
+                pr.renderRightHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
+            } else {
+                pr.renderLeftHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
+            }
+        }
         pose.popPose();
     }
 

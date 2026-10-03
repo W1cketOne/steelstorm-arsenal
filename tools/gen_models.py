@@ -447,8 +447,8 @@ def knife_model():
 # `grip` is the model y where the hand should hold it; the pivot is the model centre (y = 8),
 # so the model is slid along its own axis by (8 - grip) to put that point in the hand.
 # Hand anchors (in model pixels): where the hold point of a weapon should end up in each view.
-HAND_TP = (0.0, 1.6, 0.6)
-HAND_FP = (1.1, 0.4, 0.6)
+HAND_TP = (0.0, 0.4, 1.0)
+HAND_FP = (1.13, 0.05, 0.15)
 
 
 def _offset(d, scale, tilt, yaw):
@@ -458,12 +458,13 @@ def _offset(d, scale, tilt, yaw):
     return (x * math.cos(f) * scale, y * scale, -x * math.sin(f) * scale)
 
 
-def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25):
+def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25, fp_yaw=-90):
     """Display transforms for a model built along +Y and centred on x = z = 8.
 
     `grip` is the model y the hand closes around. The translation is solved so that this point,
     after the tilt and scale, lands exactly on the hand anchor, so long-hafted weapons sit in
-    the fist instead of floating beside it however far they are tilted.
+    the fist instead of floating beside it however far they are tilted. `fp_yaw` = 90 turns a
+    model round in first person (the scythe, whose model is mirrored to face forward in third person).
     """
     d = grip - 8
 
@@ -472,12 +473,12 @@ def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25):
         return [round(anchor[i] - o[i], 3) for i in range(3)]
 
     tp = solve(HAND_TP, scale_tp, tilt, 90)
-    fp = solve(HAND_FP, scale_fp, fp_tilt, -90)
+    fp = solve(HAND_FP, scale_fp, fp_tilt, fp_yaw)
     return {
         "thirdperson_righthand": {"rotation": [0, 90, tilt], "translation": tp, "scale": [scale_tp] * 3},
         "thirdperson_lefthand": {"rotation": [0, -90, -tilt], "translation": tp, "scale": [scale_tp] * 3},
-        "firstperson_righthand": {"rotation": [0, -90, fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
-        "firstperson_lefthand": {"rotation": [0, 90, -fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
+        "firstperson_righthand": {"rotation": [0, fp_yaw, fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
+        "firstperson_lefthand": {"rotation": [0, -fp_yaw, -fp_tilt], "translation": fp, "scale": [scale_fp] * 3},
         "ground": {"translation": [0, 2, 0], "scale": [0.5, 0.5, 0.5]},
         "gui": {"rotation": [30, 225, 0], "scale": [0.6] * 3},
         "fixed": {"rotation": [0, 0, 0], "scale": [0.5, 0.5, 0.5]},
@@ -492,7 +493,7 @@ TYPE_MODELS = {
     "dual_daggers": (dagger_model, display(0.75, 0.58, 0.5, 0)),
     "spear": (spear_model, display(0.64, 0.44, 6.0, 5)),
     "warhammer": (warhammer_model, display(0.64, 0.44, -4.0, 15)),
-    "scythe": (scythe_model, display(0.62, 0.42, -8.0, 20)),
+    "scythe": (scythe_model, display(0.62, 0.42, -8.0, 20, fp_tilt=-25, fp_yaw=90)),
     "battleaxe": (battleaxe_model, display(0.64, 0.44, -2.5, 15)),
 }
 

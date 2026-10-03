@@ -198,6 +198,7 @@ public final class WeaponAnimator {
         // Our own swing replaces the vanilla one.
         model.attackTime = 0;
         if (track == null) {
+            runAndJump(model, entity, type, partialTick);
             return;
         }
         float[] v = new float[8];
@@ -233,6 +234,72 @@ public final class WeaponAnimator {
         if (!Float.isNaN(v[3]) || !Float.isNaN(hold[3])) {
             model.leftArm.z -= reach * 0.8F;
         }
+    }
+
+    /** Sprinting carries the weapon low and trailing (or across the chest); jumping raises it and tucks a knee. */
+    private static void runAndJump(HumanoidModel<?> model, LivingEntity entity, WeaponType type, float partialTick) {
+        MovementAnims.State s = MovementAnims.get(entity);
+        float sprint = s.sprint(partialTick);
+        float air = s.air(partialTick);
+        float land = s.land(partialTick);
+        boolean two = isTwoHanded(type);
+        float pump = Mth.cos(entity.walkAnimation.position(partialTick) * 0.6662F) * entity.walkAnimation.speed(partialTick);
+        if (sprint > 0.001F) {
+            if (two) {
+                // Port arms: the haft held diagonally across the body, bouncing with each stride.
+                blend(model.rightArm, -0.55F + 0.1F * pump, -0.75F, 0.1F, sprint);
+                blend(model.leftArm, -1.0F - 0.1F * pump, 0.65F, -0.1F, sprint);
+            } else {
+                // Weapon arm swept back so the blade trails behind; the free arm pumps hard.
+                blend(model.rightArm, 0.75F + 0.25F * pump, 0.25F, 0.35F, sprint);
+                blend(model.leftArm, -1.3F * pump, 0, -0.1F, sprint);
+            }
+        }
+        if (air > 0.001F) {
+            if (two) {
+                blend(model.rightArm, -1.5F, -0.55F, 0, air * 0.8F);
+                blend(model.leftArm, -1.7F, 0.55F, 0, air * 0.8F);
+            } else {
+                blend(model.rightArm, -1.6F, 0.1F, 0.15F, air * 0.7F);
+                blend(model.leftArm, -0.5F, 0, -0.9F, air * 0.8F);
+            }
+            model.rightLeg.xRot = Mth.lerp(air, model.rightLeg.xRot, -0.95F);
+            model.leftLeg.xRot = Mth.lerp(air, model.leftLeg.xRot, 0.4F);
+        }
+        if (land > 0.001F) {
+            // Arms dip with the impact.
+            model.rightArm.xRot += 0.35F * land;
+            model.leftArm.xRot += 0.35F * land;
+        }
+    }
+
+    private static void blend(net.minecraft.client.model.geom.ModelPart part, float x, float y, float z, float t) {
+        part.xRot = Mth.lerp(t, part.xRot, x);
+        part.yRot = Mth.lerp(t, part.yRot, y);
+        part.zRot = Mth.lerp(t, part.zRot, z);
+    }
+
+    /** First-person run sway, jump lift and landing dip, added while not swinging or casting. */
+    private static void moveFirstPerson(PoseStack pose, LivingEntity player, int side, WeaponType type, float partialTick) {
+        MovementAnims.State s = MovementAnims.get(player);
+        float sprint = s.sprint(partialTick);
+        float air = s.air(partialTick);
+        float land = s.land(partialTick);
+        if (sprint <= 0.001F && air <= 0.001F && land <= 0.001F) {
+            return;
+        }
+        float phase = player.walkAnimation.position(partialTick) * 0.6662F;
+        float vy = (float) player.getDeltaMovement().y;
+        boolean two = isTwoHanded(type);
+        // Run: the weapon pulls in toward the centre and tips forward, rocking with each stride.
+        float dx = side * (-0.07F * sprint + 0.025F * sprint * Mth.sin(phase));
+        float dy = -0.05F * sprint + 0.03F * sprint * Math.abs(Mth.cos(phase)) - 0.12F * land
+                + air * Mth.clamp(-vy * 0.35F, -0.12F, 0.14F);
+        float dz = 0.04F * sprint;
+        pose.translate(dx, dy, dz);
+        pose.mulPose(Axis.XP.rotationDegrees((two ? 10 : 16) * sprint + 10 * land - 14 * air));
+        pose.mulPose(Axis.ZP.rotationDegrees(side * ((two ? 22 : 14) * sprint + 6 * sprint * Mth.sin(phase))));
+        pose.mulPose(Axis.YP.rotationDegrees(side * (8 * air)));
     }
 
     private static void apply(net.minecraft.client.model.geom.ModelPart part, float x, float y, float z) {
@@ -279,6 +346,7 @@ public final class WeaponAnimator {
         } else {
             float progress = SwingClock.progress(player, swing, type, partialTick);
             if (progress <= 0) {
+                moveFirstPerson(pose, player, side, type, partialTick);
                 return;
             }
             SWING_FP.get(type)[SwingClock.cut(player)].sample(progress, v);

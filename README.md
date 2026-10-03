@@ -7,6 +7,7 @@ A skill-based combat mod for **Minecraft Java 1.21.1** on **NeoForge 21.1.252**.
 - **Stamina** that dodge rolls, parries and heavy attacks all draw on.
 - **Smithing**: runes, whetstones and Stormsteel armour.
 - **Animations:** per-weapon swings, ability poses and a somersault dodge roll, seen in first and third person.
+- **Movement animations:** players lean into sprints, stretch on jumps and squash on landing. With a weapon you carry it trailing (or across your chest for two-handers) while running and raise it mid-jump; in first person the weapon sways with your stride, lifts on jumps and dips when you land.
 - **Big glowing effects:** shockwave halos, pillars of light, orbiting orbs, magic circles and sparkles.
 - **Interactive blocks** and **6 bosses**, two of them fully custom animated models with their own lairs.
 - **3D Stormsteel armour** with pauldrons, a crested helm and plating.

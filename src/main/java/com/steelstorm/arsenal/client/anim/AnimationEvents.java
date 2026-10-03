@@ -73,11 +73,12 @@ public final class AnimationEvents {
         Player player = event.getEntity();
         ClientAnims.Active anim = ClientAnims.get(player, event.getPartialTick());
         event.getPoseStack().pushPose();
-        if (anim == null) {
-            return;
-        }
         PoseStack pose = event.getPoseStack();
         float bodyYaw = Mth.rotLerp(event.getPartialTick(), player.yBodyRotO, player.yBodyRot);
+        if (anim == null) {
+            movement(pose, player, bodyYaw, event.getPartialTick());
+            return;
+        }
         if (anim.pose() == CastPose.SPIN) {
             float turns = anim.t() < 0.5F ? anim.t() * 2 : 1;
             pose.mulPose(Axis.YP.rotationDegrees(-720 * (float) Math.sin(turns * Math.PI / 2)));
@@ -103,6 +104,30 @@ public final class AnimationEvents {
             pose.mulPose(Axis.YP.rotationDegrees(bodyYaw));
             pose.translate(0, -0.9, 0);
         }
+    }
+
+    /**
+     * Everyday movement for every player: leaning into a sprint, stretching on the way up, tucking
+     * at the top of a jump and squashing a little on landing.
+     */
+    private static void movement(PoseStack pose, Player player, float bodyYaw, float partial) {
+        MovementAnims.State s = MovementAnims.get(player);
+        float sprint = s.sprint(partial);
+        float air = s.air(partial);
+        float land = s.land(partial);
+        if (sprint <= 0.001F && air <= 0.001F && land <= 0.001F) {
+            return;
+        }
+        float vy = (float) player.getDeltaMovement().y;
+        float lean = 9.0F * sprint * (1 - 0.5F * air) - air * Mth.clamp(vy * 18.0F, -6.0F, 8.0F);
+        if (lean != 0) {
+            pose.mulPose(Axis.YP.rotationDegrees(-bodyYaw));
+            pose.mulPose(Axis.XP.rotationDegrees(-lean));
+            pose.mulPose(Axis.YP.rotationDegrees(bodyYaw));
+        }
+        // Stretch while rising, squash on impact.
+        float stretch = air * Mth.clamp(vy * 0.35F, -0.03F, 0.06F) - land * 0.1F;
+        pose.scale(1 - stretch * 0.5F, 1 + stretch, 1 - stretch * 0.5F);
     }
 
     @SubscribeEvent

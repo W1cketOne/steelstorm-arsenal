@@ -65,6 +65,54 @@ public final class AnimationEvents {
         }
     }
 
+    // ------------------------------------------------------------------ first-person arm
+
+    /**
+     * In first person, draws the player's own arm gripping the weapon (vanilla hides the arm when
+     * holding anything), then the weapon itself, both moved by the same swing animation.
+     */
+    @SubscribeEvent
+    public static void onRenderHand(net.neoforged.neoforge.client.event.RenderHandEvent event) {
+        Minecraft mc = Minecraft.getInstance();
+        LocalPlayer player = mc.player;
+        ItemStack stack = event.getItemStack();
+        if (player == null || event.getHand() != InteractionHand.MAIN_HAND || !(stack.getItem() instanceof WeaponItem weapon)
+                || player.isInvisible() || (player.isUsingItem() && player.getUseItemRemainingTicks() > 0)) {
+            return;
+        }
+        event.setCanceled(true);
+        HumanoidArm arm = player.getMainArm();
+        int side = arm == HumanoidArm.RIGHT ? 1 : -1;
+        PoseStack pose = event.getPoseStack();
+        pose.pushPose();
+        WeaponAnimator.poseFirstPerson(pose, player, arm, weapon.type(), event.getPartialTick(), event.getEquipProgress(),
+                event.getSwingProgress());
+        pose.pushPose();
+        // Vanilla's empty-hand arm placement, measured from the grip instead of the screen corner,
+        // so the fist closes around the handle and follows every swing.
+        pose.translate(side * 0.1F, -0.02F, 0.02F);
+        pose.mulPose(Axis.YP.rotationDegrees(side * 45.0F));
+        pose.translate(side * -1.0F, 3.6F, 3.5F);
+        pose.mulPose(Axis.ZP.rotationDegrees(side * 120.0F));
+        pose.mulPose(Axis.XP.rotationDegrees(200.0F));
+        pose.mulPose(Axis.YP.rotationDegrees(side * -135.0F));
+        pose.translate(side * 5.6F, 0.0F, 0.0F);
+        net.minecraft.client.renderer.entity.EntityRenderer<? super LocalPlayer> r = mc.getEntityRenderDispatcher().getRenderer(player);
+        if (r instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
+            if (side > 0) {
+                pr.renderRightHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
+            } else {
+                pr.renderLeftHand(pose, event.getMultiBufferSource(), event.getPackedLight(), player);
+            }
+        }
+        pose.popPose();
+        mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, stack,
+                side > 0 ? net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_RIGHT_HAND
+                        : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND,
+                side < 0, pose, event.getMultiBufferSource(), event.getPackedLight());
+        pose.popPose();
+    }
+
     // ------------------------------------------------------------------ whole-body motions
 
     /** Spins and dodge somersaults turn the whole player model. */

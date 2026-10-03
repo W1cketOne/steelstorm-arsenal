@@ -244,7 +244,7 @@ def sword_guard_accent(m, sil, y, half, th, zc, zt):
     for sgn in (-1, 1):
         x = 8 + sgn * half * 0.6
         if sil == "golden":
-            m.box((x - 0.3, y + th, zc - 0.3), (x + 0.3, y + th + 0.9, zc + 0.3), "gem")
+            m.box((x - 0.35, y + th * 0.1, zc - 0.62), (x + 0.35, y + th * 0.9, zc + 0.62), "gem")
         elif sil == "diamond":
             m.box((x - 0.3, y - 1.6, zc - 0.3), (x + 0.3, y, zc + 0.3), "edge", glow=True, rot=((x, y, 8), "z", 22.5 * sgn))
         elif sil == "netherite":
@@ -310,22 +310,31 @@ def mirror_x(m):
 
 
 def longsword(s):
+    """A hand-and-a-half sword: a long hilt set low, a slim guard, a ricasso band and a long tapering blade."""
     m = Model()
     sil = s["sil"]
-    hw = {"stone": 1.9, "iron": 1.55, "golden": 1.5, "diamond": 1.45, "netherite": 1.7, "stormsteel": 1.45}[sil]
-    sword_pommel(m, sil, -4.5)
-    grip(m, -4.5, 2.5)
-    ornate_guard(m, s, 2.5, 5.8)
-    blade(m, s, hw, 3.9, 28.0, 4.0)
+    hw = {"stone": 1.9, "iron": 1.6, "golden": 1.55, "diamond": 1.5, "netherite": 1.75, "stormsteel": 1.5}[sil]
+    glow = bool(s["glow"])
+    # Faceted pommel with a gem set in each face.
+    sword_pommel(m, sil, -9.0)
+    if sil != "stone":
+        m.box((8 - 0.55, -10.55, 7.0), (8 + 0.55, -9.45, 9.0), "gem", glow=glow, rot=((8, -10.0, 8), "z", 45))
+    grip(m, -9.0, -1.0, 0.75, 1.8)
+    m.box((7.05, -1.6, 7.05), (8.95, -1.0, 8.95), "trim")
+    ornate_guard(m, s, -1.0, 6.4)
+    # Ricasso: the unsharpened shoulder of the blade, banded where it meets the guard.
+    m.box((8 - hw * 0.8, 1.4, 7.5), (8 + hw * 0.8, 3.4, 8.5), "metal")
+    m.box((8 - hw * 0.8 - 0.15, 3.4, 7.42), (8 + hw * 0.8 + 0.15, 3.9, 8.58), "trim")
+    blade(m, s, hw, 3.9, 28.5, 3.4)
     if sil == "netherite":
         notches(m, 8 - hw - 0.45, 8 + hw + 0.45, 9, 26, 2.8)
     if sil == "golden":
         m.box((8 - hw - 0.5, 8.0, 7.45), (8 + hw + 0.5, 8.8, 8.55), "trim")
     if s["legend"] == "tempest_edge":
         for sgn in (-1, 1):
-            m.box((8 + sgn * 6.6 - 0.6, 3.0, 7.3), (8 + sgn * 6.6 + 0.6, 8.0, 8.7), "trim", rot=((8 + sgn * 6.6, 3.0, 8), "z", -22.5 * sgn))
-            m.box((8 + sgn * 6.6 - 0.35, 3.5, 7.2), (8 + sgn * 6.6 + 0.35, 6.5, 8.8), "glow", glow=True,
-                  rot=((8 + sgn * 6.6, 3.0, 8), "z", -45 * sgn))
+            m.box((8 + sgn * 7.2 - 0.6, -0.5, 7.3), (8 + sgn * 7.2 + 0.6, 4.5, 8.7), "trim", rot=((8 + sgn * 7.2, -0.5, 8), "z", -22.5 * sgn))
+            m.box((8 + sgn * 7.2 - 0.35, 0.0, 7.2), (8 + sgn * 7.2 + 0.35, 3.0, 8.8), "glow", glow=True,
+                  rot=((8 + sgn * 7.2, -0.5, 8), "z", -45 * sgn))
     return m
 
 

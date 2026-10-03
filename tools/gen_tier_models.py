@@ -352,16 +352,25 @@ def katana(s):
     curve = {"stone": 0.6, "iron": 1.0, "golden": 1.1, "diamond": 0.8, "netherite": 1.3, "stormsteel": 1.2}[sil]
     g = (4.8, 32)
     em = s["emissive"]
-    segs = [(4.8, 11, 0.0, 1.75), (11, 17, -0.2, 1.7), (17, 22, -0.45, 1.62), (22, 26, -0.8, 1.52), (26, 29, -1.2, 1.38)]
-    for (y0, y1, dx, w) in segs:
-        x0 = 8 - w / 2 + dx * curve
+    # A smooth curve from many short segments: the offset grows quadratically toward the tip.
+    n = 9
+    y_end = 28.6
+    for i in range(n):
+        y0 = 4.8 + (y_end - 4.8) * i / n
+        y1 = 4.8 + (y_end - 4.8) * (i + 1) / n
+        t = (i + 0.5) / n
+        dx = -1.55 * curve * t * t
+        w = 1.78 - 0.4 * t
+        x0 = 8 - w / 2 + dx
         m.box((x0, y0, 7.72), (x0 + w, y1, 8.28), "blade", "edge", "edge", uvy=g, glow=em)
         # The hamon: a bright tempered line along the cutting edge.
-        m.box((x0 + w - 0.4, y0, 7.68), (x0 + w + 0.08, y1, 8.32), "glow" if s["glow"] else "edge", uvy=g,
-              glow=bool(s["glow"]))
-        m.box((x0 - 0.12, y0, 7.85), (x0 + 0.3, y1, 8.15), "fuller", uvy=g)
-    m.box((8 - 0.6 - 1.65 * curve, 29, 7.76), (8 + 0.6 - 1.65 * curve, 30.8, 8.24), "blade", "edge", "edge", uvy=g, glow=em)
-    m.box((8 - 0.3 - 2.0 * curve, 30.8, 7.8), (8 + 0.3 - 2.0 * curve, 32, 8.2), "edge", uvy=g, glow=em)
+        m.box((x0 + w - 0.42, y0, 7.68), (x0 + w + 0.06, y1, 8.32), "glow" if s["glow"] else "edge", uvy=g, glow=bool(s["glow"]))
+        m.box((x0 - 0.1, y0, 7.84), (x0 + 0.28, y1, 8.16), "fuller", uvy=g)
+    # Kissaki: the point keeps the curve, the edge sweeping up to the back of the blade.
+    tx = 8 - 1.55 * curve - 0.15
+    m.box((tx - 0.68, y_end, 7.76), (tx + 0.62, y_end + 1.3, 8.24), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((tx - 0.72, y_end + 1.3, 7.8), (tx + 0.12, y_end + 2.3, 8.2), "blade", "edge", "edge", uvy=g, glow=em)
+    m.box((tx - 0.72, y_end + 2.3, 7.83), (tx - 0.3, y_end + 3.0, 8.17), "edge", uvy=g, glow=em)
     if s["legend"] == "moonveil":
         m.box((4.4, 3.05, 7.5), (6.2, 3.55, 8.5), "trim", rot=((5.3, 3.3, 8), "y", 45))
         m.box((9.8, 3.05, 7.5), (11.6, 3.55, 8.5), "trim", rot=((10.7, 3.3, 8), "y", 45))

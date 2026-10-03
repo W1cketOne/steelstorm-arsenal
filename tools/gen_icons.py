@@ -601,15 +601,22 @@ def explorers_compass():
     return img
 
 
+LEGEND_GLOW = {"tempest_edge": "lightning", "rimecleaver": "frost", "voidreaver": "void", "earthshaker": "ember",
+               "bloodfang": "blood", "skypiercer": "sky", "moonveil": "moon", "kingsbane": "royal"}
+
+
 def main():
+    from icon_anim import save_animated
     for kind in WEAPONS:
-        for tier in TIERS:
-            save(tier_icon(kind, tier), "item", f"{tier}_{kind}.png")
+        for i, tier in enumerate(TIERS):
+            inlay = INLAY_COLOR.get(tier) if kind in INLAY_PATH else None
+            save_animated(tier_icon(kind, tier), tier, "item", f"{tier}_{kind}.png", seed=i * 7 + len(kind),
+                          inlay=hexc(inlay) if inlay else None)
     for name, fn in LEGENDARIES.items():
-        save(fn(), "item", f"{name}.png")
+        save_animated(fn(), LEGEND_GLOW[name], "item", f"{name}.png", seed=len(name))
     save(chakram(), "item", "chakram.png")
     save(throwing_knives(), "item", "throwing_knife.png")
-    save(ingot(), "item", "stormsteel_ingot.png")
+    save_animated(ingot(), "stormsteel", "item", "stormsteel_ingot.png", seed=3)
     save(raw_chunk(), "item", "raw_stormsteel.png")
     for name in RUNE_GLYPHS:
         save(rune(name), "item", f"{name}_rune.png")
@@ -617,7 +624,7 @@ def main():
     save(explorers_compass(), "item", "explorers_compass.png")
     save(target_dummy(), "item", "target_dummy.png")
     for piece in ("helmet", "chestplate", "leggings", "boots"):
-        save(armor_piece(piece), "item", f"stormsteel_{piece}.png")
+        save_animated(armor_piece(piece), "stormsteel", "item", f"stormsteel_{piece}.png", seed=len(piece))
     print("Icons written")
 
 

@@ -164,6 +164,17 @@ public class WeaponItem extends SwordItem {
                         format(attackDamage), format(type.attackSpeed()),
                         type.reachBonus() == 0 ? "0" : "+" + format((float) type.reachBonus()))
                 .withStyle(ChatFormatting.GRAY));
+        int kills = Mastery.kills(stack);
+        int rank = Mastery.rank(kills);
+        StringBuilder stars = new StringBuilder();
+        for (int i = 0; i < Mastery.THRESHOLDS.length; i++) {
+            stars.append(i < rank ? '\u2605' : '\u2606');
+        }
+        String progress = rank < Mastery.THRESHOLDS.length ? kills + "/" + Mastery.THRESHOLDS[rank] + " kills" : kills + " kills";
+        tooltip.add(Component.literal("Mastery: ").withStyle(ChatFormatting.GRAY)
+                .append(Component.literal(Mastery.NAMES[rank] + " ").withStyle(Mastery.COLORS[rank]))
+                .append(Component.literal(stars.toString()).withStyle(ChatFormatting.GOLD))
+                .append(Component.literal(" (" + progress + (rank > 0 ? ", +" + 3 * rank + "% damage" : "") + ")").withStyle(ChatFormatting.DARK_GRAY)));
         tooltip.add(Component.translatable("tooltip.steelstorm.passive").withStyle(ChatFormatting.GOLD)
                 .append(Component.translatable(type.passiveKey()).withStyle(ChatFormatting.YELLOW)));
         Rune rune = stack.get(ModDataComponents.RUNE);

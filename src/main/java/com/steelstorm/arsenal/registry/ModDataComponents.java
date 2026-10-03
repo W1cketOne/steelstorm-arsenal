@@ -31,6 +31,10 @@ public final class ModDataComponents {
     public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> COMPASS_TARGET =
             COMPONENTS.registerComponentType("compass_target", b -> b.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
 
+    /** Kills made with this weapon (weapon mastery). */
+    public static final DeferredHolder<DataComponentType<?>, DataComponentType<Integer>> KILLS =
+            COMPONENTS.registerComponentType("kills", b -> b.persistent(Codec.INT).networkSynchronized(ByteBufCodecs.VAR_INT));
+
     private ModDataComponents() {
     }
 }

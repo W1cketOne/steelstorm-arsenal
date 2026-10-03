@@ -525,7 +525,118 @@ def build():
     add("entity.herald_cast", "entity/herald_cast", reverb(x, 1.0, 0.3, rng))
     rng = np.random.default_rng(113)
     add("entity.captain_taunt", "entity/captain_taunt", reverb(roar(rng, 0.7, 150, (650, 1300, 2700), 2.5), 0.5, 0.2, rng))
+
+    # ------------------------------------------------------------- epic ability layers
+    for i, seed in enumerate([201, 202]):
+        rng = np.random.default_rng(seed)
+        d = 2.8
+        t = times(d)
+        x = boom(rng, d, 95 - 10 * i, 24, 1.5, 1.3) * 1.3
+        x += clang(rng, 130 + 25 * i, d, decays=(0.9, 0.6, 0.4, 0.25, 0.15), bright=0.6) * 0.35
+        x += crackle(rng, d, 70, 300, 3500, 1.6) * 0.7
+        x += lowpass(brown(d, rng), 160) * np.exp(-t * 1.2) * (1 + 0.5 * np.sin(2 * np.pi * 9 * t)) * 0.8
+        add("ability.epic_impact", f"ability/epic_impact{i + 1}", reverb(saturate(x, 1.8), 2.0, 0.35, rng, 3000))
+
+    for i, seed in enumerate([211, 212]):
+        rng = np.random.default_rng(seed)
+        d = 3.0
+        t = times(d)
+        x = highpass(white(d, rng), 1800) * env_exp(d, 45) * 1.6
+        x += crackle(rng, d, 90, 1200, 9000, 3.0) * 1.2
+        rumble = lowpass(brown(d, rng), 220 + 80 * i) * env_hump(d, 0.18, 0.6)
+        rumble *= 0.7 + 0.3 * np.abs(lowpass(rng.normal(0, 1, len(t)), 6) * 8).clip(0, 1)
+        x += rumble * 1.4 + boom(rng, d, 70, 30, 0.8, 0.0) * 0.8
+        add("ability.lightning_strike", f"ability/lightning_strike{i + 1}", reverb(saturate(x, 1.5), 2.2, 0.35, rng, 4000))
+
+    for i, seed in enumerate([221, 222, 223]):
+        rng = np.random.default_rng(seed)
+        d = 0.75
+        t = times(d)
+        x = whoosh(rng, d, 1100 + 150 * i, 4800, 0.22, 0.35, 0.18) * 1.1
+        x += osc(2000 * np.exp(-t * 1.6) + 700, d) * env_hump(d, 0.15, 1.5) * 0.25
+        x += partials([2900 + 200 * i, 4300, 6100], [0.5, 0.3, 0.2], [0.3, 0.2, 0.12], d, rng) * 0.4
+        add("ability.blade_throw", f"ability/blade_throw{i + 1}", reverb(x, 0.5, 0.2, rng))
+
+    rng = np.random.default_rng(231)
+    d = 2.6
+    t = times(d)
+    x = np.zeros(n_of(d))
+    for f in (196.0, 293.7, 392.0, 587.3):
+        v = osc(f * (1 + 0.006 * np.sin(2 * np.pi * 5.2 * t + f)), d, "saw")
+        x += lowpass(v, 2400) * 0.14
+    x *= env_hump(d, 0.45, 0.8)
+    x += magic_sweep(rng, d, 600, 7000) * 0.5
+    for k in range(9):
+        place(x, clang(rng, rng.uniform(1600, 3200), 0.5, decays=(0.22, 0.15, 0.1, 0.07, 0.05)) * 0.35, 0.9 + k * 0.13)
+    place(x, boom(rng, 1.4, 80, 30, 0.8, 0.8) * 0.9, 1.15)
+    add("ability.blade_storm", "ability/blade_storm", reverb(x, 1.8, 0.35, rng))
+
+    for i, seed in enumerate([241, 242]):
+        rng = np.random.default_rng(seed)
+        d = 2.2
+        t = times(d)
+        swell = svf(white(d, rng), 300 + 3000 * (t / d) ** 3, 0.7, "low") * np.clip(t / (d * 0.55), 0, 1) ** 3
+        swell[int(0.55 * len(t)):] *= np.exp(-(t[int(0.55 * len(t)):] - 0.55 * d) * 7)
+        x = swell * 1.2 + roar(rng, d, 52 + 6 * i, (420, 800, 1700), 5.0) * 0.6
+        x += (osc(41, d) * 0.6 + osc(58, d) * 0.4) * env_hump(d, 0.5, 0.7)
+        x += (osc(311, d) + osc(440, d)) * env_hump(d, 0.6, 1.5) * 0.08
+        add("ability.dark_power", f"ability/dark_power{i + 1}", reverb(saturate(x, 2.0), 1.8, 0.4, rng, 1600))
+
+    for i, seed in enumerate([251, 252]):
+        rng = np.random.default_rng(seed)
+        d = 1.2
+        t = times(d) / d
+        center = 300 + 2600 * np.sin(np.pi * t) ** 2
+        x = svf(white(d, rng), center, 0.25) * env_hump(1.2, 0.45, 1.0) * 1.5
+        x += svf(white(d, rng), center * 2.2, 0.15) * env_hump(1.2, 0.5, 1.6) * 0.5
+        x += whoosh(rng, d, 500, 2600, 0.4, 0.7, 0.04, 0.4) * 0.6
+        add("ability.wind_rush", f"ability/wind_rush{i + 1}", reverb(x, 0.9, 0.25, rng))
+
+    rng = np.random.default_rng(261)
+    d = 1.8
+    t = times(d)
+    x = svf(white(d, rng), 250 + 1800 * np.exp(-t * 2.5), 0.5, "low") * env_exp(d, 2.2, 0.04) * 1.6
+    x += crackle(rng, d, 80, 600, 4500, 1.2) * 0.8 + boom(rng, d, 75, 35, 0.9, 0.6) * 0.7
+    x += roar(rng, d, 85, (500, 950, 2100), 4.0) * 0.35
+    add("ability.inferno", "ability/inferno", reverb(saturate(x, 1.8), 1.3, 0.3, rng, 3500))
+
+    for i, seed in enumerate([271, 272]):
+        rng = np.random.default_rng(seed)
+        d = 3.6
+        t = times(d)
+        chord = np.zeros(n_of(d))
+        for f in ((65.4, 98.0, 130.8, 155.6) if i == 0 else (73.4, 110.0, 146.8, 174.6)):
+            chord += osc(f * (1 + 0.004 * np.sin(2 * np.pi * 0.7 * t + f)), d, "saw") * 0.3
+        chord = svf(chord, 200 + 2200 * np.exp(-t * 1.4), 0.4, "low") * env_exp(d, 0.9, 0.01)
+        x = saturate(chord * 1.6, 2.5) * 0.9
+        x += boom(rng, d, 110, 26, 1.6, 1.5) * 1.2
+        x += clang(rng, 98, d, decays=(1.4, 0.9, 0.6, 0.4, 0.25), bright=0.8) * 0.3
+        x += crackle(rng, d, 60, 400, 6000, 1.8) * 0.5
+        add("ultimate.release", f"ability/ultimate_release{i + 1}", reverb(x, 2.6, 0.38, rng, 3500))
+
+    rng = np.random.default_rng(281)
+    d = 2.2
+    t = times(d)
+    rise = (t / d) ** 2
+    x = svf(white(d, rng), 200 + 6500 * rise, 0.3) * (0.3 + 0.9 * rise)
+    x += osc(110 * 2 ** (3 * t / d), d, "saw") * 0.12 * (0.4 + rise) * (1 + 0.5 * np.sin(2 * np.pi * (4 + 18 * rise) * t))
+    x += osc(55, d) * 0.4 * rise
+    add("ultimate.charge", "ability/ultimate_charge", lowpass(x, 9000))
+
+    rng = np.random.default_rng(291)
+    d = 0.5
+    x = whoosh(rng, d, 600, 3200, 0.25, 0.4, 0.1, 0.3) + crackle(rng, d, 18, 2000, 8000, 2.5) * 0.6
+    place(x, thump(0.2, 200, 80, 25) * 0.6, 0.0)
+    add("armor.double_jump", "armor/double_jump", x)
+
+    rng = np.random.default_rng(292)
+    d = 1.1
+    t = times(d)
+    x = (osc(220, d) + osc(331, d) * 0.6) * (0.5 + 0.5 * np.sin(2 * np.pi * 26 * t)) * env_exp(d, 3.0, 0.01) * 0.6
+    x += bell(rng, 1760, d, 0.5, 0.5) + thump(d, 160, 60, 10) * 0.8 + crackle(rng, d, 25, 1500, 7000, 2.0) * 0.5
+    add("armor.barrier", "armor/barrier", reverb(x, 0.9, 0.3, rng))
     return lib
+
 
 
 SUBTITLES = {
@@ -574,6 +685,17 @@ SUBTITLES = {
     "entity.warlord_roar": "Warlord roars",
     "entity.herald_cast": "Storm Herald casts",
     "entity.captain_taunt": "Bandit Captain taunts",
+    "ability.epic_impact": "Earth-shattering impact",
+    "ability.lightning_strike": "Lightning strikes",
+    "ability.blade_throw": "Blade flies",
+    "ability.blade_storm": "Blades sing",
+    "ability.dark_power": "Dark power surges",
+    "ability.wind_rush": "Wind rushes",
+    "ability.inferno": "Fire roars",
+    "ultimate.release": "Ultimate unleashed",
+    "ultimate.charge": "Power gathers",
+    "armor.double_jump": "Thunder Step",
+    "armor.barrier": "Static Barrier absorbs a hit",
 }
 
 

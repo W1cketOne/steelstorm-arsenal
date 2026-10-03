@@ -109,6 +109,8 @@ There are six tiers: Stone, Iron, Gold, Diamond, Netherite and Stormsteel. Nethe
 
 **Charges:** abilities marked *(N charges)* can be used N times in a row. Pips above the icon show the charges left, and they refill one at a time.
 
+**Sounds:** every ability has a signature sound on top of its own effects. Slams get an earth-shattering boom, thrown blades sing, scythe powers growl, dashes rush like wind, and war cries roar like fire. Ultimates release with a trailer-style hit, and Stormsteel ultimates add a thunderclap. Holding Z plays a rising charge sound.
+
 **Charged ultimates:** tap **Z** to fire your ultimate, or **hold Z** to charge it. A gold bar fills above the icon and the damage grows up to **x1.75** after 2 seconds; release to unleash it. A full charge adds an extra blast of light.
 
 | Weapon | Passive | R | G | V | Ultimate (Z) |

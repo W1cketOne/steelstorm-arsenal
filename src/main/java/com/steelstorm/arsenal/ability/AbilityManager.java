@@ -131,7 +131,8 @@ public final class AbilityManager {
         player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SLOWDOWN, 4, 1,
                 true, false, false));
         if (held % 8 == 0 && held <= FULL_CHARGE) {
-            Fx.sound(level, player.position(), ModSounds.ABILITY_CAST, 0.6F + frac * 0.4F, 0.6F + frac * 1.0F);
+            // The caster hears a rising charge sound on their own client; everyone else gets these pulses.
+            Fx.soundForOthers(player, ModSounds.ABILITY_CAST, 0.5F + frac * 0.4F, 0.6F + frac * 1.0F);
         }
         if (held == FULL_CHARGE) {
             Fx.sound(level, player.position(), ModSounds.ULTIMATE_READY, 1.0F, 1.3F);
@@ -200,11 +201,11 @@ public final class AbilityManager {
             player.displayClientMessage(Component.translatable("message.steelstorm.no_target").withStyle(ChatFormatting.GRAY), true);
             return;
         }
+        AbilitySounds.play(ctx, power);
         if (ability.isUltimate()) {
             if (!creative) {
                 data.ultimate = 0;
             }
-            Fx.sound(player.level(), player.position(), ModSounds.ULTIMATE_CAST, 1.2F, 1.0F);
             Fx.ring(player.serverLevel(), player.position(), Fx.GOLD, 4.0F);
             // The ultimate flare: a magic circle underfoot, a pillar of light and orbs whirling round.
             int c = ctx.color();

@@ -30,6 +30,17 @@ public final class ModSounds {
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_READY = register("ability.ready", "Ability ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_READY = register("ultimate.ready", "Ultimate ready");
     public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_CAST = register("ultimate.cast", "Ultimate unleashed");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_RELEASE = register("ultimate.release", "Ultimate unleashed");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ULTIMATE_CHARGE = register("ultimate.charge", "Power gathers");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_EPIC_IMPACT = register("ability.epic_impact", "Earth-shattering impact");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_LIGHTNING_STRIKE = register("ability.lightning_strike", "Lightning strikes");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_BLADE_THROW = register("ability.blade_throw", "Blade flies");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_BLADE_STORM = register("ability.blade_storm", "Blades sing");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_DARK_POWER = register("ability.dark_power", "Dark power surges");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_WIND_RUSH = register("ability.wind_rush", "Wind rushes");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_INFERNO = register("ability.inferno", "Fire roars");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ARMOR_DOUBLE_JUMP = register("armor.double_jump", "Thunder Step");
+    public static final DeferredHolder<SoundEvent, SoundEvent> ARMOR_BARRIER = register("armor.barrier", "Static Barrier absorbs a hit");
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_SHOCKWAVE = register("ability.shockwave", "Shockwave");
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_GROUND_CRACK = register("ability.ground_crack", "Ground cracks");
     public static final DeferredHolder<SoundEvent, SoundEvent> ABILITY_RUMBLE = register("ability.rumble", "Ground rumbles");

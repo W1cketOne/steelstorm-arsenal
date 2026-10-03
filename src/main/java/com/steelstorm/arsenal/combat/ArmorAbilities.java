@@ -65,8 +65,7 @@ public final class ArmorAbilities {
         Fx.ring(level, feet, Fx.STORM, 1.6F);
         Fx.sparks(level, Fx.LIGHTNING, feet, 10, 0.4);
         Fx.burst(level, ModParticles.SPARK.get(), Fx.STORM, 1.0F, feet, 8, 0.4, 0.08);
-        Fx.sound(level, feet, ModSounds.ABILITY_DASH, 0.8F, 1.5F);
-        Fx.sound(level, feet, ModSounds.ABILITY_ZAP, 0.5F, 1.8F);
+        Fx.sound(level, feet, ModSounds.ARMOR_DOUBLE_JUMP, 1.0F, 1.0F);
     }
 
     public static boolean barrierReady(Player player) {
@@ -116,8 +115,8 @@ public final class ArmorAbilities {
         Vec3 c = player.getBoundingBox().getCenter();
         Fx.halo(level, c, Fx.STORM, Fx.LIGHTNING, 2.2F, 12);
         Fx.sparks(level, Fx.LIGHTNING, c, 24, 0.8);
-        Fx.sound(level, c, ModSounds.ABILITY_THUNDER, 0.7F, 1.6F);
-        Fx.sound(level, c, SoundEvents.SHIELD_BLOCK, 1.0F, 0.8F);
+        Fx.sound(level, c, ModSounds.ARMOR_BARRIER, 1.2F, 1.0F);
+        Fx.sound(level, c, SoundEvents.SHIELD_BLOCK, 0.8F, 0.8F);
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(c, c).inflate(4), e -> Shockwaves.canHit(player, e))) {
             Vec3 away = e.position().subtract(player.position()).multiply(1, 0, 1);
             away = away.lengthSqr() < 1e-4 ? Vec3.ZERO : away.normalize();
@@ -142,7 +141,7 @@ public final class ArmorAbilities {
         Fx.impact(level, player.position().add(0, 0.2, 0), Fx.STORM, Math.min(2.4F, 1.0F + dist * 0.08F));
         Fx.sparks(level, Fx.LIGHTNING, player.position(), 20, 1.0);
         Fx.sound(level, player.position(), ModSounds.ABILITY_SHOCKWAVE, 1.0F, 1.1F);
-        Fx.sound(level, player.position(), ModSounds.ABILITY_THUNDER, 0.6F, 1.4F);
+        Fx.sound(level, player.position(), ModSounds.ABILITY_EPIC_IMPACT, 0.4F + Math.min(0.8F, dist * 0.05F), 1.2F);
     }
 
     private ArmorAbilities() {

@@ -32,6 +32,8 @@ public final class ClientEvents {
     /** Alternating swing directions so consecutive slashes don't look identical. */
     private static final float[] SWING_ROLLS = {-25, 200, 15, 160};
     private static int swingIndex;
+    @javax.annotation.Nullable
+    private static net.minecraft.client.resources.sounds.SoundInstance chargeSound;
 
     @SubscribeEvent
     public static void onClientTick(ClientTickEvent.Post event) {
@@ -56,6 +58,9 @@ public final class ClientEvents {
                         // Ultimates charge while the key is held and go off when it is released.
                         ClientCombatState.ultimateCharge = 0;
                         PacketDistributor.sendToServer(new AbilityPayload(slot, AbilityPayload.CHARGE_START));
+                        chargeSound = net.minecraft.client.resources.sounds.SimpleSoundInstance.forUI(
+                                com.steelstorm.arsenal.registry.ModSounds.ULTIMATE_CHARGE.get(), 1.0F, 0.9F);
+                        mc.getSoundManager().play(chargeSound);
                     } else if (!ultimate || ClientCombatState.ultimateCharge < 0) {
                         PacketDistributor.sendToServer(new AbilityPayload(slot));
                     }
@@ -66,6 +71,10 @@ public final class ClientEvents {
                 || ClientCombatState.ultimateCharge > com.steelstorm.arsenal.ability.AbilityManager.FULL_CHARGE + 60)) {
             ClientCombatState.ultimateCharge = -1;
             PacketDistributor.sendToServer(new AbilityPayload(3, AbilityPayload.CHARGE_RELEASE));
+            if (chargeSound != null) {
+                mc.getSoundManager().stop(chargeSound);
+                chargeSound = null;
+            }
         }
     }
 

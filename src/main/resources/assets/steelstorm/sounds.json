@@ -274,5 +274,78 @@
       "steelstorm:entity/captain_taunt"
     ],
     "subtitle": "subtitles.steelstorm.entity.captain_taunt"
+  },
+  "ability.epic_impact": {
+    "sounds": [
+      "steelstorm:ability/epic_impact1",
+      "steelstorm:ability/epic_impact2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.epic_impact"
+  },
+  "ability.lightning_strike": {
+    "sounds": [
+      "steelstorm:ability/lightning_strike1",
+      "steelstorm:ability/lightning_strike2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.lightning_strike"
+  },
+  "ability.blade_throw": {
+    "sounds": [
+      "steelstorm:ability/blade_throw1",
+      "steelstorm:ability/blade_throw2",
+      "steelstorm:ability/blade_throw3"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blade_throw"
+  },
+  "ability.blade_storm": {
+    "sounds": [
+      "steelstorm:ability/blade_storm"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blade_storm"
+  },
+  "ability.dark_power": {
+    "sounds": [
+      "steelstorm:ability/dark_power1",
+      "steelstorm:ability/dark_power2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.dark_power"
+  },
+  "ability.wind_rush": {
+    "sounds": [
+      "steelstorm:ability/wind_rush1",
+      "steelstorm:ability/wind_rush2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.wind_rush"
+  },
+  "ability.inferno": {
+    "sounds": [
+      "steelstorm:ability/inferno"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.inferno"
+  },
+  "ultimate.release": {
+    "sounds": [
+      "steelstorm:ability/ultimate_release1",
+      "steelstorm:ability/ultimate_release2"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.release"
+  },
+  "ultimate.charge": {
+    "sounds": [
+      "steelstorm:ability/ultimate_charge"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.charge"
+  },
+  "armor.double_jump": {
+    "sounds": [
+      "steelstorm:armor/double_jump"
+    ],
+    "subtitle": "subtitles.steelstorm.armor.double_jump"
+  },
+  "armor.barrier": {
+    "sounds": [
+      "steelstorm:armor/barrier"
+    ],
+    "subtitle": "subtitles.steelstorm.armor.barrier"
   }
 }

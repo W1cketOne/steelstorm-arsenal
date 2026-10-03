@@ -487,14 +487,14 @@ def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25, fp_yaw=
 
 
 TYPE_MODELS = {
-    "longsword": (longsword_model, display(0.7, 0.6, -1.0, 10)),
+    "longsword": (longsword_model, display(0.78, 0.6, -1.0, 10)),
     "greatsword": (greatsword_model, display(0.74, 0.6, -3.0, 15)),
-    "katana": (katana_model, display(0.7, 0.6, -2.5, 10)),
-    "dual_daggers": (dagger_model, display(0.75, 0.75, 0.5, 0)),
-    "spear": (spear_model, display(0.64, 0.56, 6.0, 5)),
+    "katana": (katana_model, display(0.78, 0.6, -2.5, 10)),
+    "dual_daggers": (dagger_model, display(0.85, 0.75, 0.5, 0)),
+    "spear": (spear_model, display(0.7, 0.56, 6.0, 5)),
     "warhammer": (warhammer_model, display(0.64, 0.58, -4.0, 15)),
     "scythe": (scythe_model, display(0.62, 0.55, -8.0, 20, fp_tilt=-25, fp_yaw=120)),
-    "battleaxe": (battleaxe_model, display(0.64, 0.58, -2.5, 15)),
+    "battleaxe": (battleaxe_model, display(0.72, 0.58, -2.5, 15)),
 }
 
 TYPE_VARS = ["blade", "edge", "fuller", "metal", "trim", "gem", "grip", "shaft", "collar"]

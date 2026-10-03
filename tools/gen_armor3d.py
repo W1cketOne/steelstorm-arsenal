@@ -20,6 +20,8 @@ SCALE = 2  # texture pixels per UV unit
 PALETTES = {
     "stormsteel": {"steel": R["stormsteel"], "gold": R["gold"], "dark": R["black_iron"],
                    "glow": (110, 235, 255, 255), "glow_hot": (225, 252, 255, 255)},
+    "voidwalker": {"steel": R["obsidian"], "gold": R["amethyst"], "dark": R["black_iron"],
+                   "glow": (190, 90, 255, 255), "glow_hot": (240, 210, 255, 255)},
     "warlord": {"steel": R["black_iron"], "gold": R["netherite"], "dark": R["black_iron"],
                 "glow": (255, 110, 20, 255), "glow_hot": (255, 235, 160, 255)},
 }
@@ -164,6 +166,68 @@ W_INNER = {
     ],
 }
 
+# The Voidwalker: sleek dark plate with amethyst crystal growths and a hooded cowl.
+V_OUTER = {
+    "head": [
+        ("helm", -4, -8, -4, 8, 8, 8, 1.0, "steel", False),
+        ("cowl", -4.6, -8.8, -4.2, 9.2, 3, 9, 0.0, "plate", False),
+        ("eyes", -3, -5, -5.3, 6, 1, 1, 0.0, "glow", False),
+        ("crystal_c", -0.75, -12.5, -1.5, 1.5, 4, 1.5, 0.0, "gold", False),
+        ("crystal_r", -3.5, -11, -0.5, 1, 3, 1, 0.0, "gold", False),
+        ("crystal_l", 2.5, -11, -0.5, 1, 3, 1, 0.0, "gold", True),
+    ],
+    "body": [
+        ("cuirass", -4, 0, -2, 8, 12, 4, 1.01, "steel", False),
+        ("sash", -4.3, 0.5, -3.7, 8.6, 9, 1, 0.0, "plate", False),
+        ("core", -1, 2.5, -4.5, 2, 3, 1, 0.0, "glow", False),
+        ("cape", -4, 0, 2.8, 8, 13, 1, 0.0, "plate", False),
+        ("shard_r", -3.5, -1.5, 2.2, 1.2, 3, 1.2, 0.0, "gold", False),
+        ("shard_l", 2.3, -1.5, 2.2, 1.2, 3, 1.2, 0.0, "gold", True),
+    ],
+    "right_arm": [
+        ("sleeve", -3, -2, -2, 4, 12, 4, 1.0, "steel", False),
+        ("pauldron", -4.6, -3.5, -3, 5.5, 3, 6, 0.0, "pauldron", False),
+        ("growth", -4.5, -6, -1, 1.5, 3, 1.5, 0.0, "gold", False),
+        ("growth2", -2.8, -5.2, 0.6, 1, 2, 1, 0.0, "gold", False),
+        ("bracer", -3.5, 6, -2.5, 5, 3, 5, 0.25, "plate", False),
+        ("rune", -3.6, 7, -2.8, 5, 1, 1, 0.0, "glow", False),
+    ],
+    "left_arm": [
+        ("sleeve", -1, -2, -2, 4, 12, 4, 1.0, "steel", True),
+        ("pauldron", -0.9, -3.5, -3, 5.5, 3, 6, 0.0, "pauldron", True),
+        ("growth", 3.0, -6, -1, 1.5, 3, 1.5, 0.0, "gold", True),
+        ("growth2", 1.8, -5.2, 0.6, 1, 2, 1, 0.0, "gold", True),
+        ("bracer", -1.5, 6, -2.5, 5, 3, 5, 0.25, "plate", True),
+        ("rune", -1.4, 7, -2.8, 5, 1, 1, 0.0, "glow", True),
+    ],
+    "right_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", False),
+        ("toe", -2.3, 10, -3.6, 4.6, 2, 1.6, 0.0, "plate", False),
+        ("ankle", -2.4, 7, -2.6, 0.6, 3, 5, 0.0, "glow", False),
+    ],
+    "left_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", True),
+        ("toe", -2.3, 10, -3.6, 4.6, 2, 1.6, 0.0, "plate", True),
+        ("ankle", 1.8, 7, -2.6, 0.6, 3, 5, 0.0, "glow", True),
+    ],
+}
+
+V_INNER = {
+    "body": [
+        ("belt", -4, 9, -2, 8, 3, 4, 0.6, "plate", False),
+        ("gem", -1, 9.5, -3.0, 2, 2, 1, 0.0, "glow", False),
+        ("skirt_f", -3.5, 11.5, -2.9, 7, 6, 1, 0.0, "plate", False),
+    ],
+    "right_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", False),
+        ("knee", -2.3, 5, -3.2, 4.6, 2.5, 1.2, 0.0, "pauldron", False),
+    ],
+    "left_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", True),
+        ("knee", -2.3, 5, -3.2, 4.6, 2.5, 1.2, 0.0, "pauldron", True),
+    ],
+}
+
 PARTS = ["head", "hat", "body", "right_arm", "left_arm", "right_leg", "left_leg"]
 PIVOTS = {"head": (0, 0, 0), "hat": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5, 2, 0), "left_arm": (5, 2, 0),
           "right_leg": (-1.9, 12, 0), "left_leg": (1.9, 12, 0)}
@@ -287,7 +351,8 @@ def java_layer(model, uvs, method):
 
 def main():
     for name, cls, outer, inner in (("stormsteel", "StormsteelArmorLayers", OUTER, INNER),
-                                    ("warlord", "WarlordArmorLayers", W_OUTER, W_INNER)):
+                                    ("warlord", "WarlordArmorLayers", W_OUTER, W_INNER),
+                                    ("voidwalker", "VoidwalkerArmorLayers", V_OUTER, V_INNER)):
         use_palette(name)
         write_set(name, cls, outer, inner)
     print("3D armour written")

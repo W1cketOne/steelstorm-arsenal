@@ -56,6 +56,10 @@ public class ModItemModelProvider extends ItemModelProvider {
         basicItem(ModItems.WARLORD_CHESTPLATE.get());
         basicItem(ModItems.WARLORD_LEGGINGS.get());
         basicItem(ModItems.WARLORD_BOOTS.get());
+        basicItem(ModItems.VOIDWALKER_HELMET.get());
+        basicItem(ModItems.VOIDWALKER_CHESTPLATE.get());
+        basicItem(ModItems.VOIDWALKER_LEGGINGS.get());
+        basicItem(ModItems.VOIDWALKER_BOOTS.get());
         for (var egg : List.of(ModItems.BANDIT_DUELIST_SPAWN_EGG, ModItems.BANDIT_ARCHER_SPAWN_EGG,
                 ModItems.IRON_REVENANT_SPAWN_EGG, ModItems.FALLEN_WARLORD_SPAWN_EGG, ModItems.BANDIT_CAPTAIN_SPAWN_EGG,
                 ModItems.CRYPT_KNIGHT_SPAWN_EGG, ModItems.STORM_HERALD_SPAWN_EGG, ModItems.FORGE_COLOSSUS_SPAWN_EGG,

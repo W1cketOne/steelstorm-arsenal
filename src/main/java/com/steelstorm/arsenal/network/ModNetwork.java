@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class ModNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("6");
+        PayloadRegistrar registrar = event.registrar("7");
         // Keybinds only *request* actions; the server validates stamina, cooldowns and charge.
         registrar.playToServer(DodgePayload.TYPE, DodgePayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
@@ -34,6 +34,11 @@ public final class ModNetwork {
         registrar.playToServer(DoubleJumpPayload.TYPE, DoubleJumpPayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 com.steelstorm.arsenal.combat.ArmorAbilities.doubleJump(player);
+            }
+        });
+        registrar.playToServer(BlinkPayload.TYPE, BlinkPayload.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                com.steelstorm.arsenal.combat.VoidwalkerAbilities.blink(player);
             }
         });
         registrar.playToServer(SwingPayload.TYPE, SwingPayload.STREAM_CODEC, (payload, context) -> {

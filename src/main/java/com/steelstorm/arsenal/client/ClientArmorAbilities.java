@@ -50,6 +50,11 @@ public final class ClientArmorAbilities {
             return;
         }
         // The ground jump itself happens earlier in this same tick, so only count presses once airborne.
+        if (airTicks > 1 && pressed && !airJumped && mc.screen == null && !player.isSpectator()
+                && com.steelstorm.arsenal.combat.VoidwalkerAbilities.wearing(player, ArmorItem.Type.BOOTS)) {
+            airJumped = true;
+            PacketDistributor.sendToServer(new com.steelstorm.arsenal.network.BlinkPayload());
+        }
         if (++airTicks > 2 && pressed && !airJumped && mc.screen == null && !player.isSpectator() && !player.isFallFlying()
                 && ArmorAbilities.wearing(player, ArmorItem.Type.BOOTS)) {
             airJumped = true;
@@ -64,7 +69,16 @@ public final class ClientArmorAbilities {
 
     private static void tickSight(Minecraft mc, LocalPlayer player) {
         boolean active = ArmorAbilities.wearing(player, ArmorItem.Type.HELMET);
+        boolean voidSight = com.steelstorm.arsenal.combat.VoidwalkerAbilities.wearing(player, ArmorItem.Type.HELMET);
         IntSet now = new IntOpenHashSet();
+        if (voidSight) {
+            for (Entity e : mc.level.entitiesForRendering()) {
+                if (e != player && e.isInvisible() && e instanceof LivingEntity living && living.isAlive() && e.distanceToSqr(player) < 32 * 32) {
+                    e.setSharedFlag(6, true);
+                    now.add(e.getId());
+                }
+            }
+        }
         if (active) {
             for (Entity e : mc.level.entitiesForRendering()) {
                 if (e instanceof Enemy && e instanceof LivingEntity living && living.isAlive() && e.distanceToSqr(player) < SIGHT_RANGE * SIGHT_RANGE) {

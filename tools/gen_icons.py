@@ -628,6 +628,29 @@ def warlord_recolor(img):
     return out
 
 
+def voidwalker_recolor(img):
+    """Stormsteel's plate becomes void-black, its trim amethyst and its glow bright violet."""
+    import colorsys
+    out = img.copy()
+    for y in range(img.height):
+        for x in range(img.width):
+            r, g, b, a = img.getpixel((x, y))
+            if a == 0:
+                continue
+            h, l, s = colorsys.rgb_to_hls(r / 255, g / 255, b / 255)
+            if 0.45 < h < 0.75 and s > 0.2:
+                if h < 0.53 and l > 0.68:
+                    nr, ng, nb = colorsys.hls_to_rgb(0.78, 0.72, 1.0)
+                else:
+                    nr, ng, nb = colorsys.hls_to_rgb(0.75, 0.08 + l * 0.42, 0.3)
+            elif 0.08 < h < 0.2 and s > 0.3:
+                nr, ng, nb = colorsys.hls_to_rgb(0.77, min(0.75, l * 0.85), 0.75)
+            else:
+                nr, ng, nb = colorsys.hls_to_rgb(0.75, l * 0.7, s * 0.5)
+            out.putpixel((x, y), (int(nr * 255), int(ng * 255), int(nb * 255), a))
+    return out
+
+
 def main():
     from icon_anim import save_animated
     for kind in WEAPONS:
@@ -649,6 +672,7 @@ def main():
     for piece in ("helmet", "chestplate", "leggings", "boots"):
         save_animated(armor_piece(piece), "stormsteel", "item", f"stormsteel_{piece}.png", seed=len(piece))
         save_animated(warlord_recolor(armor_piece(piece)), "ember", "item", f"warlord_{piece}.png", seed=len(piece) + 3)
+        save_animated(voidwalker_recolor(armor_piece(piece)), "void", "item", f"voidwalker_{piece}.png", seed=len(piece) + 5)
     print("Icons written")
 
 

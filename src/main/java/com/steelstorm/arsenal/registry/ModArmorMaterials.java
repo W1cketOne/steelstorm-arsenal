@@ -38,6 +38,18 @@ public final class ModArmorMaterials {
                 List.of(new ArmorMaterial.Layer(SteelstormArsenal.id("warlord"))), 3.5F, 0.15F);
     });
 
+    /** Diamond-grade plate, light and quick: the Voidwalker set. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> VOIDWALKER = MATERIALS.register("voidwalker", () -> {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 3);
+        defense.put(ArmorItem.Type.LEGGINGS, 6);
+        defense.put(ArmorItem.Type.CHESTPLATE, 8);
+        defense.put(ArmorItem.Type.HELMET, 3);
+        defense.put(ArmorItem.Type.BODY, 11);
+        return new ArmorMaterial(defense, 20, SoundEvents.ARMOR_EQUIP_DIAMOND, () -> Ingredient.of(net.minecraft.world.item.Items.AMETHYST_SHARD),
+                List.of(new ArmorMaterial.Layer(SteelstormArsenal.id("voidwalker"))), 2.5F, 0.0F);
+    });
+
     private ModArmorMaterials() {
     }
 }

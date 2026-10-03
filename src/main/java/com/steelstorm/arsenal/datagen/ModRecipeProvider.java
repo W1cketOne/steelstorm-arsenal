@@ -159,6 +159,19 @@ public class ModRecipeProvider extends RecipeProvider {
         warlord(output, ModItems.WARLORD_CHESTPLATE.get(), ModItems.STORMSTEEL_CHESTPLATE.get());
         warlord(output, ModItems.WARLORD_LEGGINGS.get(), ModItems.STORMSTEEL_LEGGINGS.get());
         warlord(output, ModItems.WARLORD_BOOTS.get(), ModItems.STORMSTEEL_BOOTS.get());
+
+        // Voidwalker armour: a diamond piece steeped in the void.
+        voidwalker(output, ModItems.VOIDWALKER_HELMET.get(), Items.DIAMOND_HELMET);
+        voidwalker(output, ModItems.VOIDWALKER_CHESTPLATE.get(), Items.DIAMOND_CHESTPLATE);
+        voidwalker(output, ModItems.VOIDWALKER_LEGGINGS.get(), Items.DIAMOND_LEGGINGS);
+        voidwalker(output, ModItems.VOIDWALKER_BOOTS.get(), Items.DIAMOND_BOOTS);
+    }
+
+    private static void voidwalker(RecipeOutput output, ItemLike result, ItemLike base) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result)
+                .pattern("SPS").pattern("CAC").pattern("SPS")
+                .define('A', base).define('P', Items.ENDER_PEARL).define('S', Items.AMETHYST_SHARD).define('C', Items.CRYING_OBSIDIAN)
+                .unlockedBy(getHasName(Items.ENDER_PEARL), has(Items.ENDER_PEARL)).save(output);
     }
 
     private static void warlord(RecipeOutput output, ItemLike result, ItemLike base) {

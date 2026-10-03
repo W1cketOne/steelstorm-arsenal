@@ -24,6 +24,10 @@ public final class StormsteelArmorRendering {
     public static final ModelLayerLocation INNER = new ModelLayerLocation(SteelstormArsenal.id("stormsteel_armor"), "inner");
     public static final ModelLayerLocation W_OUTER = new ModelLayerLocation(SteelstormArsenal.id("warlord_armor"), "outer");
     public static final ModelLayerLocation W_INNER = new ModelLayerLocation(SteelstormArsenal.id("warlord_armor"), "inner");
+    public static final ModelLayerLocation V_OUTER = new ModelLayerLocation(SteelstormArsenal.id("voidwalker_armor"), "outer");
+    public static final ModelLayerLocation V_INNER = new ModelLayerLocation(SteelstormArsenal.id("voidwalker_armor"), "inner");
+    private static HumanoidModel<LivingEntity> vOuter;
+    private static HumanoidModel<LivingEntity> vInner;
     private static HumanoidModel<LivingEntity> wOuter;
     private static HumanoidModel<LivingEntity> wInner;
 
@@ -40,6 +44,8 @@ public final class StormsteelArmorRendering {
         event.registerLayerDefinition(INNER, StormsteelArmorLayers::inner);
         event.registerLayerDefinition(W_OUTER, WarlordArmorLayers::outer);
         event.registerLayerDefinition(W_INNER, WarlordArmorLayers::inner);
+        event.registerLayerDefinition(V_OUTER, VoidwalkerArmorLayers::outer);
+        event.registerLayerDefinition(V_INNER, VoidwalkerArmorLayers::inner);
     }
 
     @SubscribeEvent
@@ -47,11 +53,16 @@ public final class StormsteelArmorRendering {
         IClientItemExtensions extensions = new IClientItemExtensions() {
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
+                if (stack.getItem() instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem) {
+                    model(false, false);
+                    return slot == EquipmentSlot.LEGS ? vInner : vOuter;
+                }
                 return model(slot == EquipmentSlot.LEGS, stack.getItem() instanceof com.steelstorm.arsenal.item.WarlordArmorItem);
             }
         };
         BuiltInRegistries.ITEM.forEach(item -> {
-            if (item instanceof StormsteelArmorItem || item instanceof com.steelstorm.arsenal.item.WarlordArmorItem) {
+            if (item instanceof StormsteelArmorItem || item instanceof com.steelstorm.arsenal.item.WarlordArmorItem
+                    || item instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem) {
                 event.registerItem(extensions, item);
             }
         });
@@ -65,6 +76,8 @@ public final class StormsteelArmorRendering {
             inner = new HumanoidModel<>(models.bakeLayer(INNER));
             wOuter = new HumanoidModel<>(models.bakeLayer(W_OUTER));
             wInner = new HumanoidModel<>(models.bakeLayer(W_INNER));
+            vOuter = new HumanoidModel<>(models.bakeLayer(V_OUTER));
+            vInner = new HumanoidModel<>(models.bakeLayer(V_INNER));
             bakedFrom = models;
         }
         if (warlord) {

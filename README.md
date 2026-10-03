@@ -222,6 +222,16 @@ A second 3D armour set: blackened, horned plate with molten seams. Craft each pi
 - **Sabatons, Meteor Fall:** sneak in mid-air to slam down, sending out a fiery shockwave that cracks the ground.
 - **Full set, Warlord's Wrath:** immune to fire and lava, and your strikes set enemies ablaze.
 
+### Voidwalker armour
+
+A third 3D armour set: void-black plate grown through with amethyst crystals. Craft each piece from the matching **diamond piece** in the centre, with **2 ender pearls** above and below, **2 crying obsidian** at its sides and **4 amethyst shards** in the corners.
+
+- **Cowl, Void Sight:** invisible creatures and players nearby are outlined, and endermen ignore your gaze.
+- **Mantle, Phase Shift:** a 30% chance (8 s cooldown) to slip out of a hit entirely, blinking 4 blocks away.
+- **Leggings, Shadow Step:** sneaking makes you invisible.
+- **Treads, Void Blink:** press jump in mid-air to teleport up to 7 blocks forward.
+- **Full set, Between Worlds:** no fall damage (ender pearls included).
+
 ### Weaponsmiths
 
 Villager weaponsmiths sell the following, depending on their level:

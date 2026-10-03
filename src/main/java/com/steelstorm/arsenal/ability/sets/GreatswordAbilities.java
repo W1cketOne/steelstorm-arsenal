@@ -20,7 +20,7 @@ public final class GreatswordAbilities {
                 SignatureAbilities.titansGuard(),
                 Ability.of("greatsword_crescent_wave", "Crescent Wave",
                         "Swing a wave of force that flies 16 blocks, passing through every enemy in its way.",
-                        30, 140, GreatswordAbilities::crescentWave),
+                        30, 140, GreatswordAbilities::crescentWave).withCharges(3),
                 SignatureAbilities.swordSanctum(),
                 Ability.ultimate("greatsword_colossus_strike", "Colossus Strike",
                         "Raise the greatsword for a moment, then slam it down: a 16-block fissure tears open ahead of you "

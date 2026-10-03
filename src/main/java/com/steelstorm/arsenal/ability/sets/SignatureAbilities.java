@@ -199,7 +199,7 @@ public final class SignatureAbilities {
         return Ability.of("battleaxe_chain_hook", "Chain Hook",
                 "Hurl a hooked chain at the enemy you look at (up to 16 blocks) and drag it to your feet, staggered and with its "
                         + "armour broken.",
-                25, 180, SignatureAbilities::chainHookRun);
+                25, 180, SignatureAbilities::chainHookRun).withCharges(2);
     }
 
     static boolean chainHookRun(AbilityContext ctx) {

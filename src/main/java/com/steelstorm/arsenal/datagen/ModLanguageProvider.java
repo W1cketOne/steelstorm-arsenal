@@ -254,6 +254,10 @@ public class ModLanguageProvider extends LanguageProvider {
         add("tooltip.steelstorm.ability_cost", " - %s stamina, %ss");
         add("tooltip.steelstorm.ultimate_cost", " - ultimate, %ss");
         add("tooltip.steelstorm.hold_shift", "Hold Shift for ability details");
+        add("tooltip.steelstorm.charges", " x%s charges");
+        add("tooltip.steelstorm.hold_ultimate", " Hold [%s] to charge the ultimate: up to +75%% damage");
+        add("message.steelstorm.charging", "Charging... release to unleash!");
+        add("message.steelstorm.overcharged", "OVERCHARGED!");
         add("tooltip.steelstorm.no_abilities", "Abilities unlock at Netherite and Stormsteel tier");
         add("tooltip.steelstorm.stormsteel", "Stormsteel: hits sometimes zap a second nearby enemy");
         add("tooltip.steelstorm.controls", "Hold Use to guard and parry. Sneak + attack for a heavy attack.");

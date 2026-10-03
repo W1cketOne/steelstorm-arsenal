@@ -59,7 +59,12 @@ public class ThrowingKnifeEntity extends AbstractArrow implements ThrownWeaponEn
 
     /** A knife made of light: it can't be picked up and fades shortly after landing. */
     public static ThrowingKnifeEntity spectral(LivingEntity owner, Vec3 from, Vec3 velocity, float damage, byte mode) {
-        ThrowingKnifeEntity knife = new ThrowingKnifeEntity(owner.level(), owner, new ItemStack(ModItems.THROWING_KNIFE.get()));
+        return spectral(owner, from, velocity, damage, mode, new ItemStack(ModItems.THROWING_KNIFE.get()));
+    }
+
+    /** As above, but drawn as a glowing copy of `look` (Sword Toss throws the player's own sword). */
+    public static ThrowingKnifeEntity spectral(LivingEntity owner, Vec3 from, Vec3 velocity, float damage, byte mode, ItemStack look) {
+        ThrowingKnifeEntity knife = new ThrowingKnifeEntity(owner.level(), owner, look.copyWithCount(1));
         knife.setPos(from.x, from.y, from.z);
         knife.setDeltaMovement(velocity);
         double horizontal = velocity.horizontalDistance();

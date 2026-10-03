@@ -27,7 +27,7 @@ public final class DaggerAbilities {
                         25, 160, DaggerAbilities::shadowstep),
                 Ability.of("dual_daggers_fan_of_knives", "Fan of Knives",
                         "Spin and fling a ring of twelve spectral knives in every direction.",
-                        30, 160, DaggerAbilities::fanOfKnives),
+                        30, 160, DaggerAbilities::fanOfKnives).withCharges(3),
                 Ability.ultimate("dual_daggers_death_blossom", "Death Blossom",
                         "Melt into the shadows for 5 seconds: you turn invisible and fast, enemies lose track of you, and "
                                 + "your next four hits deal triple damage.",

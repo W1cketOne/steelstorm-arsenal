@@ -52,7 +52,6 @@ public enum CastPose {
     }
 
     static {
-        map(RISING, "longsword_rising_slash");
         map(STANCE, "longsword_riposte", "throwing_knife_venom", "greatsword_titans_guard");
         map(THRUST, "longsword_blade_dash", "dual_daggers_shadowstep", "spear_impale");
         map(SLAM, "warhammer_earthquake", "warhammer_stone_prison", "greatsword_colossus_strike", "earthshaker_tectonic_spiral");
@@ -61,7 +60,7 @@ public enum CastPose {
         map(DRAW, "katana_flash_step", "katana_iaido", "katana_wind_scar");
         map(FLURRY, "dual_daggers_flurry");
         map(LEAP, "spear_vault_leap", "spear_dragon_dive", "warhammer_cataclysm", "kingsbane_regicide");
-        map(THROW, "warhammer_hammer_throw", "greatsword_sword_sanctum", "battleaxe_chain_hook", "scythe_deaths_crescent", "chakram_sawblade", "chakram_twin_throw",
+        map(THROW, "longsword_sword_toss", "warhammer_hammer_throw", "greatsword_sword_sanctum", "battleaxe_chain_hook", "scythe_deaths_crescent", "chakram_sawblade", "chakram_twin_throw",
                 "throwing_knife_volley", "throwing_knife_blink");
         map(ROAR, "battleaxe_war_cry", "battleaxe_berserker_rage", "bloodfang_hemorrhage");
     }

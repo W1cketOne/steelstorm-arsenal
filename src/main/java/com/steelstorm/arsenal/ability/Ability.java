@@ -21,8 +21,15 @@ public final class Ability {
     private final int cooldown;
     private final boolean ultimate;
     private final Action action;
+    private final int charges;
 
     private Ability(String id, String name, String description, int staminaCost, int cooldown, boolean ultimate, Action action) {
+        this(id, name, description, staminaCost, cooldown, ultimate, action, 1);
+    }
+
+    private Ability(String id, String name, String description, int staminaCost, int cooldown, boolean ultimate, Action action,
+                    int charges) {
+        this.charges = charges;
         this.id = id;
         this.name = name;
         this.description = description;
@@ -38,6 +45,18 @@ public final class Ability {
 
     public static Ability ultimate(String id, String name, String description, int cooldownTicks, Action action) {
         return new Ability(id, name, description, 0, cooldownTicks, true, action);
+    }
+
+    /**
+     * A copy that can be used `charges` times in a row. Each use spends a charge; charges come back
+     * one at a time, each taking the full cooldown.
+     */
+    public Ability withCharges(int charges) {
+        return new Ability(id, name, description, staminaCost, cooldown, ultimate, action, charges);
+    }
+
+    public int charges() {
+        return charges;
     }
 
     public String id() {

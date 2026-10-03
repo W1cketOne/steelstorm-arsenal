@@ -19,7 +19,7 @@ public final class KatanaAbilities {
         return new AbilitySet("katana",
                 Ability.of("katana_flash_step", "Flash Step",
                         "Vanish and reappear 7 blocks ahead. Everything you passed is cut a heartbeat later and starts to bleed.",
-                        25, 100, KatanaAbilities::flashStep),
+                        25, 100, KatanaAbilities::flashStep).withCharges(3),
                 Ability.of("katana_iaido", "Iaido",
                         "Sheathe the blade, then draw it in one wide, lightning-fast cut that deals heavy damage and two stacks of Bleed.",
                         30, 140, KatanaAbilities::iaido),

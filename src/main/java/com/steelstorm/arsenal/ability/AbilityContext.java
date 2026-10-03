@@ -44,6 +44,8 @@ public final class AbilityContext {
     public final Ability ability;
     /** Damage of one full-strength hit with this weapon. */
     public final float baseDamage;
+    /** Damage scale from charging an ultimate (1 for a tap, up to 1.75 fully charged). */
+    public float power = 1.0F;
 
     public AbilityContext(ServerPlayer player, ItemStack stack, Ability ability, float baseDamage) {
         this.player = player;
@@ -207,7 +209,7 @@ public final class AbilityContext {
     // ------------------------------------------------------------------ damage and control
 
     public float dmg(float multiplier) {
-        return (float) (baseDamage * multiplier * Config.SPECIAL_DAMAGE_MULTIPLIER.get());
+        return (float) (baseDamage * multiplier * power * Config.SPECIAL_DAMAGE_MULTIPLIER.get());
     }
 
     /** Hits a target for `multiplier` x the weapon's damage, with impact sparks and sound. */

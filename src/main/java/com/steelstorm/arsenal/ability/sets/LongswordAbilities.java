@@ -8,6 +8,7 @@ import com.steelstorm.arsenal.ability.Shockwaves;
 import com.steelstorm.arsenal.combat.CombatUtil;
 import com.steelstorm.arsenal.combat.Stamina;
 import com.steelstorm.arsenal.entity.SpectralWeaponEntity;
+import com.steelstorm.arsenal.entity.ThrowingKnifeEntity;
 import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModEffects;
 import com.steelstorm.arsenal.registry.ModParticles;
@@ -27,37 +28,33 @@ import net.minecraft.world.phys.Vec3;
 public final class LongswordAbilities {
     public static AbilitySet create() {
         return new AbilitySet("longsword",
-                Ability.of("longsword_rising_slash", "Rising Slash",
-                        "An upward cut that throws enemies in front of you into the air and carries you up with it.",
-                        25, 120, LongswordAbilities::risingSlash),
+                Ability.of("longsword_sword_toss", "Sword Toss",
+                        "Hurl a glowing copy of your sword where you look. Holds 3 charges: throw them one after another.",
+                        12, 70, LongswordAbilities::swordToss).withCharges(3),
                 Ability.of("longsword_riposte", "Riposte",
                         "Take a parrying stance for 1.5 seconds. The next attack against you is turned aside and answered "
                                 + "with a counter-strike for double damage that staggers the attacker.",
                         20, 160, LongswordAbilities::riposte),
                 Ability.of("longsword_blade_dash", "Blade Dash",
                         "Dash 6 blocks forward, cutting and staggering every enemy you pass through.",
-                        20, 100, LongswordAbilities::bladeDash),
+                        20, 100, LongswordAbilities::bladeDash).withCharges(2),
                 Ability.ultimate("longsword_judgment", "Judgment of Steel",
                         "Six giant spectral swords rain down around the spot you look at, then a seventh crashes into the "
                                 + "centre with a shockwave.",
                         600, LongswordAbilities::judgment));
     }
 
-    static boolean risingSlash(AbilityContext ctx) {
+    static boolean swordToss(AbilityContext ctx) {
         int c = ctx.color();
-        ctx.sound(ModSounds.WEAPON_SWING_HEAVY, 1.0F, 1.15F);
-        ctx.slash(-80, c, 1.15F, 1.7);
-        ctx.later(2, () -> ctx.slash(-100, 0xFFFFFF, 0.85F, 1.9));
-        for (LivingEntity e : ctx.cone(4.2, 60)) {
-            if (ctx.hit(e, 1.2F, c)) {
-                ctx.launch(e, 1.0);
-            }
-        }
-        Vec3 m = ctx.player.getDeltaMovement();
-        ctx.player.setDeltaMovement(m.x, Math.max(m.y, 0.55), m.z);
-        ctx.player.hurtMarked = true;
-        ctx.data().noFallUntil = ctx.now() + 40;
-        ctx.shake(0.3F, 5);
+        Vec3 dir = ctx.look();
+        // Alternate the throwing hand a little so a volley fans out instead of stacking up.
+        Vec3 side = dir.cross(new Vec3(0, 1, 0)).normalize().scale((ctx.now() / 6) % 2 == 0 ? 0.35 : -0.35);
+        Vec3 from = ctx.eye().add(dir.scale(0.6)).add(side).add(0, -0.15, 0);
+        ThrowingKnifeEntity.spectral(ctx.player, from, dir.scale(2.6), ctx.dmg(1.1F), ThrowingKnifeEntity.SPECTRAL, ctx.stack);
+        ctx.sound(ModSounds.WEAPON_THROW, 1.0F, 1.2F);
+        ctx.sound(ModSounds.WEAPON_SWING_HEAVY, 0.7F, 1.5F);
+        ctx.slash(-20, c, 0.8F, 1.4);
+        Fx.burst(ctx.level, ModParticles.GLOW.get(), c, 1.2F, from, 6, 0.15, 0.05);
         return true;
     }
 

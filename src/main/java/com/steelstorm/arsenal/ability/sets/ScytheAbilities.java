@@ -28,7 +28,7 @@ public final class ScytheAbilities {
                         30, 180, ScytheAbilities::soulHarvest),
                 Ability.of("scythe_deaths_crescent", "Death's Crescent",
                         "Throw a spinning crescent of death that flies out 12 blocks and comes back, cutting everything both ways.",
-                        30, 140, ScytheAbilities::deathsCrescent),
+                        30, 140, ScytheAbilities::deathsCrescent).withCharges(2),
                 SignatureAbilities.deathMark());
     }
 

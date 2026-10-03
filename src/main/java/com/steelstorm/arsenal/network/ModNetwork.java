@@ -15,7 +15,7 @@ import net.neoforged.neoforge.network.registration.PayloadRegistrar;
 public final class ModNetwork {
     @SubscribeEvent
     public static void register(RegisterPayloadHandlersEvent event) {
-        PayloadRegistrar registrar = event.registrar("4");
+        PayloadRegistrar registrar = event.registrar("5");
         // Keybinds only *request* actions; the server validates stamina, cooldowns and charge.
         registrar.playToServer(DodgePayload.TYPE, DodgePayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
@@ -24,7 +24,11 @@ public final class ModNetwork {
         });
         registrar.playToServer(AbilityPayload.TYPE, AbilityPayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
-                AbilityManager.tryActivate(player, payload.slot());
+                switch (payload.phase()) {
+                    case AbilityPayload.CHARGE_START -> AbilityManager.startCharge(player);
+                    case AbilityPayload.CHARGE_RELEASE -> AbilityManager.releaseCharge(player);
+                    default -> AbilityManager.tryActivate(player, payload.slot());
+                }
             }
         });
         registrar.playToServer(DoubleJumpPayload.TYPE, DoubleJumpPayload.STREAM_CODEC, (payload, context) -> {

@@ -30,6 +30,10 @@ public class CombatData {
     /** Ability cooldowns keyed by ability id. */
     public final Map<String, Long> cooldownEnd = new HashMap<>();
     public final Map<String, Integer> cooldownTotal = new HashMap<>();
+    /** Charges spent on multi-charge abilities (see Ability#withCharges); not saved, so they refill on relog. */
+    public final Map<String, Integer> chargesUsed = new HashMap<>();
+    /** Short lockout between two uses of a multi-charge ability. */
+    public final Map<String, Long> nextUse = new HashMap<>();
     /** Ultimate meter, 0..100. Filled by dealing damage, parrying and taking hits. */
     public float ultimate;
     /** While an ultimate is still playing out, its own damage doesn't refill the meter. */
@@ -92,5 +96,22 @@ public class CombatData {
     public void forceSync() {
         syncedStamina = -1;
         syncedSet = null;
+    }
+
+    /** Refills any charges whose cooldown has finished and returns how many are available. */
+    public int chargesLeft(com.steelstorm.arsenal.ability.Ability ability, long now) {
+        String id = ability.id();
+        int used = chargesUsed.getOrDefault(id, 0);
+        long end = cooldownEnd.getOrDefault(id, 0L);
+        int total = Math.max(1, cooldownTotal.getOrDefault(id, ability.cooldown()));
+        while (used > 0 && now >= end) {
+            used--;
+            if (used > 0) {
+                end += total;
+            }
+        }
+        chargesUsed.put(id, used);
+        cooldownEnd.put(id, end);
+        return ability.charges() - used;
     }
 }

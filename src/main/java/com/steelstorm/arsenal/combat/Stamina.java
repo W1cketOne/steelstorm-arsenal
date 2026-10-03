@@ -85,7 +85,12 @@ public final class Stamina {
         long cooldownHash = 17;
         if (set != null) {
             for (int slot = 0; slot < AbilitySet.SLOTS; slot++) {
-                cooldownHash = cooldownHash * 31 + data.cooldownEnd.getOrDefault(set.get(slot).id(), 0L);
+                Ability a = set.get(slot);
+                if (a.charges() > 1) {
+                    data.chargesLeft(a, now);
+                }
+                cooldownHash = cooldownHash * 31 + data.cooldownEnd.getOrDefault(a.id(), 0L);
+                cooldownHash = cooldownHash * 31 + data.chargesUsed.getOrDefault(a.id(), 0);
             }
         }
         if (!force && shown == data.syncedStamina && data.combo == data.syncedCombo && ultimate == data.syncedUltimate
@@ -100,15 +105,17 @@ public final class Stamina {
         data.syncedCooldownHash = cooldownHash;
         List<Integer> left = new ArrayList<>(AbilitySet.SLOTS);
         List<Integer> total = new ArrayList<>(AbilitySet.SLOTS);
+        List<Integer> charges = new ArrayList<>(AbilitySet.SLOTS);
         if (set != null) {
             for (int slot = 0; slot < AbilitySet.SLOTS; slot++) {
                 Ability ability = set.get(slot);
                 left.add((int) data.cooldownLeft(ability.id(), now));
                 total.add(data.cooldownTotal.getOrDefault(ability.id(), ability.cooldown()));
+                charges.add(ability.charges() - data.chargesUsed.getOrDefault(ability.id(), 0));
             }
         }
         PacketDistributor.sendToPlayer(player, new CombatSyncPayload(data.stamina, max(), data.ultimate, data.combo,
-                (int) Math.max(0, data.dodgeCooldownEnd - now), setId, left, total));
+                (int) Math.max(0, data.dodgeCooldownEnd - now), setId, left, total, charges));
     }
 
     public static void shake(Player player, float strength, int ticks) {

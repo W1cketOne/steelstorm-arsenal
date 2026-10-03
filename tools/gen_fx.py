@@ -308,6 +308,10 @@ def glyph(name, d):
         for r in (18, 34, 50):
             d.ellipse([c - r, 92 - r * 0.45, c + r, 92 + r * 0.45], outline=W, width=6)
         hammer(d, 64, 40, 0.8)
+    elif name == "sword_toss":
+        for k, (x, y) in enumerate(((24, 104), (44, 84), (64, 64))):
+            blade(d, x, y, x + 46, y - 46, 9 if k == 2 else 7)
+            d.line([(x - 14, y + 4), (x - 2, y - 8)], fill=(255, 255, 255, 140), width=4)
     elif name == "hammer_throw":
         hammer(d, 56, 60, 0.85); d.arc([10, 10, 118, 118], 280, 40, fill=W, width=7); arrow(d, 108, 72, 104, 84, 6)
     elif name == "fissure":
@@ -445,7 +449,7 @@ def glyph(name, d):
 
 ABILITY_ICONS = {
     # longsword
-    "longsword_rising_slash": ("longsword", "up_slash"), "longsword_riposte": ("longsword", "stance"),
+    "longsword_sword_toss": ("longsword", "sword_toss"), "longsword_riposte": ("longsword", "stance"),
     "longsword_blade_dash": ("longsword", "dash"), "longsword_judgment": ("longsword", "judgment"),
     "greatsword_titans_guard": ("greatsword", "titan_guard"), "greatsword_crescent_wave": ("greatsword", "crescent"),
     "greatsword_sword_sanctum": ("greatsword", "sanctum"), "greatsword_colossus_strike": ("greatsword", "colossus"),

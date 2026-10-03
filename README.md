@@ -107,16 +107,20 @@ The jar is written to **`build/libs/steelstorm-1.0.0.jar`**.
 
 There are six tiers: Stone, Iron, Gold, Diamond, Netherite and Stormsteel. Netherite weapons are made at a smithing table from diamond ones. Every weapon has a **passive** that is always on. **Abilities and the ultimate unlock only on Netherite, Stormsteel and legendary (purple-named) weapons**; lower tiers keep the passive and the swing animations.
 
+**Charges:** abilities marked *(N charges)* can be used N times in a row. Pips above the icon show the charges left, and they refill one at a time.
+
+**Charged ultimates:** tap **Z** to fire your ultimate, or **hold Z** to charge it. A gold bar fills above the icon and the damage grows up to **x1.75** after 2 seconds; release to unleash it. A full charge adds an extra blast of light.
+
 | Weapon | Passive | R | G | V | Ultimate (Z) |
 | --- | --- | --- | --- | --- | --- |
-| **Longsword** | Every 3rd hit in a row deals +30% | Rising Slash: throws enemies (and you) into the air | Riposte: a parry stance that answers the next blow | Blade Dash: dash 6 blocks, cutting through enemies | **Judgment of Steel**: seven giant spectral swords rain down |
-| **Greatsword** | Wide sweeping strikes | Titan's Guard: soak up 75% of every blow for 3 s, then blast it all back | Crescent Wave: a flying wave of force | Sword Sanctum: plant a giant spectral sword that pulls in, burns, then explodes | **Colossus Strike**: a 16-block fissure tears open |
-| **Katana** | Critical hits cause Bleed | Flash Step: vanish 7 blocks ahead, cutting everything you pass | Iaido: one lightning-fast draw cut | Wind Scar: three crossing blades of wind that bleed | **Thousand Cuts**: blink between up to eight enemies |
-| **Dual Daggers** | Double damage from behind | Flurry: five quick stabs | Shadowstep: appear behind your target | Fan of Knives: twelve spectral knives in a ring | **Death Blossom**: become invisible and deadly for 5 s |
+| **Longsword** | Every 3rd hit in a row deals +30% | Sword Toss (3 charges): hurl glowing copies of your sword | Riposte: a parry stance that answers the next blow | Blade Dash (2 charges): dash 6 blocks, cutting through enemies | **Judgment of Steel**: seven giant spectral swords rain down |
+| **Greatsword** | Wide sweeping strikes | Titan's Guard: soak up 75% of every blow for 3 s, then blast it all back | Crescent Wave (3 charges): a flying wave of force | Sword Sanctum: plant a giant spectral sword that pulls in, burns, then explodes | **Colossus Strike**: a 16-block fissure tears open |
+| **Katana** | Critical hits cause Bleed | Flash Step (3 charges): vanish 7 blocks ahead, cutting everything you pass | Iaido: one lightning-fast draw cut | Wind Scar: three crossing blades of wind that bleed | **Thousand Cuts**: blink between up to eight enemies |
+| **Dual Daggers** | Double damage from behind | Flurry: five quick stabs | Shadowstep: appear behind your target | Fan of Knives (3 charges): twelve spectral knives in a ring | **Death Blossom**: become invisible and deadly for 5 s |
 | **Spear** | Can be thrown | Impale: pierce and pin a 7-block line | Vault Leap: pole-vault forward | Sweeping Arc: a huge sweep that throws enemies back | **Dragon Dive**: leap high and dive onto a spot up to 20 blocks away |
 | **Warhammer** | Hits cause Armor Break | Earthquake: a 7-block shockwave that ripples through the ground | Hammer Throw: hurl the hammer; it comes back | Stone Prison: seal an enemy in rock, then shatter it | **Cataclysm**: leap and crash down like a meteor |
-| **Scythe** | Heals you for 10% of damage dealt | Reap: a full-circle life-draining sweep | Soul Harvest: drag and Mark everything within 9 blocks | Death's Crescent: a returning crescent of death | **Death Mark**: doom everything near; 3 s later it takes heavy damage plus half of what it took meanwhile |
-| **Battleaxe** | Breaks shields, bonus against blocking | Whirlwind: spin while moving | Chain Hook: drag an enemy to your feet, staggered and armour-broken | War Cry: weaken, slow and stagger enemies | **Berserker Rage**: 8 s of faster, harder, life-stealing hits |
+| **Scythe** | Heals you for 10% of damage dealt | Reap: a full-circle life-draining sweep | Soul Harvest: drag and Mark everything within 9 blocks | Death's Crescent (2 charges): a returning crescent of death | **Death Mark**: doom everything near; 3 s later it takes heavy damage plus half of what it took meanwhile |
+| **Battleaxe** | Breaks shields, bonus against blocking | Whirlwind: spin while moving | Chain Hook (2 charges): drag an enemy to your feet, staggered and armour-broken | War Cry: weaken, slow and stagger enemies | **Berserker Rage**: 8 s of faster, harder, life-stealing hits |
 
 **Thrown weapons** (the chakram and throwing knives) have no abilities; they are thrown with right click.
 

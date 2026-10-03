@@ -14,7 +14,7 @@ import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
  * ability slots of the weapon set named by `setId` (what the server thinks is held).
  */
 public record CombatSyncPayload(float stamina, float maxStamina, float ultimate, int combo, int dodgeCooldownLeft, String setId,
-                                List<Integer> cooldownLeft, List<Integer> cooldownTotal) implements CustomPacketPayload {
+                                List<Integer> cooldownLeft, List<Integer> cooldownTotal, List<Integer> charges) implements CustomPacketPayload {
     public static final Type<CombatSyncPayload> TYPE = new Type<>(SteelstormArsenal.id("combat_sync"));
     public static final StreamCodec<ByteBuf, CombatSyncPayload> STREAM_CODEC = StreamCodec.of(CombatSyncPayload::write, CombatSyncPayload::read);
     private static final int MAX_SLOTS = 8;
@@ -28,11 +28,12 @@ public record CombatSyncPayload(float stamina, float maxStamina, float ultimate,
         ByteBufCodecs.STRING_UTF8.encode(buf, p.setId);
         writeInts(buf, p.cooldownLeft);
         writeInts(buf, p.cooldownTotal);
+        writeInts(buf, p.charges);
     }
 
     private static CombatSyncPayload read(ByteBuf buf) {
         return new CombatSyncPayload(buf.readFloat(), buf.readFloat(), buf.readFloat(), VarInt.read(buf), VarInt.read(buf),
-                ByteBufCodecs.STRING_UTF8.decode(buf), readInts(buf), readInts(buf));
+                ByteBufCodecs.STRING_UTF8.decode(buf), readInts(buf), readInts(buf), readInts(buf));
     }
 
     private static void writeInts(ByteBuf buf, List<Integer> values) {

@@ -30,6 +30,9 @@ public final class AbilityTooltips {
             MutableComponent line = Component.literal(" [").append(Component.keybind(KEYS[slot])).append("] ").withStyle(ChatFormatting.GRAY)
                     .append(Component.translatable(ability.nameKey()).withStyle(color));
             String seconds = format(ability.cooldown() / 20.0F);
+            if (ability.charges() > 1) {
+                line.append(Component.translatable("tooltip.steelstorm.charges", ability.charges()).withStyle(ChatFormatting.BLUE));
+            }
             if (ability.isUltimate()) {
                 line.append(Component.translatable("tooltip.steelstorm.ultimate_cost", seconds).withStyle(ChatFormatting.DARK_GRAY));
             } else {
@@ -41,6 +44,8 @@ public final class AbilityTooltips {
                 tooltip.add(Component.literal("    ").append(Component.translatable(ability.descKey())).withStyle(ChatFormatting.DARK_AQUA));
             }
         }
+        tooltip.add(Component.translatable("tooltip.steelstorm.hold_ultimate", Component.keybind(KEYS[3]))
+                .withStyle(ChatFormatting.GOLD, ChatFormatting.ITALIC));
         if (!details) {
             tooltip.add(Component.translatable("tooltip.steelstorm.hold_shift").withStyle(ChatFormatting.DARK_GRAY, ChatFormatting.ITALIC));
         }

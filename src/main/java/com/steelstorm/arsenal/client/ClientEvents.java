@@ -48,12 +48,24 @@ public final class ClientEvents {
             }
         }
         for (int slot = 0; slot < ModKeyMappings.ABILITIES.length; slot++) {
+            boolean ultimate = slot == 3;
             while (ModKeyMappings.ABILITIES[slot].consumeClick()) {
                 if (mc.screen == null && !player.isSpectator() && Abilities.forStack(player.getMainHandItem()) != null) {
-                    PacketDistributor.sendToServer(new AbilityPayload(slot));
                     ClientCombatState.pressAge[slot] = 0;
+                    if (ultimate && ClientCombatState.ultimateCharge < 0 && ultimateReady(player)) {
+                        // Ultimates charge while the key is held and go off when it is released.
+                        ClientCombatState.ultimateCharge = 0;
+                        PacketDistributor.sendToServer(new AbilityPayload(slot, AbilityPayload.CHARGE_START));
+                    } else if (!ultimate || ClientCombatState.ultimateCharge < 0) {
+                        PacketDistributor.sendToServer(new AbilityPayload(slot));
+                    }
                 }
             }
+        }
+        if (ClientCombatState.ultimateCharge >= 0 && (!ModKeyMappings.ULTIMATE.isDown() || mc.screen != null
+                || ClientCombatState.ultimateCharge > com.steelstorm.arsenal.ability.AbilityManager.FULL_CHARGE + 60)) {
+            ClientCombatState.ultimateCharge = -1;
+            PacketDistributor.sendToServer(new AbilityPayload(3, AbilityPayload.CHARGE_RELEASE));
         }
     }
 
@@ -105,6 +117,11 @@ public final class ClientEvents {
         event.setYaw(event.getYaw() + Mth.sin(time) * amount * 0.9F);
         event.setPitch(event.getPitch() + Mth.cos(time * 1.3F) * amount * 0.7F);
         event.setRoll(event.getRoll() + Mth.sin(time * 0.7F) * amount * 1.2F);
+    }
+
+    private static boolean ultimateReady(LocalPlayer player) {
+        boolean synced = ClientCombatState.setId.equals(Abilities.forStack(player.getMainHandItem()).id());
+        return (ClientCombatState.ultimate >= 100 || player.getAbilities().instabuild) && (!synced || ClientCombatState.cooldownLeft[3] <= 0);
     }
 
     private ClientEvents() {

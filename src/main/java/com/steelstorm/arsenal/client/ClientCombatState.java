@@ -17,6 +17,10 @@ public final class ClientCombatState {
     public static String setId = "";
     public static final int[] cooldownLeft = new int[AbilitySet.SLOTS];
     public static final int[] cooldownTotal = new int[AbilitySet.SLOTS];
+    /** Charges left on multi-charge abilities (1 for ordinary ones). */
+    public static final int[] charges = {1, 1, 1, 1};
+    /** Ticks the ultimate key has been held while charging, or -1. */
+    public static int ultimateCharge = -1;
     /** Ticks since each slot came off cooldown, for the "ready" flash. */
     public static final int[] readyAge = {100, 100, 100, 100};
     /** Ticks since the ultimate became ready, for its glow. */
@@ -56,6 +60,7 @@ public final class ClientCombatState {
             }
             cooldownLeft[i] = left;
             cooldownTotal[i] = Math.max(1, i < payload.cooldownTotal().size() ? payload.cooldownTotal().get(i) : 1);
+            charges[i] = i < payload.charges().size() ? payload.charges().get(i) : 1;
         }
     }
 
@@ -89,6 +94,9 @@ public final class ClientCombatState {
         }
         comboAge++;
         ultimateReadyAge++;
+        if (ultimateCharge >= 0) {
+            ultimateCharge++;
+        }
     }
 
     public static void reset() {
@@ -98,6 +106,7 @@ public final class ClientCombatState {
         combo = 0;
         shakeTicks = 0;
         setId = "";
+        ultimateCharge = -1;
         for (int i = 0; i < AbilitySet.SLOTS; i++) {
             cooldownLeft[i] = 0;
             cooldownTotal[i] = 1;

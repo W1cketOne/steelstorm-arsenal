@@ -89,7 +89,13 @@ public final class CombatHud {
             g.blit(HUD, x, y + dy, 0, 0, 22, 22, 128, 64);
             g.blit(ability.icon(), x + 3, y + 3 + dy, 0, 0, 16, 16, 16, 16);
             int left = synced ? ClientCombatState.cooldownLeft[slot] : 0;
-            if (left > 0) {
+            int charges = ability.charges() > 1 ? (synced ? ClientCombatState.charges[slot] : ability.charges()) : 1;
+            if (ability.charges() > 1 && charges > 0 && left > 0) {
+                // Still usable: only a thin bar shows the next charge coming back.
+                float frac = Mth.clamp(1 - (left - partial) / (float) Math.max(1, ClientCombatState.cooldownTotal[slot]), 0, 1);
+                g.fill(x + 3, y + 17 + dy, x + 19, y + 19 + dy, 0xC0101010);
+                g.fill(x + 3, y + 17 + dy, x + 3 + Math.round(16 * frac), y + 19 + dy, 0xFF7FD8FF);
+            } else if (left > 0) {
                 cooldownOverlay(g, font, x + 3, y + 3 + dy, 16, left, ClientCombatState.cooldownTotal[slot], partial);
             } else {
                 if (!creative && ClientCombatState.stamina < ability.staminaCost() * costMultiplier) {
@@ -98,6 +104,13 @@ public final class CombatHud {
                 readyFlash(g, x + 3, y + 3 + dy, 16, ClientCombatState.readyAge[slot]);
             }
             keyLabel(g, font, ModKeyMappings.ABILITIES[slot].getTranslatedKeyMessage().getString(), x + 21, y + 14 + dy);
+            if (ability.charges() > 1) {
+                // One pip per charge across the top of the frame.
+                for (int k = 0; k < ability.charges(); k++) {
+                    int px = x + 4 + k * 5;
+                    g.fill(px, y - 3 + dy, px + 4, y - 1 + dy, k < charges ? 0xFF7FD8FF : 0xFF303844);
+                }
+            }
         }
         renderUltimate(g, font, set.get(3), x0 + 69, y - 4, synced, partial);
     }
@@ -134,6 +147,19 @@ public final class CombatHud {
             readyFlash(g, x + 5, y + 5 + dy, 16, ClientCombatState.ultimateReadyAge / 2);
         }
         keyLabel(g, font, ModKeyMappings.ULTIMATE.getTranslatedKeyMessage().getString(), x + 25, y + 18 + dy);
+        if (ClientCombatState.ultimateCharge >= 0) {
+            float frac = Mth.clamp((ClientCombatState.ultimateCharge + partial) / com.steelstorm.arsenal.ability.AbilityManager.FULL_CHARGE, 0, 1);
+            int barY = y - 8 + dy;
+            g.fill(x - 1, barY - 1, x + 27, barY + 4, 0xE0101010);
+            int color = frac >= 1 ? ((Minecraft.getInstance().player.tickCount / 2) % 2 == 0 ? 0xFFFFFFFF : 0xFFFFC233) : 0xFFFFC233;
+            g.fill(x, barY, x + Math.round(26 * frac), barY + 3, color);
+            String text = String.format(java.util.Locale.ROOT, "x%.2f", 1 + com.steelstorm.arsenal.ability.AbilityManager.MAX_POWER_BONUS * frac);
+            g.pose().pushPose();
+            g.pose().translate(x + 13, barY - 7, 220);
+            g.pose().scale(0.6F, 0.6F, 1);
+            g.drawString(font, text, -font.width(text) / 2, 0, 0xFFFFE9A8, true);
+            g.pose().popPose();
+        }
     }
 
     private static void cooldownOverlay(GuiGraphics g, Font font, int x, int y, int size, int left, int total, float partial) {

@@ -13,6 +13,7 @@ Each tier has its own silhouette, not just its own colours:
 Models are written to models/item/3d/<tier>_<type>.json with their textures filled in.
 """
 import json
+import math
 import os
 
 from gen_models import LEGENDARY_MODELS, MODELS, TYPE_MODELS, Model, tex_grip, write_textures
@@ -222,26 +223,36 @@ def ornate_guard(m, s, y, half, th=1.4, depth=(7, 9)):
 
 
 def blade(m, s, hw, y0, y1, tip, th=0.42, steps=4, ridge=True):
-    """A bevelled blade with a gradient running from hilt to tip; returns the tip height."""
-    top = y1 + tip
+    """A bevelled blade that narrows in stages to a true point; returns the tip height.
+
+    The point is two stacked squares turned 45 degrees (the Blockbench way of getting a clean
+    diagonal), so the tip reads as a sharp spear point instead of a stepped tower.
+    """
+    top = min(31.9, y1 + tip)
     g = (y0, top)
     em = s["emissive"]
-    m.box((8 - hw, y0, 8 - th), (8 + hw, y1, 8 + th), "blade", "edge", "edge", uvy=g, glow=em)
-    for sgn in (-1, 1):
-        xa, xb = sorted((8 + sgn * hw, 8 + sgn * (hw + 0.45)))
-        m.box((xa, y0 + 0.6, 8 - th * 0.4), (xb, y1, 8 + th * 0.4), "edge", uvy=g, glow=em)
+    hw *= 0.88
+    wl = hw * 0.88 + 0.4  # half-width at the base of the point, edges included
+    base = top - wl * 1.3
+    n = 3
+    ys = [y0 + (base - y0) * k / n for k in range(n + 1)]
+    t = th
+    for k in range(n):
+        w = hw * (1 - 0.06 * k)
+        t = th * (1 - 0.08 * k)
+        m.box((8 - w, ys[k], 8 - t), (8 + w, ys[k + 1], 8 + t), "blade", "edge", "edge", uvy=g, glow=em)
+        for sgn in (-1, 1):
+            xa, xb = sorted((8 + sgn * w, 8 + sgn * (w + 0.4)))
+            m.box((xa, ys[k] + (0.6 if k == 0 else 0), 8 - t * 0.45), (xb, ys[k + 1], 8 + t * 0.45), "edge", uvy=g, glow=em)
+    h = wl / 1.4142
+    m.box((8 - h, base - h, 8 - t * 0.9), (8 + h, base + h, 8 + t * 0.9), "blade", "edge", "edge", uvy=g, glow=em,
+          rot=((8, base, 8), "z", 45))
+    c2, h2 = base + wl * 0.72, h * 0.6
+    m.box((8 - h2, c2 - h2, 8 - t * 0.7), (8 + h2, c2 + h2, 8 + t * 0.7), "edge", uvy=g, glow=em, rot=((8, c2, 8), "z", 45))
     if s["glow"]:
-        inlay(m, s, 7.7, 8.3, y0 + 1.0, y1 + tip * 0.3, 8 - th - 0.1, 8 + th + 0.1)
+        inlay(m, s, 7.7, 8.3, y0 + 1.0, base + wl * 0.3, 8 - th - 0.1, 8 + th + 0.1)
     elif ridge:
-        m.box((7.7, y0 + 0.6, 8 - th - 0.08), (8.3, y1, 8 + th + 0.08), "fuller", uvy=g)
-    y = y1
-    for k in range(steps):
-        frac = 1 - (k + 1) / (steps + 0.5)
-        h = tip / steps
-        w = (hw + 0.45) * frac
-        tz = th * (0.95 - 0.12 * k)
-        m.box((8 - w, y, 8 - tz), (8 + w, y + h, 8 + tz), "blade", "edge", "edge", uvy=g, glow=em)
-        y += h
+        m.box((7.7, y0 + 0.6, 8 - th - 0.08), (8.3, base + wl * 0.3, 8 + th + 0.08), "fuller", uvy=g)
     return top
 
 
@@ -494,26 +505,30 @@ def scythe(s):
     m.box((8.6, 8, 7.5), (12, 9, 8.5), "grip")
     m.box((7, 23, 7), (9, 26.5, 9), "trim")
     m.box((7.3, 24, 6.8), (8.7, 25.4, 9.2), "gem", glow=bool(s["glow"]))
-    reach = {"stone": 0.7, "iron": 1.0, "golden": 1.05, "diamond": 1.0, "netherite": 1.0, "stormsteel": 1.1}[tier]
-    steps = [(2.0, 8.0, 23.4, 27.0), (-3.0, 2.0, 22.0, 25.6), (-7.0, -3.0, 20.2, 23.6), (-10.0, -7.0, 18.4, 21.2),
-             (-12.0, -10.0, 16.8, 18.9), (-13.4, -12.0, 15.8, 17.2)]
-    if reach < 1:
-        steps = steps[:4]
+    # The crescent: segments chained along an arc, each turned a little further down and tapering to the tip.
     glowing = bool(s["glow"])
-    for (x0, x1, y0, y1) in steps:
-        m.box((x0, y0, 7.75), (x1, y1, 8.25), "blade", "edge", "edge")
-        m.box((x0, y0 - 0.3, 7.8), (x1, y0 + 0.35, 8.2), "glow" if glowing else "edge", glow=glowing)
+    segs = [(0, 6.5, 3.1), (22.5, 5.5, 2.7), (45, 4.5, 2.0), (45, 3.0, 1.1)]
+    if tier == "stone":
+        segs = segs[:3]
+    px, py = 7.6, 25.6
+    for i, (ang, length, w) in enumerate(segs):
+        r = ((px, py, 8), "z", ang)
+        m.box((px - length, py - w, 7.74), (px + 0.3, py, 8.26), "blade", "edge", "edge", rot=r)
+        m.box((px - length, py - w - 0.3, 7.8), (px + 0.3, py - w + 0.35, 8.2), "glow" if glowing else "edge", glow=glowing, rot=r)
+        m.box((px - length, py - 0.35, 7.66), (px + 0.3, py + 0.2, 8.34), "trim" if tier != "stone" else "metal", rot=r)
+        if tier != "stone" and i < len(segs) - 1:
+            m.box((px - 0.45, py - 0.45 - w * 0.4, 7.6), (px + 0.45, py + 0.45 - w * 0.4, 8.4), "gem", glow=glowing,
+                  rot=((px, py - w * 0.4, 8), "z", 45))
+        rad = math.radians(ang)
+        px, py = px - length * math.cos(rad), py - length * math.sin(rad)
     if tier == "golden":
         m.box((8.6, 24.5, 7.75), (11.5, 26, 8.25), "trim")
         tassel(m, 12, 9, 8, 3.5)
     elif tier == "netherite":
-        # A second, smaller blade on the back of the head.
-        for (x0, x1, y0, y1) in ((9.0, 12.0, 23.0, 25.5), (12.0, 14.5, 21.0, 24.0), (14.5, 15.8, 19.5, 22.0)):
-            m.box((x0, y0, 7.78), (x1, y1, 8.22), "blade", "edge", "edge")
+        # A hooked spike on the back of the head.
+        m.box((8.6, 24.0, 7.78), (13.5, 25.4, 8.22), "blade", "edge", "edge", rot=((8.6, 25.4, 8), "z", -22.5))
+        m.box((12.4, 22.2, 7.8), (13.6, 24.8, 8.2), "edge", rot=((13, 24.8, 8), "z", -45))
         m.box((7.2, 26.5, 7.2), (8.8, 29.5, 8.8), "metal")
-    elif tier == "diamond":
-        for x in (-4.0, -9.0):
-            m.box((x - 0.6, 24.0 - abs(x) * 0.35, 7.7), (x + 0.6, 26.0 - abs(x) * 0.35, 8.3), "edge", rot=((x, 24, 8), "z", 45))
     elif tier == "stormsteel":
         m.box((7.5, 26.5, 7.5), (8.5, 30.0, 8.5), "trim")
         m.box((7.65, 30.0, 7.65), (8.35, 31.5, 8.35), "glow", glow=True)
@@ -534,13 +549,28 @@ def battleaxe(s):
         def X(a, b):
             lo, hi = 8 + sgn * a * size, 8 + sgn * b * size
             return (min(lo, hi), max(lo, hi))
-        x0, x1 = X(1.4, 4.0)
-        m.box((x0, 14, 7.6), (x1, 20, 8.4), "metal")
-        x0, x1 = X(4.0, 6.5)
-        m.box((x0, 12.5 - (size - 1) * 6, 7.65), (x1, 21.5 + (size - 1) * 6, 8.35), "metal")
-        x0, x1 = X(6.5, 7.6)
+        # A bearded crescent: narrow neck, flaring body, and a curved bit whose horns sweep out.
         glowing = bool(s["glow"])
-        m.box((x0, 11 - (size - 1) * 8, 7.7), (x1, 23 + (size - 1) * 8, 8.3), "glow" if glowing else "edge", glow=glowing)
+        k = size
+        x0, x1 = X(1.4, 3.6)
+        m.box((x0, 15.2, 7.6), (x1, 18.8, 8.4), "metal")
+        x0, x1 = X(3.6, 5.6)
+        m.box((x0, 13.6, 7.64), (x1, 20.4, 8.36), "metal")
+        ex = 8 + sgn * 5.6 * k
+        xa, xb = sorted((ex, ex + sgn * 1.4))
+        m.box((xa, 12.4, 7.68), (xb, 21.6, 8.32), "metal")
+        ea, eb = sorted((ex + sgn * 1.4, ex + sgn * 2.2))
+        m.box((ea, 12.6, 7.72), (eb, 21.4, 8.28), "glow" if glowing else "edge", glow=glowing)
+        # Horns: the bit's top and bottom swept outward, each with its own honed edge.
+        for (y0, y1, piv, ang) in ((21.2, 25.6, 21.2, -22.5 * sgn), (8.4, 12.8, 12.8, 22.5 * sgn)):
+            m.box((xa, y0, 7.7), (xb + (0.8 if sgn > 0 else 0) - (0 if sgn > 0 else -0.0), y1, 8.3), "metal",
+                  rot=((ex + sgn * 0.7, piv, 8), "z", ang))
+            m.box((ea, y0, 7.74), (eb, y1, 8.26), "glow" if glowing else "edge", glow=glowing,
+                  rot=((ex + sgn * 0.7, piv, 8), "z", ang))
+        # Rivets where the head meets the haft.
+        for y in (14.6, 19.4):
+            rx = 8 + sgn * 2.6
+            m.box((rx - 0.35, y - 0.35, 7.45), (rx + 0.35, y + 0.35, 8.55), "trim")
         if tier == "netherite":
             ex = 8 + sgn * 7.4
             m.box((ex - 0.5, 22.5, 7.72), (ex + 0.5, 25, 8.28), "edge", rot=((ex, 22.5, 8), "z", -22.5 * sgn))

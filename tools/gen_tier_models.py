@@ -207,19 +207,53 @@ def grip(m, y0, y1, r=0.75, every=2.0):
 
 
 def ornate_guard(m, s, y, half, th=1.4, depth=(7, 9)):
-    """A crossguard with a jewelled centre block and a langet climbing onto the blade."""
+    """A crossguard with a jewelled centre and a langet climbing onto the blade.
+
+    Kept slim: a tapering bar that steps down toward the quillon tips, so it reads as forged
+    steel rather than a stack of bricks.
+    """
     sil = s["sil"]
-    sword_guard(m, sil, y, half, th, depth)
     z0, z1 = depth
+    zc = (z0 + z1) / 2
+    zt = (z1 - z0) / 2
     glow = bool(s["glow"])
-    m.box((8 - 1.8, y - 0.7, z0 - 0.35), (8 + 1.8, y + th + 0.9, z1 + 0.35), "trim")
-    m.box((8 - 0.9, y - 0.25, z0 - 0.6), (8 + 0.9, y + th + 0.45, z1 + 0.6), "gem", glow=glow)
-    m.box((8 - 1.15, y + th + 0.9, 8 - 0.62), (8 + 1.15, y + th + 2.1, 8 + 0.62), "trim")
-    m.box((8 - 0.6, y + th + 2.1, 8 - 0.58), (8 + 0.6, y + th + 2.9, 8 + 0.58), "trim", rot=((8, y + th + 2.1, 8), "z", 0))
-    if sil != "stone":
-        for sgn in (-1, 1):
-            x = 8 + sgn * (half + 0.1)
-            m.box((x - 0.55, y + 0.2, z0 - 0.25), (x + 0.55, y + th - 0.2, z1 + 0.25), "gem", glow=glow)
+    th = th * 0.8
+    # Tapering bar: full depth near the centre, thinner toward the tips.
+    m.box((8 - half * 0.55, y, zc - zt * 0.8), (8 + half * 0.55, y + th, zc + zt * 0.8), "trim")
+    for sgn in (-1, 1):
+        xa, xb = sorted((8 + sgn * half * 0.55, 8 + sgn * half))
+        m.box((xa, y + th * 0.15, zc - zt * 0.55), (xb, y + th * 0.85, zc + zt * 0.55), "trim")
+        tip = 8 + sgn * half
+        if sil == "stone":
+            continue
+        # Quillon finials curl toward the blade.
+        m.box((tip - 0.4, y + th * 0.2, zc - zt * 0.5), (tip + 0.4, y + th + 1.4, zc + zt * 0.5), "trim",
+              rot=((tip, y + th * 0.2, 8), "z", -22.5 * sgn))
+    if sil in ("golden", "diamond", "netherite", "stormsteel"):
+        sword_guard_accent(m, sil, y, half, th, zc, zt)
+    # Centre block with a gem on each face, and the langet running up onto the blade.
+    m.box((8 - 1.25, y - 0.5, zc - zt - 0.2), (8 + 1.25, y + th + 0.6, zc + zt + 0.2), "trim")
+    m.box((8 - 0.6, y - 0.1, zc - zt - 0.45), (8 + 0.6, y + th + 0.2, zc + zt + 0.45), "gem", glow=glow,
+          rot=((8, y + th / 2 + 0.05, 8), "z", 45))
+    m.box((8 - 0.9, y + th + 0.6, 8 - 0.55), (8 + 0.9, y + th + 1.5, 8 + 0.55), "trim")
+    m.box((8 - 0.45, y + th + 1.5, 8 - 0.5), (8 + 0.45, y + th + 2.3, 8 + 0.5), "trim")
+
+
+def sword_guard_accent(m, sil, y, half, th, zc, zt):
+    """Small per-tier touches on the guard: glowing filigree, crystal prongs or ember spikes."""
+    for sgn in (-1, 1):
+        x = 8 + sgn * half * 0.6
+        if sil == "golden":
+            m.box((x - 0.3, y + th, zc - 0.3), (x + 0.3, y + th + 0.9, zc + 0.3), "gem")
+        elif sil == "diamond":
+            m.box((x - 0.3, y - 1.6, zc - 0.3), (x + 0.3, y, zc + 0.3), "edge", glow=True, rot=((x, y, 8), "z", 22.5 * sgn))
+        elif sil == "netherite":
+            m.box((x - 0.3, y - 1.8, zc - 0.25), (x + 0.3, y, zc + 0.25), "metal", rot=((x, y, 8), "z", 22.5 * sgn))
+            m.box((x - 0.2, y + th * 0.3, zc - zt * 0.6), (x + 0.2, y + th * 0.7, zc + zt * 0.6), "glow", glow=True)
+        elif sil == "stormsteel":
+            m.box((x - 0.2, y + th * 0.3, zc - zt * 0.6), (x + 0.2, y + th * 0.7, zc + zt * 0.6), "glow", glow=True)
+            m.box((8 + sgn * half - 0.25, y + th * 0.2, zc - 0.25), (8 + sgn * half + 0.25, y + th + 2.4, zc + 0.25), "glow",
+                  glow=True, rot=((8 + sgn * half, y + th * 0.2, 8), "z", -45 * sgn))
 
 
 def blade(m, s, hw, y0, y1, tip, th=0.42, steps=4, ridge=True):

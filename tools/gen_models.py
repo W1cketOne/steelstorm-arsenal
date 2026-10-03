@@ -448,7 +448,7 @@ def knife_model():
 # so the model is slid along its own axis by (8 - grip) to put that point in the hand.
 # Hand anchors (in model pixels): where the hold point of a weapon should end up in each view.
 HAND_TP = (0.0, 0.4, 1.0)
-HAND_FP = (1.13, 0.05, 0.15)
+HAND_FP = (1.13, 2.0, 0.15)
 
 
 def _offset(d, scale, tilt, yaw):
@@ -458,7 +458,7 @@ def _offset(d, scale, tilt, yaw):
     return (x * math.cos(f) * scale, y * scale, -x * math.sin(f) * scale)
 
 
-def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25, fp_yaw=-90):
+def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25, fp_yaw=-60):
     """Display transforms for a model built along +Y and centred on x = z = 8.
 
     `grip` is the model y the hand closes around. The translation is solved so that this point,
@@ -487,14 +487,14 @@ def display(scale_tp=0.62, scale_fp=0.46, grip=4.0, tilt=10, fp_tilt=25, fp_yaw=
 
 
 TYPE_MODELS = {
-    "longsword": (longsword_model, display(0.7, 0.44, -1.0, 10)),
-    "greatsword": (greatsword_model, display(0.74, 0.44, -3.0, 15)),
-    "katana": (katana_model, display(0.7, 0.44, -2.5, 10)),
-    "dual_daggers": (dagger_model, display(0.75, 0.58, 0.5, 0)),
-    "spear": (spear_model, display(0.64, 0.44, 6.0, 5)),
-    "warhammer": (warhammer_model, display(0.64, 0.44, -4.0, 15)),
-    "scythe": (scythe_model, display(0.62, 0.42, -8.0, 20, fp_tilt=-25, fp_yaw=90)),
-    "battleaxe": (battleaxe_model, display(0.64, 0.44, -2.5, 15)),
+    "longsword": (longsword_model, display(0.7, 0.6, -1.0, 10)),
+    "greatsword": (greatsword_model, display(0.74, 0.6, -3.0, 15)),
+    "katana": (katana_model, display(0.7, 0.6, -2.5, 10)),
+    "dual_daggers": (dagger_model, display(0.75, 0.75, 0.5, 0)),
+    "spear": (spear_model, display(0.64, 0.56, 6.0, 5)),
+    "warhammer": (warhammer_model, display(0.64, 0.58, -4.0, 15)),
+    "scythe": (scythe_model, display(0.62, 0.55, -8.0, 20, fp_tilt=-25, fp_yaw=120)),
+    "battleaxe": (battleaxe_model, display(0.64, 0.58, -2.5, 15)),
 }
 
 TYPE_VARS = ["blade", "edge", "fuller", "metal", "trim", "gem", "grip", "shaft", "collar"]

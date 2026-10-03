@@ -88,15 +88,13 @@ public final class AnimationEvents {
         WeaponAnimator.poseFirstPerson(pose, player, arm, weapon.type(), event.getPartialTick(), event.getEquipProgress(),
                 event.getSwingProgress());
         pose.pushPose();
-        // Vanilla's empty-hand arm placement, measured from the grip instead of the screen corner,
-        // so the fist closes around the handle and follows every swing.
-        pose.translate(side * 0.1F, -0.02F, 0.02F);
-        pose.mulPose(Axis.YP.rotationDegrees(side * 45.0F));
-        pose.translate(side * -1.0F, 3.6F, 3.5F);
-        pose.mulPose(Axis.ZP.rotationDegrees(side * 120.0F));
-        pose.mulPose(Axis.XP.rotationDegrees(200.0F));
-        pose.mulPose(Axis.YP.rotationDegrees(side * -135.0F));
-        pose.translate(side * 5.6F, 0.0F, 0.0F);
+        // Close the fist exactly on the weapon's grip point (where the item model's hold point is
+        // placed, see gen_models.HAND_FP) with the forearm running back to the corner of the screen.
+        pose.translate(side * 1.13F / 16.0F, 2.0F / 16.0F, 0.15F / 16.0F);
+        org.joml.Vector3f along = new org.joml.Vector3f(side * -0.22F, 0.72F, -0.66F).normalize();
+        pose.mulPose(new org.joml.Quaternionf().rotationTo(new org.joml.Vector3f(0, 1, 0), along));
+        pose.mulPose(Axis.YP.rotationDegrees(side * 90));
+        pose.translate(side * 6.0F / 16.0F, -10.5F / 16.0F, 0);
         net.minecraft.client.renderer.entity.EntityRenderer<? super LocalPlayer> r = mc.getEntityRenderDispatcher().getRenderer(player);
         if (r instanceof net.minecraft.client.renderer.entity.player.PlayerRenderer pr) {
             if (side > 0) {

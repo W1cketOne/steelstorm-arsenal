@@ -71,6 +71,7 @@ public final class WeaponAnimator {
         twoHanded(WeaponType.SCYTHE,
                 new float[]{-1.2F, 0.9F, 0, -1.3F, 1.4F, 0, 0.6F, 0}, new float[]{-1.25F, -1.1F, 0, -1.2F, -0.4F, 0, -0.8F, 1}, 0.2F, 0.55F);
 
+        CAST_TP.put(CastPose.INSPECT, hold(0.15F, 0.85F, -1.35F, -0.55F, 0.1F, N, N, N, 0, 0));
         CAST_TP.put(CastPose.RAISE, hold(0.15F, 0.85F, -3.0F, -0.2F, 0, -3.0F, 0.2F, 0, 0, 0));
         CAST_TP.put(CastPose.THRUST, hold(0.2F, 0.8F, -1.55F, -0.1F, 0, -1.2F, 0.5F, 0, -0.2F, 4));
         CAST_TP.put(CastPose.SPIN, hold(0.12F, 0.88F, -0.3F, 0, -1.3F, -0.3F, 0, 1.3F, 0, 0));
@@ -272,6 +273,20 @@ public final class WeaponAnimator {
             model.rightLeg.xRot = Mth.lerp(air, model.rightLeg.xRot, -0.95F);
             model.leftLeg.xRot = Mth.lerp(air, model.leftLeg.xRot, 0.4F);
         }
+        float rest = s.rest(partialTick);
+        if (rest > 0.001F) {
+            if (two) {
+                // Heavy weapons rest on the shoulder, the off hand on the haft.
+                blend(model.rightArm, -2.5F, -0.45F, 0.15F, rest);
+                blend(model.leftArm, -1.35F, 0.75F, 0, rest);
+            } else {
+                // Blade lowered and angled out, at ease.
+                blend(model.rightArm, -0.1F, 0.1F, 0.2F, rest);
+            }
+            float breathe = Mth.sin((entity.tickCount + partialTick) * 0.08F) * 0.04F * rest;
+            model.rightArm.xRot += breathe;
+            model.leftArm.xRot -= breathe;
+        }
         if (land > 0.001F) {
             // Arms dip with the impact.
             model.rightArm.xRot += 0.35F * land;
@@ -338,6 +353,10 @@ public final class WeaponAnimator {
             pose.mulPose(Axis.ZP.rotationDegrees(side * -60 * Mth.sin(cast.t() * Mth.PI)));
             return;
         }
+        if (cast != null && cast.pose() == CastPose.INSPECT) {
+            inspect(pose, side, cast.t());
+            return;
+        }
         if (cast != null && cast.pose() == CastPose.FLURRY) {
             float stab = Math.abs(Mth.sin(cast.t() * Mth.PI * 6));
             pose.translate(side * 0.1F * Mth.sin(cast.t() * 37), 0.02F, -0.4F * stab);
@@ -361,6 +380,22 @@ public final class WeaponAnimator {
         pose.mulPose(Axis.XP.rotationDegrees(v[3]));
         pose.mulPose(Axis.YP.rotationDegrees(side * v[4]));
         pose.mulPose(Axis.ZP.rotationDegrees(side * v[5]));
+    }
+
+    /** Brings the weapon in, turns the flat of the blade to the camera, flips it round, then puts it back. */
+    private static void inspect(PoseStack pose, int side, float t) {
+        float in = smooth(t / 0.18F) * (1 - smooth((t - 0.84F) / 0.16F));
+        float turn = smooth((t - 0.15F) / 0.2F) * (1 - smooth((t - 0.8F) / 0.15F));
+        float flip = smooth((t - 0.42F) / 0.3F);
+        pose.translate(side * -0.2F * in, 0.05F * in + 0.012F * Mth.sin(t * 20) * in, -0.16F * in);
+        pose.mulPose(Axis.ZP.rotationDegrees(side * 28 * in));
+        pose.mulPose(Axis.YP.rotationDegrees(side * (-70 * turn + 360 * flip)));
+        pose.mulPose(Axis.XP.rotationDegrees(-12 * in));
+    }
+
+    private static float smooth(float x) {
+        x = Mth.clamp(x, 0, 1);
+        return x * x * (3 - 2 * x);
     }
 
     public static boolean isTwoHanded(WeaponType type) {

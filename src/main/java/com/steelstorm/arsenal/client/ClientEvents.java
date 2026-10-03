@@ -44,6 +44,13 @@ public final class ClientEvents {
         }
         ClientCombatState.tick();
         // Keys only send requests; the server checks stamina, cooldowns and charge.
+        while (ModKeyMappings.INSPECT.consumeClick()) {
+            if (mc.screen == null && player.getMainHandItem().getItem() instanceof com.steelstorm.arsenal.weapon.WeaponItem
+                    && com.steelstorm.arsenal.client.anim.ClientAnims.get(player, 0) == null) {
+                com.steelstorm.arsenal.client.anim.ClientAnims.start(player.getId(), com.steelstorm.arsenal.anim.CastPose.INSPECT,
+                        com.steelstorm.arsenal.anim.CastPose.INSPECT.duration);
+            }
+        }
         while (ModKeyMappings.DODGE.consumeClick()) {
             if (mc.screen == null && !player.isSpectator()) {
                 PacketDistributor.sendToServer(new DodgePayload(player.input.forwardImpulse, player.input.leftImpulse));

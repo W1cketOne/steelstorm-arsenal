@@ -108,6 +108,7 @@ public class ModLanguageProvider extends LanguageProvider {
         ModSounds.SUBTITLES.forEach((event, text) -> add("subtitles.steelstorm." + event, text));
         add("key.categories.steelstorm", "Steelstorm Arsenal");
         add("key.steelstorm.dodge", "Dodge Roll");
+        add("key.steelstorm.inspect", "Inspect Weapon");
         add("key.steelstorm.ability_1", "Ability 1");
         add("key.steelstorm.ability_2", "Ability 2");
         add("key.steelstorm.ability_3", "Ability 3");

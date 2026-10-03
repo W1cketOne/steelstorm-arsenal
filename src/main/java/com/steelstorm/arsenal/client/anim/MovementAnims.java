@@ -26,6 +26,8 @@ public final class MovementAnims {
         float land;
         float landO;
         int airTicks;
+        int idle;
+        int idleO;
         boolean wasGround = true;
 
         public float sprint(float partial) {
@@ -34,6 +36,11 @@ public final class MovementAnims {
 
         public float air(float partial) {
             return Mth.lerp(partial, airO, air);
+        }
+
+        /** 0..1: how settled into the idle pose the player is (after ~3 s standing still). */
+        public float rest(float partial) {
+            return Mth.clamp((Mth.lerp(partial, idleO, idle) - 60) / 16.0F, 0, 1);
         }
 
         /** 1 right on landing, fading to 0 over a few ticks. */
@@ -76,6 +83,10 @@ public final class MovementAnims {
                 s.land = Math.max(0, s.land - 0.2F);
             }
             s.wasGround = ground;
+            s.idleO = s.idle;
+            boolean still = ground && p.getDeltaMovement().horizontalDistanceSqr() < 1.0E-4 && !p.swinging && !p.isCrouching()
+                    && ClientAnims.get(p, 0) == null;
+            s.idle = still ? Math.min(s.idle + 1, 200) : Math.max(0, Math.min(s.idle, 76) - 6);
         }
     }
 

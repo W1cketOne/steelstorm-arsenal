@@ -245,6 +245,7 @@
   "key.steelstorm.ability_2": "Ability 2",
   "key.steelstorm.ability_3": "Ability 3",
   "key.steelstorm.dodge": "Dodge Roll",
+  "key.steelstorm.inspect": "Inspect Weapon",
   "key.steelstorm.ultimate": "Ultimate",
   "message.steelstorm.ability_cooldown": "%s ready in %ss",
   "message.steelstorm.already_sharp": "This blade is already razor sharp",

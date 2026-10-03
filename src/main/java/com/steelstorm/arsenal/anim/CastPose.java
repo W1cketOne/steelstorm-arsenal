@@ -35,7 +35,9 @@ public enum CastPose {
     /** A cut from low to high. */
     RISING(9),
     /** The dodge roll: a full somersault. */
-    DODGE(10);
+    DODGE(10),
+    /** Admiring the weapon (client-only, from the Inspect key). */
+    INSPECT(56);
 
     public final int duration;
 

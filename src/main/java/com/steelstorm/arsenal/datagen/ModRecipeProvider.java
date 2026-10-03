@@ -153,6 +153,19 @@ public class ModRecipeProvider extends RecipeProvider {
         armor(output, ModItems.STORMSTEEL_CHESTPLATE.get(), "M M", "MMM", "MMM");
         armor(output, ModItems.STORMSTEEL_LEGGINGS.get(), "MMM", "M M", "M M");
         armor(output, ModItems.STORMSTEEL_BOOTS.get(), "M M", "M M");
+
+        // Ember Warlord armour: a Stormsteel piece forged with netherite, blaze and magma.
+        warlord(output, ModItems.WARLORD_HELMET.get(), ModItems.STORMSTEEL_HELMET.get());
+        warlord(output, ModItems.WARLORD_CHESTPLATE.get(), ModItems.STORMSTEEL_CHESTPLATE.get());
+        warlord(output, ModItems.WARLORD_LEGGINGS.get(), ModItems.STORMSTEEL_LEGGINGS.get());
+        warlord(output, ModItems.WARLORD_BOOTS.get(), ModItems.STORMSTEEL_BOOTS.get());
+    }
+
+    private static void warlord(RecipeOutput output, ItemLike result, ItemLike base) {
+        ShapedRecipeBuilder.shaped(RecipeCategory.COMBAT, result)
+                .pattern("BMB").pattern("NAN").pattern("BMB")
+                .define('A', base).define('N', Items.NETHERITE_INGOT).define('B', Items.BLAZE_ROD).define('M', Items.MAGMA_CREAM)
+                .unlockedBy(getHasName(Items.NETHERITE_INGOT), has(Items.NETHERITE_INGOT)).save(output);
     }
 
     private static void rune(RecipeOutput output, Rune rune, ItemLike element) {

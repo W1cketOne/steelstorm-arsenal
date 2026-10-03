@@ -212,6 +212,16 @@ There are six runes:
   - immunity to lightning
   - enemies that hit you in melee may get zapped
 
+### Ember Warlord armour
+
+A second 3D armour set: blackened, horned plate with molten seams. Craft each piece from the matching **Stormsteel piece** in the centre, with **2 netherite ingots** at its sides, **4 blaze rods** in the corners and **2 magma cream** above and below.
+
+- **Helm, Infernal Eyes:** night vision; blindness and darkness can't touch you.
+- **Cuirass, Magma Heart:** melee attackers are scorched and set ablaze.
+- **Greaves, Scorched Path:** sprint into enemies to bowl them aside in flames.
+- **Sabatons, Meteor Fall:** sneak in mid-air to slam down, sending out a fiery shockwave that cracks the ground.
+- **Full set, Warlord's Wrath:** immune to fire and lava, and your strikes set enemies ablaze.
+
 ### Weaponsmiths
 
 Villager weaponsmiths sell the following, depending on their level:

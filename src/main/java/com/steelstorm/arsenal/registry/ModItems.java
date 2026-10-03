@@ -103,6 +103,10 @@ public final class ModItems {
     public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_CHESTPLATE = armor("stormsteel_chestplate", ArmorItem.Type.CHESTPLATE);
     public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_LEGGINGS = armor("stormsteel_leggings", ArmorItem.Type.LEGGINGS);
     public static final DeferredItem<StormsteelArmorItem> STORMSTEEL_BOOTS = armor("stormsteel_boots", ArmorItem.Type.BOOTS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.WarlordArmorItem> WARLORD_HELMET = warlord("warlord_helmet", ArmorItem.Type.HELMET);
+    public static final DeferredItem<com.steelstorm.arsenal.item.WarlordArmorItem> WARLORD_CHESTPLATE = warlord("warlord_chestplate", ArmorItem.Type.CHESTPLATE);
+    public static final DeferredItem<com.steelstorm.arsenal.item.WarlordArmorItem> WARLORD_LEGGINGS = warlord("warlord_leggings", ArmorItem.Type.LEGGINGS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.WarlordArmorItem> WARLORD_BOOTS = warlord("warlord_boots", ArmorItem.Type.BOOTS);
 
     // Interactive blocks.
     public static final DeferredItem<BlockItem> WHETSTONE = ITEMS.registerSimpleBlockItem("whetstone", ModBlocks.WHETSTONE);
@@ -134,6 +138,11 @@ public final class ModItems {
     private static DeferredItem<StormsteelArmorItem> armor(String name, ArmorItem.Type type) {
         return ITEMS.register(name, () -> new StormsteelArmorItem(ModArmorMaterials.STORMSTEEL, type,
                 new Item.Properties().durability(type.getDurability(35)).fireResistant()));
+    }
+
+    private static DeferredItem<com.steelstorm.arsenal.item.WarlordArmorItem> warlord(String name, ArmorItem.Type type) {
+        return ITEMS.register(name, () -> new com.steelstorm.arsenal.item.WarlordArmorItem(ModArmorMaterials.WARLORD, type,
+                new Item.Properties().durability(type.getDurability(40)).fireResistant().rarity(net.minecraft.world.item.Rarity.RARE)));
     }
 
     public static DeferredItem<RuneItem> rune(Rune rune) {

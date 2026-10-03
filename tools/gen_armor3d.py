@@ -17,11 +17,19 @@ from texlib import R, hexc, mix, save
 UV_W, UV_H = 128, 64
 SCALE = 2  # texture pixels per UV unit
 
-STEEL = R["stormsteel"]
-GOLD = R["gold"]
-DARK = R["black_iron"]
-GLOW = (110, 235, 255, 255)
-GLOW_HOT = (225, 252, 255, 255)
+PALETTES = {
+    "stormsteel": {"steel": R["stormsteel"], "gold": R["gold"], "dark": R["black_iron"],
+                   "glow": (110, 235, 255, 255), "glow_hot": (225, 252, 255, 255)},
+    "warlord": {"steel": R["black_iron"], "gold": R["netherite"], "dark": R["black_iron"],
+                "glow": (255, 110, 20, 255), "glow_hot": (255, 235, 160, 255)},
+}
+STEEL = GOLD = DARK = GLOW = GLOW_HOT = None
+
+
+def use_palette(name):
+    global STEEL, GOLD, DARK, GLOW, GLOW_HOT
+    pal = PALETTES[name]
+    STEEL, GOLD, DARK, GLOW, GLOW_HOT = pal["steel"], pal["gold"], pal["dark"], pal["glow"], pal["glow_hot"]
 
 # part -> list of cubes: (name, x, y, z, w, h, d, inflate, material, mirror)
 OUTER = {
@@ -79,6 +87,80 @@ INNER = {
     "left_leg": [
         ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", True),
         ("knee", -2.5, 5, -3.3, 5, 3, 1.5, 0.0, "pauldron", True),
+    ],
+}
+
+# The Ember Warlord: blackened plate, horns, spikes and molten seams.
+W_OUTER = {
+    "head": [
+        ("helm", -4, -8, -4, 8, 8, 8, 1.0, "steel", False),
+        ("visor", -4.5, -5.5, -5.6, 9, 3, 1, 0.0, "plate", False),
+        ("eyes", -3, -4.8, -5.9, 6, 1, 1, 0.0, "glow", False),
+        ("ridge", -1, -10, -4.5, 2, 2, 9, 0.0, "gold", False),
+        ("horn_r", -7.5, -11, -1, 2, 6, 2, 0.0, "gold", False),
+        ("horn_rt", -8.5, -14, -0.5, 1, 3, 1, 0.0, "pauldron", False),
+        ("horn_l", 5.5, -11, -1, 2, 6, 2, 0.0, "gold", True),
+        ("horn_lt", 7.5, -14, -0.5, 1, 3, 1, 0.0, "pauldron", True),
+        ("jaw", -4.5, -2, -5, 9, 2, 3, 0.0, "plate", False),
+    ],
+    "body": [
+        ("cuirass", -4, 0, -2, 8, 12, 4, 1.01, "steel", False),
+        ("chest", -4.5, 0.5, -3.9, 9, 7, 1, 0.0, "plate", False),
+        ("core", -1.5, 2.5, -4.7, 3, 3, 1, 0.0, "glow", False),
+        ("ribs", -3.5, 7.5, -3.6, 7, 3, 1, 0.0, "pauldron", False),
+        ("back", -3.5, 0.5, 2.8, 7, 9, 1, 0.0, "plate", False),
+        ("spine", -0.5, -1, 3.6, 1, 10, 2, 0.0, "gold", False),
+        ("gorget", -4.5, -1.5, -3, 9, 2, 6, 0.0, "gold", False),
+    ],
+    "right_arm": [
+        ("sleeve", -3, -2, -2, 4, 12, 4, 1.0, "steel", False),
+        ("pauldron", -5.5, -4.5, -3.5, 7, 4, 7, 0.0, "pauldron", False),
+        ("spike1", -5, -7.5, -0.5, 1, 3, 1, 0.0, "gold", False),
+        ("spike2", -3, -8, -0.5, 1, 3.5, 1, 0.0, "gold", False),
+        ("spike3", -1, -7, -0.5, 1, 2.5, 1, 0.0, "gold", False),
+        ("gauntlet", -3.6, 6, -2.6, 5, 4, 5, 0.25, "plate", False),
+        ("knuckle", -3.6, 9.5, -2.8, 5, 1, 1, 0.0, "glow", False),
+    ],
+    "left_arm": [
+        ("sleeve", -1, -2, -2, 4, 12, 4, 1.0, "steel", True),
+        ("pauldron", -1.5, -4.5, -3.5, 7, 4, 7, 0.0, "pauldron", True),
+        ("spike1", 4, -7.5, -0.5, 1, 3, 1, 0.0, "gold", True),
+        ("spike2", 2, -8, -0.5, 1, 3.5, 1, 0.0, "gold", True),
+        ("spike3", 0, -7, -0.5, 1, 2.5, 1, 0.0, "gold", True),
+        ("gauntlet", -1.4, 6, -2.6, 5, 4, 5, 0.25, "plate", True),
+        ("knuckle", -1.4, 9.5, -2.8, 5, 1, 1, 0.0, "glow", True),
+    ],
+    "right_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", False),
+        ("toe", -2.5, 10, -4.2, 5, 2, 2.2, 0.0, "gold", False),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", False),
+        ("spur", -0.5, 9, 2.5, 1, 1, 2, 0.0, "gold", False),
+    ],
+    "left_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", True),
+        ("toe", -2.5, 10, -4.2, 5, 2, 2.2, 0.0, "gold", True),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", True),
+        ("spur", -0.5, 9, 2.5, 1, 1, 2, 0.0, "gold", True),
+    ],
+}
+
+W_INNER = {
+    "body": [
+        ("belt", -4, 9, -2, 8, 3, 4, 0.6, "gold", False),
+        ("buckle", -1.5, 9.3, -3.0, 3, 2.4, 1, 0.0, "glow", False),
+        ("tasset_r", -4.2, 11.5, -3.0, 3.6, 5, 1, 0.0, "plate", False),
+        ("tasset_l", 0.6, 11.5, -3.0, 3.6, 5, 1, 0.0, "plate", True),
+        ("tasset_b", -3.5, 11.5, 2.0, 7, 4, 1, 0.0, "plate", False),
+    ],
+    "right_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", False),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", False),
+        ("knee_spike", -0.5, 5.5, -4.6, 1, 1, 1.4, 0.0, "gold", False),
+    ],
+    "left_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", True),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", True),
+        ("knee_spike", -0.5, 5.5, -4.6, 1, 1, 1.4, 0.0, "gold", True),
     ],
 }
 
@@ -204,10 +286,18 @@ def java_layer(model, uvs, method):
 
 
 def main():
+    for name, cls, outer, inner in (("stormsteel", "StormsteelArmorLayers", OUTER, INNER),
+                                    ("warlord", "WarlordArmorLayers", W_OUTER, W_INNER)):
+        use_palette(name)
+        write_set(name, cls, outer, inner)
+    print("3D armour written")
+
+
+def write_set(name, cls, OUTER, INNER):
     out_uv = pack(OUTER)
     in_uv = pack(INNER)
-    save(paint(OUTER, out_uv, 1), "models", "armor", "stormsteel_3d_outer.png")
-    save(paint(INNER, in_uv, 2), "models", "armor", "stormsteel_3d_inner.png")
+    save(paint(OUTER, out_uv, 1), "models", "armor", f"{name}_3d_outer.png")
+    save(paint(INNER, in_uv, 2), "models", "armor", f"{name}_3d_inner.png")
     java = f"""package com.steelstorm.arsenal.client;
 
 import net.minecraft.client.model.HumanoidModel;
@@ -219,23 +309,22 @@ import net.minecraft.client.model.geom.builders.MeshDefinition;
 import net.minecraft.client.model.geom.builders.PartDefinition;
 
 /**
- * Cube layout of the 3D Stormsteel armour. Generated by tools/gen_armor3d.py together with its
+ * Cube layout of the 3D {name} armour. Generated by tools/gen_armor3d.py together with its
  * textures; edit the script, not this file.
  */
-public final class StormsteelArmorLayers {{
+public final class {cls} {{
 {java_layer(OUTER, out_uv, "outer")}
 
 {java_layer(INNER, in_uv, "inner")}
 
-    private StormsteelArmorLayers() {{
+    private {cls}() {{
     }}
 }}
 """
     path = os.path.join(os.path.dirname(__file__), "..", "src", "main", "java", "com", "steelstorm", "arsenal", "client",
-                        "StormsteelArmorLayers.java")
+                        f"{cls}.java")
     with open(path, "w") as f:
         f.write(java)
-    print("3D armour written")
 
 
 if __name__ == "__main__":

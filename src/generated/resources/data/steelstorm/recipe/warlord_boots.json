@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "key": {
+    "A": {
+      "item": "steelstorm:stormsteel_boots"
+    },
+    "B": {
+      "item": "minecraft:blaze_rod"
+    },
+    "M": {
+      "item": "minecraft:magma_cream"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    }
+  },
+  "pattern": [
+    "BMB",
+    "NAN",
+    "BMB"
+  ],
+  "result": {
+    "count": 1,
+    "id": "steelstorm:warlord_boots"
+  }
+}

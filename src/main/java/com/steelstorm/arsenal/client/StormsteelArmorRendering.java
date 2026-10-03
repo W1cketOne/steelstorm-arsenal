@@ -22,6 +22,10 @@ import net.neoforged.neoforge.client.extensions.common.RegisterClientExtensionsE
 public final class StormsteelArmorRendering {
     public static final ModelLayerLocation OUTER = new ModelLayerLocation(SteelstormArsenal.id("stormsteel_armor"), "outer");
     public static final ModelLayerLocation INNER = new ModelLayerLocation(SteelstormArsenal.id("stormsteel_armor"), "inner");
+    public static final ModelLayerLocation W_OUTER = new ModelLayerLocation(SteelstormArsenal.id("warlord_armor"), "outer");
+    public static final ModelLayerLocation W_INNER = new ModelLayerLocation(SteelstormArsenal.id("warlord_armor"), "inner");
+    private static HumanoidModel<LivingEntity> wOuter;
+    private static HumanoidModel<LivingEntity> wInner;
 
     private static EntityModelSet bakedFrom;
     private static HumanoidModel<LivingEntity> outer;
@@ -34,6 +38,8 @@ public final class StormsteelArmorRendering {
     public static void registerLayers(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(OUTER, StormsteelArmorLayers::outer);
         event.registerLayerDefinition(INNER, StormsteelArmorLayers::inner);
+        event.registerLayerDefinition(W_OUTER, WarlordArmorLayers::outer);
+        event.registerLayerDefinition(W_INNER, WarlordArmorLayers::inner);
     }
 
     @SubscribeEvent
@@ -41,23 +47,28 @@ public final class StormsteelArmorRendering {
         IClientItemExtensions extensions = new IClientItemExtensions() {
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
-                return model(slot == EquipmentSlot.LEGS);
+                return model(slot == EquipmentSlot.LEGS, stack.getItem() instanceof com.steelstorm.arsenal.item.WarlordArmorItem);
             }
         };
         BuiltInRegistries.ITEM.forEach(item -> {
-            if (item instanceof StormsteelArmorItem) {
+            if (item instanceof StormsteelArmorItem || item instanceof com.steelstorm.arsenal.item.WarlordArmorItem) {
                 event.registerItem(extensions, item);
             }
         });
     }
 
-    private static HumanoidModel<LivingEntity> model(boolean legs) {
+    private static HumanoidModel<LivingEntity> model(boolean legs, boolean warlord) {
         EntityModelSet models = Minecraft.getInstance().getEntityModels();
         if (models != bakedFrom || outer == null) {
             // Re-bake after resource reloads.
             outer = new HumanoidModel<>(models.bakeLayer(OUTER));
             inner = new HumanoidModel<>(models.bakeLayer(INNER));
+            wOuter = new HumanoidModel<>(models.bakeLayer(W_OUTER));
+            wInner = new HumanoidModel<>(models.bakeLayer(W_INNER));
             bakedFrom = models;
+        }
+        if (warlord) {
+            return legs ? wInner : wOuter;
         }
         return legs ? inner : outer;
     }

@@ -31,6 +31,7 @@ public final class CombatHud {
         event.registerAbove(VanillaGuiLayers.FOOD_LEVEL, SteelstormArsenal.id("stamina"), CombatHud::renderStamina);
         event.registerAbove(VanillaGuiLayers.HOTBAR, SteelstormArsenal.id("abilities"), CombatHud::renderAbilities);
         event.registerAbove(VanillaGuiLayers.CROSSHAIR, SteelstormArsenal.id("combo"), CombatHud::renderCombo);
+        event.registerAbove(VanillaGuiLayers.CAMERA_OVERLAYS, SteelstormArsenal.id("flash"), CombatHud::renderFlash);
     }
 
     private static boolean hidden(Minecraft mc) {
@@ -210,6 +211,20 @@ public final class CombatHud {
         g.pose().scale(pop, pop, 1);
         g.drawString(mc.font, text, 0, 0, color, true);
         g.pose().popPose();
+    }
+
+    /** A white flash with a golden vignette when an ultimate goes off. */
+    private static void renderFlash(GuiGraphics g, DeltaTracker delta) {
+        float f = ClientCombatState.flash;
+        if (f <= 0.01F) {
+            return;
+        }
+        int a = (int) (Math.min(1, f) * 120);
+        g.fill(0, 0, g.guiWidth(), g.guiHeight(), (a << 24) | 0xFFF6E0);
+        int edge = (int) (Math.min(1, f) * 160);
+        int w = g.guiWidth(), h = g.guiHeight(), b = Math.max(8, h / 10);
+        g.fillGradient(0, 0, w, b, (edge << 24) | 0xFFB800, 0x00FFB800);
+        g.fillGradient(0, h - b, w, h, 0x00FFB800, (edge << 24) | 0xFFB800);
     }
 
     private CombatHud() {

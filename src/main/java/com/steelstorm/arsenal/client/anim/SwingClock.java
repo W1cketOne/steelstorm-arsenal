@@ -13,6 +13,7 @@ public final class SwingClock {
         float lastVanilla;
         double start = -1000;
         int cut;
+        boolean finisher;
     }
 
     private static final WeakHashMap<LivingEntity, State> STATES = new WeakHashMap<>();
@@ -39,11 +40,19 @@ public final class SwingClock {
             if (now - state.start > duration(type) * 0.45) {
                 state.start = now - vanillaSwing * 6;
                 state.cut = 1 - state.cut;
+                // Every third hit of a combo is an overhead finisher (only the local player knows its combo).
+                state.finisher = entity == net.minecraft.client.Minecraft.getInstance().player
+                        && com.steelstorm.arsenal.client.ClientCombatState.combo % 3 == 2;
             }
         }
         state.lastVanilla = vanillaSwing;
         float t = (float) ((now - state.start) / duration(type));
         return t >= 0 && t < 1 ? t : 0;
+    }
+
+    public static boolean finisher(LivingEntity entity) {
+        State state = STATES.get(entity);
+        return state != null && state.finisher;
     }
 
     public static int cut(LivingEntity entity) {

@@ -34,11 +34,38 @@ public abstract class SteelstormBoss extends SteelstormMonster {
                 boolean shown = bossEvent.getPlayers().contains(player);
                 if (!shown && (distance < BAR_SHOW_DISTANCE * BAR_SHOW_DISTANCE || getTarget() == player)) {
                     bossEvent.addPlayer(player);
+                    if (introduced.add(player.getUUID())) {
+                        introduce(player);
+                    }
                 } else if (shown && distance > BAR_HIDE_DISTANCE * BAR_HIDE_DISTANCE && getTarget() != player) {
                     bossEvent.removePlayer(player);
                 }
             }
         }
+    }
+
+    private final java.util.Set<java.util.UUID> introduced = new java.util.HashSet<>();
+
+    /** A film-style title card the first time a player meets this boss. */
+    private void introduce(ServerPlayer player) {
+        String id = net.minecraft.core.registries.BuiltInRegistries.ENTITY_TYPE.getKey(getType()).getPath();
+        String epithet = switch (id) {
+            case "forge_colossus" -> "The Molten King";
+            case "moonblade_revenant" -> "Blade of the Pale Moon";
+            case "fallen_warlord" -> "Tyrant of the Fallen Keep";
+            case "storm_herald" -> "Voice of the Tempest";
+            case "iron_revenant" -> "The Unbroken Guard";
+            default -> "Champion of Steel";
+        };
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitlesAnimationPacket(8, 50, 16));
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetTitleTextPacket(
+                getType().getDescription().copy().withStyle(net.minecraft.ChatFormatting.GOLD, net.minecraft.ChatFormatting.BOLD)));
+        player.connection.send(new net.minecraft.network.protocol.game.ClientboundSetSubtitleTextPacket(
+                net.minecraft.network.chat.Component.literal("— " + epithet + " —").withStyle(net.minecraft.ChatFormatting.GRAY,
+                        net.minecraft.ChatFormatting.ITALIC)));
+        player.playNotifySound(com.steelstorm.arsenal.registry.ModSounds.ULTIMATE_RELEASE.get(), net.minecraft.sounds.SoundSource.HOSTILE,
+                0.9F, 0.6F);
+        com.steelstorm.arsenal.combat.Stamina.shake(player, 0.6F, 14);
     }
 
     @Override

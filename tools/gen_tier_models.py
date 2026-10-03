@@ -641,9 +641,8 @@ def main():
     write_textures()
     for name in ("violet_wrap", "ember_wrap", "green_wrap", "teal_wrap", "straw", "red_wrap", "blue_wrap"):
         save(tex_grip(R[name], 5), "item", "3d", f"grip_{name}.png")
-    for i, (name, colors) in enumerate(GRADIENTS.items()):
-        save(tex_grad_blade(colors, i), "item", "3d", f"grad_{name}.png")
-        save(tex_grad_edge(colors), "item", "3d", f"gedge_{name}.png")
+    import hd_textures
+    hd_textures.write(GRADIENTS)
     count = 0
     for kind, build in BUILDERS.items():
         for tier in TIERS:

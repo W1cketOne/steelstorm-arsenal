@@ -48,6 +48,9 @@ public final class ClientCombatState {
         ultimate = payload.ultimate();
         dodgeCooldownLeft = payload.dodgeCooldownLeft();
         if (payload.combo() != combo) {
+            if (payload.combo() > combo) {
+                hitPunch = payload.combo() % 3 == 0 ? 1.0F : 0.55F;
+            }
             comboAge = payload.combo() > combo ? 0 : comboAge;
             combo = payload.combo();
         }
@@ -64,7 +67,15 @@ public final class ClientCombatState {
         }
     }
 
+    /** 1 on a landed hit, decaying: drives the FOV punch. */
+    public static float hitPunch;
+    /** White screen flash for ultimates and boss intros. */
+    public static float flash;
+
     static void shake(float strength, int ticks) {
+        if (strength >= 0.6F) {
+            flash = Math.max(flash, Math.min(1.0F, strength * 0.6F));
+        }
         if (strength >= shakeStrength * (shakeTicks / (float) shakeTotal)) {
             shakeStrength = strength;
             shakeTicks = ticks;
@@ -94,6 +105,8 @@ public final class ClientCombatState {
         }
         comboAge++;
         ultimateReadyAge++;
+        hitPunch = Math.max(0, hitPunch - 0.25F);
+        flash = Math.max(0, flash - 0.08F);
         if (ultimateCharge >= 0) {
             ultimateCharge++;
         }

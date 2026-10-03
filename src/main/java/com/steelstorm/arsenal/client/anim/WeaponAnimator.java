@@ -32,6 +32,12 @@ public final class WeaponAnimator {
 
     private static final Map<WeaponType, Keyframes[]> SWING_FP = new EnumMap<>(WeaponType.class);
     private static final Map<CastPose, Keyframes> CAST_FP = new EnumMap<>(CastPose.class);
+    /** The combo finisher: a big overhead chop, whatever the weapon. */
+    private static final Keyframes FINISHER_TP = Keyframes.of(key(0, N, N, N, N, N, N, 0, 0),
+            key(0.3F, -3.1F, -0.1F, 0, -3.0F, 0.1F, 0, 0, 0), key(0.5F, -0.2F, -0.1F, 0, -0.3F, 0.2F, 0, 0, 2.5F),
+            key(0.8F, -0.2F, -0.1F, 0, -0.3F, 0.2F, 0, 0, 2.5F), key(1, N, N, N, N, N, N, 0, 0));
+    private static final Keyframes FINISHER_FP = Keyframes.of(key(0, 0, 0, 0, 0, 0, 0), key(0.3F, 0.0F, 0.5F, 0.25F, -85, 0, 0),
+            key(0.5F, -0.05F, -0.45F, -0.35F, 70, 0, 0), key(0.8F, -0.05F, -0.45F, -0.35F, 70, 0, 0), key(1, 0, 0, 0, 0, 0, 0));
 
     static {
         float r = -0.35F;
@@ -191,7 +197,7 @@ public final class WeaponAnimator {
         } else {
             float progress = SwingClock.progress(entity, swing, type, partialTick);
             if (progress > 0) {
-                track = SWING_TP.get(type)[SwingClock.cut(entity)];
+                track = SwingClock.finisher(entity) ? FINISHER_TP : SWING_TP.get(type)[SwingClock.cut(entity)];
                 t = progress;
             }
         }
@@ -349,7 +355,7 @@ public final class WeaponAnimator {
                 moveFirstPerson(pose, player, side, type, partialTick);
                 return;
             }
-            SWING_FP.get(type)[SwingClock.cut(player)].sample(progress, v);
+            (SwingClock.finisher(player) ? FINISHER_FP : SWING_FP.get(type)[SwingClock.cut(player)]).sample(progress, v);
         }
         pose.translate(side * v[0], v[1], v[2]);
         pose.mulPose(Axis.XP.rotationDegrees(v[3]));

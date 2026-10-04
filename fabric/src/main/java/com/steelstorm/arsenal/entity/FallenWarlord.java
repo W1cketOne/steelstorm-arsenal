@@ -166,6 +166,18 @@ public class FallenWarlord extends SteelstormMonster {
             enterPhase(newPhase);
         }
         bossEvent.setProgress(fraction);
+        if (tickCount % 10 == 0 && level() instanceof ServerLevel server) {
+            // Only players close by (or being fought) see the bar.
+            for (ServerPlayer player : server.players()) {
+                double d = player.distanceToSqr(this);
+                boolean shown = bossEvent.getPlayers().contains(player);
+                if (!shown && (d < 40 * 40 || getTarget() == player)) {
+                    bossEvent.addPlayer(player);
+                } else if (shown && d > 56 * 56 && getTarget() != player) {
+                    bossEvent.removePlayer(player);
+                }
+            }
+        }
         if (phase >= 3 && level() instanceof ServerLevel server && tickCount % 4 == 0) {
             server.sendParticles(ParticleTypes.FLAME, getX(), getY(1.0), getZ(), 2, 0.4, 0.3, 0.4, 0.01);
         }
@@ -195,7 +207,7 @@ public class FallenWarlord extends SteelstormMonster {
     @Override
     public void startSeenByPlayer(ServerPlayer player) {
         super.startSeenByPlayer(player);
-        bossEvent.addPlayer(player);
+        // The bar appears by distance in customServerAiStep; display-only (NoAI) warlords never show it.
     }
 
     @Override

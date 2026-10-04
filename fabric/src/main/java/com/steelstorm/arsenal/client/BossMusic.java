@@ -51,7 +51,7 @@ public final class BossMusic {
         }
         boolean boss = false;
         for (Entity e : mc.level.entitiesForRendering()) {
-            if (e instanceof SteelstormBoss b && b.isAlive() && b.distanceToSqr(mc.player) < RANGE * RANGE) {
+            if (e instanceof SteelstormBoss b && b.isAlive() && !b.isNoAi() && b.distanceToSqr(mc.player) < RANGE * RANGE) {
                 boss = true;
                 break;
             }

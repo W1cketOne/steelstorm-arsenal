@@ -112,6 +112,12 @@ public class TargetDummyEntity extends Mob {
     protected void doPush(net.minecraft.world.entity.Entity entity) {
     }
 
+    /** /kill and the void remove the dummy outright instead of leaving it stuck mid-death. */
+    @Override
+    public void kill() {
+        discard();
+    }
+
     @Override
     public boolean removeWhenFarAway(double distance) {
         return false;

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "RHR",
+    "RPR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "H": {
+      "item": "minecraft:dragon_breath"
+    },
+    "P": {
+      "item": "minecraft:netherite_leggings"
+    }
+  },
+  "result": {
+    "id": "steelstorm:dragonscale_leggings",
+    "count": 1
+  }
+}

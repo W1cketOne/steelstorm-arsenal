@@ -19,6 +19,43 @@ import net.minecraft.world.entity.LivingEntity;
  */
 public final class WeaponAnimator {
     private static final float N = Float.NaN;
+    /** First-person shoulder pivot relative to the camera, and how much of each attack's arc it shows. */
+    private static float[] FP_SHOULDER = {0.3F, -0.45F, 0.05F};
+    /** How much of each attack's yaw, pitch and roll first person shows. */
+    private static float[] FP_SCALE = {0.6F, 0.6F, 0.8F};
+    private static long tuneRead;
+
+    /** Dev aid: config/steelstorm-anim-tune.properties, if present, overrides the first-person arc live. */
+    private static void tune() {
+        long now = System.currentTimeMillis();
+        if (now - tuneRead < 1000) {
+            return;
+        }
+        tuneRead = now;
+        java.nio.file.Path file = net.fabricmc.loader.api.FabricLoader.getInstance().getConfigDir().resolve("steelstorm-anim-tune.properties");
+        if (!java.nio.file.Files.exists(file)) {
+            return;
+        }
+        try (var in = java.nio.file.Files.newBufferedReader(file)) {
+            java.util.Properties p = new java.util.Properties();
+            p.load(in);
+            FP_SHOULDER = floats(p.getProperty("shoulder"), FP_SHOULDER);
+            FP_SCALE = floats(p.getProperty("scale"), FP_SCALE);
+        } catch (Exception ignored) {
+        }
+    }
+
+    private static float[] floats(String s, float[] def) {
+        if (s == null) {
+            return def;
+        }
+        String[] parts = s.split(",");
+        float[] out = new float[parts.length];
+        for (int i = 0; i < parts.length; i++) {
+            out[i] = Float.parseFloat(parts[i].trim());
+        }
+        return out;
+    }
 
     // ------------------------------------------------------------------ third person
     // Channels: right arm x/y/z rotation, left arm x/y/z rotation, body yaw, forward reach.
@@ -196,10 +233,11 @@ public final class WeaponAnimator {
             track = CAST_TP.get(cast.pose());
             t = cast.t();
         } else {
-            float progress = SwingClock.progress(entity, swing, type, partialTick);
-            if (progress > 0) {
-                track = SwingClock.finisher(entity) ? FINISHER_TP : SWING_TP.get(type)[SwingClock.cut(entity)];
-                t = progress;
+            float[] a = new float[AttackAnims.CHANNELS];
+            if (SwingClock.sample(entity, swing, type, partialTick, a)) {
+                model.attackTime = 0;
+                attackThirdPerson(model, entity, type, a);
+                return;
             }
         }
         // Our own swing replaces the vanilla one.
@@ -254,6 +292,72 @@ public final class WeaponAnimator {
         if (!Float.isNaN(v[3]) || !Float.isNaN(hold[3])) {
             model.leftArm.z -= reach * 0.8F;
         }
+    }
+
+    /** Forward lean for each model this frame, applied after vanilla's setupAnim resets the body (see HumanoidModelMixin). */
+    public static final java.util.Map<HumanoidModel<?>, Float> LEAN = new java.util.IdentityHashMap<>();
+
+    /**
+     * Poses the whole body for a melee attack: the weapon arm swings about the shoulder along the
+     * attack's arc, a two-handed grip brings the off hand with it, the free arm counterbalances,
+     * the torso twists into the cut and the lead leg steps forward.
+     */
+    private static void attackThirdPerson(HumanoidModel<?> model, LivingEntity entity, WeaponType type, float[] a) {
+        float w = a[7];
+        float yaw = a[0] * Mth.DEG_TO_RAD;
+        float pitch = a[1] * Mth.DEG_TO_RAD;
+        float roll = a[2] * Mth.DEG_TO_RAD;
+        boolean two = isTwoHanded(type);
+        float rx = -0.7F - pitch * 0.9F;
+        float ry = -yaw * 0.85F;
+        float rz = -roll * 0.12F;
+        blend(model.rightArm, rx, ry, rz, w);
+        if (two) {
+            blend(model.leftArm, rx + 0.08F, ry + 0.55F, -rz, w);
+        } else {
+            // The free arm swings out the other way for balance.
+            blend(model.leftArm, -0.45F + pitch * 0.15F, yaw * 0.35F, -0.35F - Math.abs(yaw) * 0.12F, w * 0.85F);
+        }
+        float body = a[4];
+        if (body != 0) {
+            model.body.yRot = body;
+            model.rightArm.z = Mth.sin(body) * 5.0F;
+            model.rightArm.x = -Mth.cos(body) * 5.0F;
+            model.leftArm.z = -Mth.sin(body) * 5.0F;
+            model.leftArm.x = Mth.cos(body) * 5.0F;
+            model.rightArm.yRot += body;
+            model.leftArm.yRot += body;
+        }
+        float push = a[3] * 6.0F;
+        model.rightArm.z -= push;
+        if (two) {
+            model.leftArm.z -= push * 0.8F;
+        }
+        float step = a[6];
+        model.rightLeg.xRot = Mth.lerp(w, model.rightLeg.xRot, -0.55F * step);
+        model.leftLeg.xRot = Mth.lerp(w, model.leftLeg.xRot, 0.38F * step);
+        if (a[5] != 0) {
+            LEAN.put(model, a[5]);
+        }
+    }
+
+    /** Applies this frame's attack lean at the end of setupAnim (vanilla zeroes body.xRot first). */
+    public static void applyLean(HumanoidModel<?> model) {
+        Float lean = LEAN.remove(model);
+        if (lean == null || model.crouching) {
+            return;
+        }
+        model.body.xRot += lean;
+        float dy = Mth.sin(lean) * 12.0F * 0.25F;
+        float dz = Mth.sin(lean) * 12.0F * 0.5F;
+        model.rightArm.y += dy;
+        model.leftArm.y += dy;
+        model.head.y += dy;
+        model.hat.y += dy;
+        model.rightArm.z += dz;
+        model.leftArm.z += dz;
+        model.head.z += dz;
+        model.hat.z += dz;
     }
 
     /** Sprinting carries the weapon low and trailing (or across the chest); jumping raises it and tucks a knee. */
@@ -357,10 +461,33 @@ public final class WeaponAnimator {
     public static void poseFirstPerson(PoseStack pose, LivingEntity player, HumanoidArm arm, WeaponType type, float partialTick,
                                        float equip, float swing) {
         int side = arm == HumanoidArm.RIGHT ? 1 : -1;
+        ClientAnims.Active cast = ClientAnims.get(player, partialTick);
+        float[] a = null;
+        if (cast == null) {
+            a = new float[AttackAnims.CHANNELS];
+            if (!SwingClock.sample(player, swing, type, partialTick, a)) {
+                a = null;
+            }
+        }
+        if (a != null) {
+            // The arm swings about the shoulder (below and to the side of the camera), so the
+            // weapon sweeps across the view in a real arc instead of sliding around.
+            tune();
+            pose.translate(side * FP_SHOULDER[0], FP_SHOULDER[1], FP_SHOULDER[2]);
+            pose.mulPose(Axis.YP.rotationDegrees(side * a[0] * FP_SCALE[0]));
+            // Downward cuts would drop the weapon out of view from a shoulder below the camera, so
+            // they show less of their arc than upswings do.
+            pose.mulPose(Axis.XP.rotationDegrees(a[1] * (a[1] > 0 ? FP_SCALE[1] : FP_SCALE[1] * 0.45F)));
+            pose.translate(-side * FP_SHOULDER[0], -FP_SHOULDER[1], -FP_SHOULDER[2]);
+        }
         // Vanilla dips the item while the attack recharges; with big 3D weapons that reads as the
         // weapon bobbing about between swings, so only a hint of it is kept.
         pose.translate(side * 0.56F, -0.52F + equip * -0.08F, -0.72F);
-        ClientAnims.Active cast = ClientAnims.get(player, partialTick);
+        if (a != null) {
+            pose.translate(0, 0, -a[3]);
+            pose.mulPose(Axis.ZP.rotationDegrees(side * a[2] * FP_SCALE[2]));
+            return;
+        }
         float[] v = new float[6];
         if (cast != null && cast.pose() == CastPose.SPIN) {
             pose.translate(side * -0.1F, 0.05F, -0.1F);
@@ -384,19 +511,8 @@ public final class WeaponAnimator {
                 v[1] += 0.01F * Mth.sin(cast.ticks() * 2.3F);
             }
         } else {
-            float progress = SwingClock.progress(player, swing, type, partialTick);
-            if (progress <= 0) {
-                moveFirstPerson(pose, player, side, type, partialTick);
-                return;
-            }
-            (SwingClock.finisher(player) ? FINISHER_FP : SWING_FP.get(type)[SwingClock.cut(player)]).sample(progress, v);
-            // Keep swings close to the hand: a short, firm cut instead of the weapon sailing across the screen.
-            for (int i = 0; i < 3; i++) {
-                v[i] *= 0.3F;
-            }
-            for (int i = 3; i < 6; i++) {
-                v[i] *= 0.55F;
-            }
+            moveFirstPerson(pose, player, side, type, partialTick);
+            return;
         }
         pose.translate(side * v[0], v[1], v[2]);
         pose.mulPose(Axis.XP.rotationDegrees(v[3]));

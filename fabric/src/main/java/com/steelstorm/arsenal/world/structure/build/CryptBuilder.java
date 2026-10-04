@@ -234,7 +234,7 @@ public class CryptBuilder extends Builder {
             set(x, hallFloor, hz1 - 3, stair(Blocks.POLISHED_BLACKSTONE_BRICK_STAIRS, Direction.NORTH, false));
         }
         ItemStack prize = noise(c, 77, c) < 0.4F
-                ? new ItemStack(ModItems.legendary(LegendaryWeaponItem.Legendary.values()[random.nextInt(LegendaryWeaponItem.Legendary.values().length)]).get())
+                ? new ItemStack(ModItems.legendary(LegendaryWeaponItem.Legendary.values()[random.nextInt(8)]).get())
                 : new ItemStack(ModItems.weapon(WeaponType.values()[random.nextInt(WeaponType.values().length)],
                 random.nextBoolean() ? WeaponTier.DIAMOND : WeaponTier.STORMSTEEL).get());
         pedestal(c, hallFloor + 1, hz1 - 1, prize);

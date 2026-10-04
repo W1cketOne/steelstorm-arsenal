@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "RHR",
+    "RPR",
+    "RRR"
+  ],
+  "key": {
+    "R": {
+      "item": "minecraft:netherite_scrap"
+    },
+    "H": {
+      "item": "minecraft:dragon_breath"
+    },
+    "P": {
+      "item": "minecraft:netherite_helmet"
+    }
+  },
+  "result": {
+    "id": "steelstorm:dragonscale_helmet",
+    "count": 1
+  }
+}

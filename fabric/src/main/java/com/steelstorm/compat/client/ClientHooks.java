@@ -131,7 +131,7 @@ public final class ClientHooks {
             ArmorRenderer.renderPart(pose, buffers, light, stack, model, texture(stack.getItem(), entity, stack, slot));
         };
         for (Item item : BuiltInRegistries.ITEM) {
-            if (item instanceof StormsteelArmorItem || item instanceof WarlordArmorItem || item instanceof VoidwalkerArmorItem) {
+            if (com.steelstorm.arsenal.client.StormsteelArmorRendering.isModArmor(item)) {
                 ArmorRenderer.register(renderer, item);
             }
         }
@@ -144,6 +144,12 @@ public final class ClientHooks {
         }
         if (item instanceof WarlordArmorItem w) {
             return w.getArmorTexture(stack, entity, slot, null, inner);
+        }
+        if (item instanceof com.steelstorm.arsenal.item.CelestialArmorItem c) {
+            return c.getArmorTexture(stack, entity, slot, null, inner);
+        }
+        if (item instanceof com.steelstorm.arsenal.item.DragonscaleArmorItem d) {
+            return d.getArmorTexture(stack, entity, slot, null, inner);
         }
         return ((StormsteelArmorItem) item).getArmorTexture(stack, entity, slot, null, inner);
     }

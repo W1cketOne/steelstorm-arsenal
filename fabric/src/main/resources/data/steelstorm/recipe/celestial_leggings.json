@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "GSG",
+    "GPG",
+    "GGG"
+  ],
+  "key": {
+    "G": {
+      "item": "minecraft:gold_block"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    },
+    "P": {
+      "item": "minecraft:netherite_leggings"
+    }
+  },
+  "result": {
+    "id": "steelstorm:celestial_leggings",
+    "count": 1
+  }
+}

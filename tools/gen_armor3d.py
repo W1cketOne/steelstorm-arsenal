@@ -24,6 +24,10 @@ PALETTES = {
                    "glow": (190, 90, 255, 255), "glow_hot": (240, 210, 255, 255)},
     "warlord": {"steel": R["black_iron"], "gold": R["netherite"], "dark": R["black_iron"],
                 "glow": (255, 110, 20, 255), "glow_hot": (255, 235, 160, 255)},
+    "celestial": {"steel": R["cloth_white"], "gold": R["gold"], "dark": R["silver"],
+                  "glow": (255, 214, 110, 255), "glow_hot": (255, 252, 230, 255)},
+    "dragonscale": {"steel": R["blood"], "gold": R["obsidian"], "dark": R["black_iron"],
+                    "glow": (255, 96, 20, 255), "glow_hot": (255, 230, 150, 255)},
 }
 STEEL = GOLD = DARK = GLOW = GLOW_HOT = None
 
@@ -228,6 +232,167 @@ V_INNER = {
     ],
 }
 
+# The Celestial set: white-and-gold plate, a floating halo and folded seraph wings.
+C_OUTER = {
+    "head": [
+        ("helm", -4, -8, -4, 8, 8, 8, 1.0, "steel", False),
+        ("visor", -4.5, -5.5, -5.6, 9, 4, 1, 0.0, "pauldron", False),
+        ("eyes", -3, -4.5, -5.9, 6, 1, 1, 0.0, "glow", False),
+        ("crest", -0.5, -11, -4.6, 1, 4, 9, 0.0, "gold", False),
+        ("wing_r", -6.5, -9.5, -2, 1, 5, 5, 0.0, "gold", False),
+        ("wing_l", 5.5, -9.5, -2, 1, 5, 5, 0.0, "gold", True),
+        ("halo_f", -3.5, -13, -3.5, 7, 0.8, 0.8, 0.0, "glow", False),
+        ("halo_b", -3.5, -13, 2.7, 7, 0.8, 0.8, 0.0, "glow", False),
+        ("halo_r", -3.5, -13, -2.7, 0.8, 0.8, 5.4, 0.0, "glow", False),
+        ("halo_l", 2.7, -13, -2.7, 0.8, 0.8, 5.4, 0.0, "glow", True),
+    ],
+    "body": [
+        ("cuirass", -4, 0, -2, 8, 12, 4, 1.01, "steel", False),
+        ("plate", -4.2, 0.5, -3.8, 8.4, 7, 1, 0.0, "plate", False),
+        ("core", -1.5, 2.5, -4.6, 3, 3, 1, 0.0, "glow", False),
+        ("gorget", -4.5, -1.5, -3, 9, 2, 6, 0.0, "gold", False),
+        ("back", -3.5, 0.5, 2.8, 7, 9, 1, 0.0, "plate", False),
+        ("wing_r1", -11, -3, 3.4, 7, 3, 1, 0.0, "steel", False),
+        ("wing_r2", -12, 0, 3.6, 8, 3, 1, 0.0, "steel", False),
+        ("wing_r3", -11, 3, 3.8, 7, 3, 1, 0.0, "steel", False),
+        ("wing_r4", -9, 6, 4.0, 5, 3, 1, 0.0, "steel", False),
+        ("wing_l1", 4, -3, 3.4, 7, 3, 1, 0.0, "steel", True),
+        ("wing_l2", 4, 0, 3.6, 8, 3, 1, 0.0, "steel", True),
+        ("wing_l3", 4, 3, 3.8, 7, 3, 1, 0.0, "steel", True),
+        ("wing_l4", 4, 6, 4.0, 5, 3, 1, 0.0, "steel", True),
+        ("wing_root", -4, -2, 3.2, 8, 3, 1.2, 0.0, "gold", False),
+    ],
+    "right_arm": [
+        ("sleeve", -3, -2, -2, 4, 12, 4, 1.0, "steel", False),
+        ("pauldron", -5.5, -4, -3.5, 7, 4, 7, 0.0, "pauldron", False),
+        ("trim", -5.6, -1.2, -3.6, 7.2, 1, 7.2, 0.0, "gold", False),
+        ("feather", -5, -7, -1, 1, 3, 2, 0.0, "gold", False),
+        ("bracer", -3.6, 6, -2.6, 5, 4, 5, 0.25, "plate", False),
+        ("gem", -3.6, 7.5, -2.9, 5, 1, 1, 0.0, "glow", False),
+    ],
+    "left_arm": [
+        ("sleeve", -1, -2, -2, 4, 12, 4, 1.0, "steel", True),
+        ("pauldron", -1.5, -4, -3.5, 7, 4, 7, 0.0, "pauldron", True),
+        ("trim", -1.6, -1.2, -3.6, 7.2, 1, 7.2, 0.0, "gold", True),
+        ("feather", 4, -7, -1, 1, 3, 2, 0.0, "gold", True),
+        ("bracer", -1.4, 6, -2.6, 5, 4, 5, 0.25, "plate", True),
+        ("gem", -1.4, 7.5, -2.9, 5, 1, 1, 0.0, "glow", True),
+    ],
+    "right_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", False),
+        ("toe", -2.5, 10, -4.2, 5, 2, 2.2, 0.0, "gold", False),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", False),
+        ("ankle_wing", -3.4, 7, -1, 1, 3, 3, 0.0, "gold", False),
+    ],
+    "left_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "steel", True),
+        ("toe", -2.5, 10, -4.2, 5, 2, 2.2, 0.0, "gold", True),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", True),
+        ("ankle_wing", 2.4, 7, -1, 1, 3, 3, 0.0, "gold", True),
+    ],
+}
+
+C_INNER = {
+    "body": [
+        ("belt", -4, 9, -2, 8, 3, 4, 0.6, "gold", False),
+        ("buckle", -1.5, 9.3, -3.0, 3, 2.4, 1, 0.0, "glow", False),
+        ("tabard", -2.5, 11.5, -2.9, 5, 7, 1, 0.0, "plate", False),
+        ("tasset_r", -4.2, 11.5, -2.8, 1.6, 4, 1, 0.0, "gold", False),
+        ("tasset_l", 2.6, 11.5, -2.8, 1.6, 4, 1, 0.0, "gold", True),
+    ],
+    "right_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", False),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", False),
+    ],
+    "left_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "steel", True),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", True),
+    ],
+}
+
+# The Dragonscale set: crimson scale plate, great swept horns, a spined back and folded wings.
+D_OUTER = {
+    "head": [
+        ("helm", -4, -8, -4, 8, 8, 8, 1.0, "scale", False),
+        ("snout", -3, -4, -6.2, 6, 3, 2, 0.0, "pauldron", False),
+        ("eyes", -3.2, -6, -5.6, 6.4, 1, 1, 0.0, "glow", False),
+        ("brow", -4.5, -7.5, -5.4, 9, 1.5, 1.5, 0.0, "gold", False),
+        ("horn_r1", -6, -10, 0, 2, 3, 2, 0.0, "gold", False),
+        ("horn_r2", -7, -12, 2, 1.6, 3, 1.6, 0.0, "gold", False),
+        ("horn_r3", -7.5, -13, 4, 1.2, 2, 2.4, 0.0, "gold", False),
+        ("horn_l1", 4, -10, 0, 2, 3, 2, 0.0, "gold", True),
+        ("horn_l2", 5.4, -12, 2, 1.6, 3, 1.6, 0.0, "gold", True),
+        ("horn_l3", 6.3, -13, 4, 1.2, 2, 2.4, 0.0, "gold", True),
+        ("spine1", -0.5, -10.5, -2, 1, 2.5, 1, 0.0, "gold", False),
+        ("spine2", -0.5, -10, 1, 1, 2, 1, 0.0, "gold", False),
+    ],
+    "body": [
+        ("cuirass", -4, 0, -2, 8, 12, 4, 1.01, "scale", False),
+        ("chest", -4.4, 0.5, -3.9, 8.8, 7, 1, 0.0, "plate", False),
+        ("core", -1.5, 2.5, -4.7, 3, 3, 1, 0.0, "glow", False),
+        ("back", -3.5, 0.5, 2.8, 7, 9, 1, 0.0, "scale", False),
+        ("spine1", -0.5, -0.5, 3.6, 1, 2, 2, 0.0, "gold", False),
+        ("spine2", -0.5, 2.5, 3.6, 1, 2, 2.5, 0.0, "gold", False),
+        ("spine3", -0.5, 5.5, 3.6, 1, 2, 2, 0.0, "gold", False),
+        ("spine4", -0.5, 8.5, 3.6, 1, 2, 1.5, 0.0, "gold", False),
+        ("wing_r", -10, -4, 3.4, 6, 9, 1, 0.0, "plate", False),
+        ("wing_r_bone", -11, -5, 3.2, 7, 1.2, 1.4, 0.0, "gold", False),
+        ("wing_l", 4, -4, 3.4, 6, 9, 1, 0.0, "plate", True),
+        ("wing_l_bone", 4, -5, 3.2, 7, 1.2, 1.4, 0.0, "gold", True),
+        ("gorget", -4.5, -1.5, -3, 9, 2, 6, 0.0, "gold", False),
+    ],
+    "right_arm": [
+        ("sleeve", -3, -2, -2, 4, 12, 4, 1.0, "scale", False),
+        ("pauldron", -5.5, -4.5, -3.5, 7, 4, 7, 0.0, "pauldron", False),
+        ("claw1", -5, -7, -2, 1, 3, 1, 0.0, "gold", False),
+        ("claw2", -5, -7.5, 0, 1, 3.5, 1, 0.0, "gold", False),
+        ("claw3", -5, -6.5, 2, 1, 2.5, 1, 0.0, "gold", False),
+        ("gauntlet", -3.6, 6, -2.6, 5, 4, 5, 0.25, "plate", False),
+        ("talon", -3.6, 9.5, -3.4, 5, 1, 1.4, 0.0, "glow", False),
+    ],
+    "left_arm": [
+        ("sleeve", -1, -2, -2, 4, 12, 4, 1.0, "scale", True),
+        ("pauldron", -1.5, -4.5, -3.5, 7, 4, 7, 0.0, "pauldron", True),
+        ("claw1", 4, -7, -2, 1, 3, 1, 0.0, "gold", True),
+        ("claw2", 4, -7.5, 0, 1, 3.5, 1, 0.0, "gold", True),
+        ("claw3", 4, -6.5, 2, 1, 2.5, 1, 0.0, "gold", True),
+        ("gauntlet", -1.4, 6, -2.6, 5, 4, 5, 0.25, "plate", True),
+        ("talon", -1.4, 9.5, -3.4, 5, 1, 1.4, 0.0, "glow", True),
+    ],
+    "right_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "scale", False),
+        ("toe", -2.5, 10, -4.4, 5, 2, 2.4, 0.0, "gold", False),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", False),
+        ("spur", -0.5, 9, 2.5, 1, 1, 2, 0.0, "gold", False),
+    ],
+    "left_leg": [
+        ("boot", -2, 6, -2, 4, 6, 4, 1.0, "scale", True),
+        ("toe", -2.5, 10, -4.4, 5, 2, 2.4, 0.0, "gold", True),
+        ("shin", -2, 4.5, -3.7, 4, 5, 1, 0.0, "plate", True),
+        ("spur", -0.5, 9, 2.5, 1, 1, 2, 0.0, "gold", True),
+    ],
+}
+
+D_INNER = {
+    "body": [
+        ("belt", -4, 9, -2, 8, 3, 4, 0.6, "gold", False),
+        ("buckle", -1.5, 9.3, -3.0, 3, 2.4, 1, 0.0, "glow", False),
+        ("tasset_r", -4.2, 11.5, -3.0, 3.6, 5, 1, 0.0, "scale", False),
+        ("tasset_l", 0.6, 11.5, -3.0, 3.6, 5, 1, 0.0, "scale", True),
+        ("tail", -1, 10, 2.0, 2, 2, 4, 0.0, "scale", False),
+    ],
+    "right_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "scale", False),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", False),
+        ("knee_spike", -0.5, 5.5, -4.6, 1, 1, 1.4, 0.0, "gold", False),
+    ],
+    "left_leg": [
+        ("cuisse", -2, 0, -2, 4, 8, 4, 0.55, "scale", True),
+        ("knee", -2.5, 5, -3.4, 5, 3, 1.5, 0.0, "pauldron", True),
+        ("knee_spike", -0.5, 5.5, -4.6, 1, 1, 1.4, 0.0, "gold", True),
+    ],
+}
+
 PARTS = ["head", "hat", "body", "right_arm", "left_arm", "right_leg", "left_leg"]
 PIVOTS = {"head": (0, 0, 0), "hat": (0, 0, 0), "body": (0, 0, 0), "right_arm": (-5, 2, 0), "left_arm": (5, 2, 0),
           "right_leg": (-1.9, 12, 0), "left_leg": (1.9, 12, 0)}
@@ -278,7 +443,7 @@ def paint_face(img, rect, material, face, rng, name):
     x0, y0, fw, fh = (r * SCALE for r in rect)
     if fw == 0 or fh == 0:
         return
-    ramp = {"steel": STEEL, "gold": GOLD, "plate": STEEL, "pauldron": STEEL, "glow": STEEL}[material]
+    ramp = {"steel": STEEL, "gold": GOLD, "plate": STEEL, "pauldron": STEEL, "glow": STEEL, "scale": STEEL}[material]
     light = {"top": 0.78, "front": 0.62, "left": 0.52, "right": 0.5, "back": 0.42, "bottom": 0.3}[face]
     for py in range(fh):
         for px in range(fw):
@@ -292,6 +457,18 @@ def paint_face(img, rect, material, face, rng, name):
             if rng.random() < 0.05:
                 l += rng.choice([-0.1, 0.08])
             color = ramp.at(l)
+            if material == "scale" and edge > 0:
+                # Overlapping scales: rows of arcs, offset every other row, each lit on top.
+                row = py // (3 * SCALE)
+                cx = (px + (row % 2) * 2 * SCALE) % (4 * SCALE)
+                cy = py % (3 * SCALE)
+                arc = abs(cx - 2 * SCALE) ** 2 / (4.0 * SCALE) + cy
+                if arc > 2.4 * SCALE:
+                    color = STEEL.at(0.18)
+                elif cy < SCALE:
+                    color = STEEL.at(min(1.0, l + 0.25))
+                else:
+                    color = STEEL.at(l)
             if material == "glow":
                 r = math.hypot(fx - 0.5, fy - 0.5)
                 color = mix(GLOW_HOT, GLOW, min(1.0, r * 2))
@@ -352,7 +529,9 @@ def java_layer(model, uvs, method):
 def main():
     for name, cls, outer, inner in (("stormsteel", "StormsteelArmorLayers", OUTER, INNER),
                                     ("warlord", "WarlordArmorLayers", W_OUTER, W_INNER),
-                                    ("voidwalker", "VoidwalkerArmorLayers", V_OUTER, V_INNER)):
+                                    ("voidwalker", "VoidwalkerArmorLayers", V_OUTER, V_INNER),
+                                    ("celestial", "CelestialArmorLayers", C_OUTER, C_INNER),
+                                    ("dragonscale", "DragonscaleArmorLayers", D_OUTER, D_INNER)):
         use_palette(name)
         write_set(name, cls, outer, inner)
     print("3D armour written")
@@ -386,7 +565,7 @@ public final class {cls} {{
     }}
 }}
 """
-    path = os.path.join(os.path.dirname(__file__), "..", "src", "main", "java", "com", "steelstorm", "arsenal", "client",
+    path = os.path.join(os.path.dirname(__file__), "..", "fabric", "src", "main", "java", "com", "steelstorm", "arsenal", "client",
                         f"{cls}.java")
     with open(path, "w") as f:
         f.write(java)

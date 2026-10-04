@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "equipment",
+  "pattern": [
+    "BSB",
+    "NLN",
+    "BNB"
+  ],
+  "key": {
+    "B": {
+      "item": "minecraft:diamond_block"
+    },
+    "S": {
+      "item": "minecraft:nether_star"
+    },
+    "N": {
+      "item": "minecraft:netherite_ingot"
+    },
+    "L": {
+      "item": "steelstorm:rimecleaver"
+    }
+  },
+  "result": {
+    "id": "steelstorm:worldsplitter",
+    "count": 1
+  }
+}

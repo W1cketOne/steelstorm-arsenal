@@ -64,6 +64,14 @@ public final class WeaponLooks {
             case SKYPIERCER -> 0x9AD8FF;
             case MOONVEIL -> 0xD6DEFF;
             case KINGSBANE -> Fx.GOLD;
+            case SOLARIS -> 0xFFB01F;
+            case WORLDSPLITTER -> 0x22E0C8;
+            case ECLIPSE -> 0x7A2CFF;
+            case STARFALL -> 0xFF7A1A;
+            case SOULREAPER -> 0x5BFFB0;
+            case VENOMFANG -> 0x7CFF3A;
+            case DRAGONSPINE -> 0xFF5A1F;
+            case TITANBREAKER -> 0xFFD24A;
         };
     }
 

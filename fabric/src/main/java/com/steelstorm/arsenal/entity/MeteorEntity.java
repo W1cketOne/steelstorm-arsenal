@@ -32,6 +32,12 @@ import net.minecraft.world.phys.Vec3;
 public class MeteorEntity extends Entity {
     private static final EntityDataAccessor<Float> SIZE = SynchedEntityData.defineId(MeteorEntity.class, EntityDataSerializers.FLOAT);
 
+    /** False for meteors summoned by Starfall: they burn and blast, but leave the ground alone. */
+    public boolean crater = true;
+    /** Whoever called the meteor down (it never hurts them). */
+    @org.jetbrains.annotations.Nullable
+    public LivingEntity owner;
+
     public MeteorEntity(EntityType<? extends MeteorEntity> type, Level level) {
         super(type, level);
         this.noPhysics = true;
@@ -96,7 +102,7 @@ public class MeteorEntity extends Entity {
         float size = size();
         Vec3 c = Vec3.atCenterOf(center);
         int radius = Math.round(2.5F + size);
-        if (Config.METEOR_CRATERS.get()) {
+        if (crater && Config.METEOR_CRATERS.get()) {
             // Blast a crater out of natural ground only (never player builds).
             for (BlockPos p : BlockPos.betweenClosed(center.offset(-radius, -radius, -radius), center.offset(radius, radius, radius))) {
                 double d = Math.sqrt(p.distSqr(center));
@@ -129,10 +135,14 @@ public class MeteorEntity extends Entity {
         }
         // Shockwave: everything nearby is thrown and burned.
         for (LivingEntity e : level.getEntitiesOfClass(LivingEntity.class, new AABB(c, c).inflate(radius + 6))) {
+            if (e == owner || (owner != null && e.isAlliedTo(owner))) {
+                continue;
+            }
             double d = e.position().distanceTo(c);
-            float dmg = (float) Math.max(0, 14 - d * 1.4);
+            float dmg = (float) Math.max(0, (owner != null ? 40 : 14) - d * 1.4);
             if (dmg > 0) {
-                e.hurt(level.damageSources().explosion(this, null), dmg);
+                e.hurt(owner instanceof net.minecraft.world.entity.player.Player p ? level.damageSources().explosion(this, p)
+                        : level.damageSources().explosion(this, null), dmg);
                 e.igniteForSeconds(4);
                 Shockwaves.throwUp(e, c, 0.6);
             }

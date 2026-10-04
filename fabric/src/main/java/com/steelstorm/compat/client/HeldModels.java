@@ -28,9 +28,11 @@ public final class HeldModels {
             "stone_longsword", "stone_scythe", "stone_spear", "stone_warhammer", "stormsteel_battleaxe",
             "stormsteel_dual_daggers", "stormsteel_greatsword", "stormsteel_katana", "stormsteel_longsword",
             "stormsteel_scythe", "stormsteel_spear", "stormsteel_warhammer", "tempest_edge", "throwing_knife",
-            "voidreaver",
+            "voidreaver", "solaris", "worldsplitter", "eclipse", "starfall", "soulreaper", "venomfang",
+            "dragonspine", "titanbreaker",
     };
     private static final Map<Item, ResourceLocation> HELD = new HashMap<>();
+    private static final Map<BakedModel, BakedModel> GLOWING = new java.util.IdentityHashMap<>();
 
     public static void init() {
         ModelLoadingPlugin.register(ctx -> {
@@ -60,7 +62,13 @@ public final class HeldModels {
             return model;
         }
         BakedModel heldModel = Minecraft.getInstance().getModelManager().getModel(id);
-        return heldModel != null ? heldModel : model;
+        if (heldModel == null) {
+            return model;
+        }
+        if (GLOWING.size() > 512) {
+            GLOWING.clear();  // stale entries from before a resource reload
+        }
+        return GLOWING.computeIfAbsent(heldModel, GlowModel::new);
     }
 
     private HeldModels() {

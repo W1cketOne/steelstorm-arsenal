@@ -12,6 +12,8 @@ public final class Subscribers {
         "com.steelstorm.arsenal.combat.VoidwalkerAbilities",
         "com.steelstorm.arsenal.combat.WarlordAbilities",
         "com.steelstorm.arsenal.combat.WeaponLight",
+        "com.steelstorm.arsenal.combat.CelestialAbilities",
+        "com.steelstorm.arsenal.combat.DragonscaleAbilities",
         "com.steelstorm.arsenal.network.ModNetwork",
         "com.steelstorm.arsenal.registry.ModEntities",
         "com.steelstorm.arsenal.world.MeteorShowers",

@@ -50,6 +50,30 @@ public final class ModArmorMaterials {
                 List.of(new ArmorMaterial.Layer(SteelstormArsenal.id("voidwalker"))), 2.5F, 0.0F);
     });
 
+    /** Above netherite: the Celestial set, blessed gold-and-white plate. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> CELESTIAL = MATERIALS.register("celestial", () -> {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 5);
+        defense.put(ArmorItem.Type.LEGGINGS, 8);
+        defense.put(ArmorItem.Type.CHESTPLATE, 10);
+        defense.put(ArmorItem.Type.HELMET, 5);
+        defense.put(ArmorItem.Type.BODY, 14);
+        return new ArmorMaterial(defense, 25, SoundEvents.ARMOR_EQUIP_GOLD, () -> Ingredient.of(net.minecraft.world.item.Items.NETHER_STAR),
+                List.of(new ArmorMaterial.Layer(SteelstormArsenal.id("celestial"))), 6.0F, 0.3F);
+    });
+
+    /** The strongest plate in the game: Dragonscale, forged from the dragon's own hide. */
+    public static final DeferredHolder<ArmorMaterial, ArmorMaterial> DRAGONSCALE = MATERIALS.register("dragonscale", () -> {
+        EnumMap<ArmorItem.Type, Integer> defense = new EnumMap<>(ArmorItem.Type.class);
+        defense.put(ArmorItem.Type.BOOTS, 6);
+        defense.put(ArmorItem.Type.LEGGINGS, 9);
+        defense.put(ArmorItem.Type.CHESTPLATE, 11);
+        defense.put(ArmorItem.Type.HELMET, 6);
+        defense.put(ArmorItem.Type.BODY, 15);
+        return new ArmorMaterial(defense, 22, SoundEvents.ARMOR_EQUIP_NETHERITE, () -> Ingredient.of(net.minecraft.world.item.Items.DRAGON_BREATH),
+                List.of(new ArmorMaterial.Layer(SteelstormArsenal.id("dragonscale"))), 7.0F, 0.4F);
+    });
+
     private ModArmorMaterials() {
     }
 }

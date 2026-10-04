@@ -68,6 +68,17 @@ public final class WeaponEffects {
                         amount *= 1.5F;
                     }
                 }
+                case TITANBREAKER -> amount += target.getMaxHealth() * 0.06F;
+                case DRAGONSPINE -> {
+                    if (!target.onGround()) {
+                        amount *= 2.0F;
+                    }
+                }
+                case ECLIPSE -> {
+                    if (CombatUtil.isBehind(target, player) || target.hasEffect(MobEffects.BLINDNESS)) {
+                        amount *= 1.75F;
+                    }
+                }
                 default -> {
                 }
             }
@@ -159,6 +170,87 @@ public final class WeaponEffects {
                     heal(player, 1.0F);
                 }
                 BleedEffect.apply(target, 100);
+            }
+            case SOLARIS -> {
+                target.igniteForSeconds(6);
+                float dmg = (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.4F);
+                Shockwaves.ring(level, player, target.position(), 3.0F, 1.2F, dmg, 0.25, 0xFFB01F, e -> e.igniteForSeconds(4));
+                Fx.burst(level, ModParticles.GLOW.get(), 0xFFD25A, 1.6F, target.getBoundingBox().getCenter(), 12, 0.4, 0.1);
+                if (data.finisherPending) {
+                    Fx.impact(level, target.position(), 0xFFF2B0, 2.5F);
+                    Shockwaves.ring(level, player, target.position(), 6.0F, 1.0F, dmg * 3, 0.6, 0xFFB01F, e -> e.igniteForSeconds(8));
+                    Fx.sound(level, target.position(), ModSounds.ABILITY_INFERNO, 1.2F, 0.9F);
+                }
+            }
+            case WORLDSPLITTER -> {
+                Vec3 start = player.getEyePosition().add(0, -0.5, 0).add(player.getLookAngle().scale(1.0));
+                SlashWaveEntity.fire(player, start, player.getLookAngle(), 1.4F, 12, 2.2F, data.finisherPending ? 90 : 0,
+                        (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.8F), 0x22E0C8, false, null);
+                Fx.sound(level, player.position(), ModSounds.ABILITY_SLASH_WAVE, 0.8F, 1.2F);
+            }
+            case ECLIPSE -> {
+                target.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, 100, 1));
+                if (data.critPending) {
+                    for (int k = -1; k <= 1; k++) {
+                        Vec3 dir = Vec3.directionFromRotation(player.getXRot(), player.getYRot() + k * 15);
+                        SlashWaveEntity.fire(player, player.getEyePosition().add(0, -0.4, 0).add(dir), dir, 1.4F, 12, 1.6F, k * 30,
+                                (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.7F), 0x7A2CFF, false, null);
+                    }
+                    Fx.sound(level, player.position(), ModSounds.ABILITY_SLASH_WAVE, 0.8F, 1.4F);
+                }
+            }
+            case STARFALL -> {
+                target.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 60, 3));
+                if (data.finisherPending) {
+                    com.steelstorm.arsenal.entity.MeteorEntity m = com.steelstorm.arsenal.registry.ModEntities.METEOR.get().create(level);
+                    if (m != null) {
+                        m.crater = false;
+                        m.owner = player;
+                        m.setSize(1.0F);
+                        Vec3 vel = new Vec3(0.3, -1.9, 0.2);
+                        m.setPos(target.position().subtract(vel.scale(16)));
+                        m.setDeltaMovement(vel);
+                        level.addFreshEntity(m);
+                    }
+                }
+            }
+            case SOULREAPER -> {
+                heal(player, (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 0.25F));
+                for (LivingEntity other : CombatUtil.around(player, target.position(), 6)) {
+                    if (other != target) {
+                        Vec3 to = target.position().subtract(other.position()).multiply(1, 0, 1);
+                        if (to.lengthSqr() > 1) {
+                            Vec3 pull = to.normalize().scale(0.55);
+                            other.setDeltaMovement(pull.x, Math.max(other.getDeltaMovement().y, 0.1), pull.z);
+                            other.hurtMarked = true;
+                        }
+                    }
+                }
+                Fx.burst(level, ModParticles.GLOW.get(), 0x5BFFB0, 1.4F, target.getBoundingBox().getCenter(), 10, 0.5, 0.05);
+            }
+            case VENOMFANG -> {
+                target.addEffect(new MobEffectInstance(MobEffects.POISON, 120, 2));
+                target.addEffect(new MobEffectInstance(MobEffects.WITHER, 120, 1));
+                BleedEffect.apply(target, 120);
+                heal(player, 1.5F);
+            }
+            case DRAGONSPINE -> {
+                target.igniteForSeconds(6);
+                if (target.onGround()) {
+                    target.setDeltaMovement(target.getDeltaMovement().add(0, 0.75, 0));
+                    target.hurtMarked = true;
+                }
+                level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, target.getX(), target.getY(0.5), target.getZ(),
+                        16, 0.3, 0.4, 0.3, 0.05);
+            }
+            case TITANBREAKER -> {
+                target.addEffect(new MobEffectInstance(ModEffects.ARMOR_BREAK, 160, 1));
+                if (data.finisherPending) {
+                    Shockwaves.ring(level, player, target.position(), 5.0F, 1.0F,
+                            (float) (AbilityManager.baseDamage(player.getMainHandItem()) * 1.2F), 0.9, 0xFFD24A, null);
+                    Fx.sound(level, target.position(), ModSounds.ABILITY_SHOCKWAVE, 1.2F, 0.7F);
+                    Stamina.shake(player, 0.7F, 8);
+                }
             }
             case MOONVEIL -> {
                 if (data.critPending) {

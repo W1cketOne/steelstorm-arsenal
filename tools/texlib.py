@@ -9,7 +9,8 @@ import random
 
 from PIL import Image
 
-ROOT = os.path.join(os.path.dirname(__file__), "..", "src", "main", "resources", "assets", "steelstorm", "textures")
+# The mod is built with Fabric now (fabric/); generators write into its resources.
+ROOT = os.path.join(os.path.dirname(__file__), "..", "fabric", "src", "main", "resources", "assets", "steelstorm", "textures")
 
 
 def hexc(h, a=255):

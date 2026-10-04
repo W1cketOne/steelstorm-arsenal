@@ -33,6 +33,11 @@ public abstract class HumanoidModelMixin {
         }
     }
 
+    @Inject(method = "setupAnim(Lnet/minecraft/world/entity/LivingEntity;FFFFF)V", at = @At("TAIL"))
+    private void steelstorm$lean(LivingEntity entity, float limbSwing, float limbSwingAmount, float age, float yaw, float pitch, CallbackInfo ci) {
+        com.steelstorm.arsenal.client.anim.WeaponAnimator.applyLean((HumanoidModel<?>) (Object) this);
+    }
+
     private boolean steelstorm$pose(LivingEntity entity, HumanoidArm arm, HumanoidModel.ArmPose pose) {
         if (pose != HumanoidModel.ArmPose.ITEM || arm != entity.getMainArm() || !(entity.getMainHandItem().getItem() instanceof WeaponItem)) {
             return false;

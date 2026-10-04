@@ -26,14 +26,13 @@ public final class StormsteelArmorRendering {
     public static final ModelLayerLocation W_INNER = new ModelLayerLocation(SteelstormArsenal.id("warlord_armor"), "inner");
     public static final ModelLayerLocation V_OUTER = new ModelLayerLocation(SteelstormArsenal.id("voidwalker_armor"), "outer");
     public static final ModelLayerLocation V_INNER = new ModelLayerLocation(SteelstormArsenal.id("voidwalker_armor"), "inner");
-    private static HumanoidModel<LivingEntity> vOuter;
-    private static HumanoidModel<LivingEntity> vInner;
-    private static HumanoidModel<LivingEntity> wOuter;
-    private static HumanoidModel<LivingEntity> wInner;
+    public static final ModelLayerLocation C_OUTER = new ModelLayerLocation(SteelstormArsenal.id("celestial_armor"), "outer");
+    public static final ModelLayerLocation C_INNER = new ModelLayerLocation(SteelstormArsenal.id("celestial_armor"), "inner");
+    public static final ModelLayerLocation D_OUTER = new ModelLayerLocation(SteelstormArsenal.id("dragonscale_armor"), "outer");
+    public static final ModelLayerLocation D_INNER = new ModelLayerLocation(SteelstormArsenal.id("dragonscale_armor"), "inner");
 
     private static EntityModelSet bakedFrom;
-    private static HumanoidModel<LivingEntity> outer;
-    private static HumanoidModel<LivingEntity> inner;
+    private static final java.util.Map<ModelLayerLocation, HumanoidModel<LivingEntity>> MODELS = new java.util.HashMap<>();
 
     private StormsteelArmorRendering() {
     }
@@ -46,6 +45,17 @@ public final class StormsteelArmorRendering {
         event.registerLayerDefinition(W_INNER, WarlordArmorLayers::inner);
         event.registerLayerDefinition(V_OUTER, VoidwalkerArmorLayers::outer);
         event.registerLayerDefinition(V_INNER, VoidwalkerArmorLayers::inner);
+        event.registerLayerDefinition(C_OUTER, CelestialArmorLayers::outer);
+        event.registerLayerDefinition(C_INNER, CelestialArmorLayers::inner);
+        event.registerLayerDefinition(D_OUTER, DragonscaleArmorLayers::outer);
+        event.registerLayerDefinition(D_INNER, DragonscaleArmorLayers::inner);
+    }
+
+    /** Whether this item is drawn with one of the mod's 3D armour models. */
+    public static boolean isModArmor(net.minecraft.world.item.Item item) {
+        return item instanceof StormsteelArmorItem || item instanceof com.steelstorm.arsenal.item.WarlordArmorItem
+                || item instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem || item instanceof com.steelstorm.arsenal.item.CelestialArmorItem
+                || item instanceof com.steelstorm.arsenal.item.DragonscaleArmorItem;
     }
 
     @SubscribeEvent
@@ -53,36 +63,37 @@ public final class StormsteelArmorRendering {
         IClientItemExtensions extensions = new IClientItemExtensions() {
             @Override
             public HumanoidModel<?> getHumanoidArmorModel(LivingEntity entity, ItemStack stack, EquipmentSlot slot, HumanoidModel<?> original) {
-                if (stack.getItem() instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem) {
-                    model(false, false);
-                    return slot == EquipmentSlot.LEGS ? vInner : vOuter;
+                boolean legs = slot == EquipmentSlot.LEGS;
+                net.minecraft.world.item.Item item = stack.getItem();
+                if (item instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem) {
+                    return model(legs ? V_INNER : V_OUTER);
                 }
-                return model(slot == EquipmentSlot.LEGS, stack.getItem() instanceof com.steelstorm.arsenal.item.WarlordArmorItem);
+                if (item instanceof com.steelstorm.arsenal.item.WarlordArmorItem) {
+                    return model(legs ? W_INNER : W_OUTER);
+                }
+                if (item instanceof com.steelstorm.arsenal.item.CelestialArmorItem) {
+                    return model(legs ? C_INNER : C_OUTER);
+                }
+                if (item instanceof com.steelstorm.arsenal.item.DragonscaleArmorItem) {
+                    return model(legs ? D_INNER : D_OUTER);
+                }
+                return model(legs ? INNER : OUTER);
             }
         };
         BuiltInRegistries.ITEM.forEach(item -> {
-            if (item instanceof StormsteelArmorItem || item instanceof com.steelstorm.arsenal.item.WarlordArmorItem
-                    || item instanceof com.steelstorm.arsenal.item.VoidwalkerArmorItem) {
+            if (isModArmor(item)) {
                 event.registerItem(extensions, item);
             }
         });
     }
 
-    private static HumanoidModel<LivingEntity> model(boolean legs, boolean warlord) {
+    private static HumanoidModel<LivingEntity> model(ModelLayerLocation layer) {
         EntityModelSet models = Minecraft.getInstance().getEntityModels();
-        if (models != bakedFrom || outer == null) {
+        if (models != bakedFrom) {
             // Re-bake after resource reloads.
-            outer = new HumanoidModel<>(models.bakeLayer(OUTER));
-            inner = new HumanoidModel<>(models.bakeLayer(INNER));
-            wOuter = new HumanoidModel<>(models.bakeLayer(W_OUTER));
-            wInner = new HumanoidModel<>(models.bakeLayer(W_INNER));
-            vOuter = new HumanoidModel<>(models.bakeLayer(V_OUTER));
-            vInner = new HumanoidModel<>(models.bakeLayer(V_INNER));
+            MODELS.clear();
             bakedFrom = models;
         }
-        if (warlord) {
-            return legs ? wInner : wOuter;
-        }
-        return legs ? inner : outer;
+        return MODELS.computeIfAbsent(layer, l -> new HumanoidModel<>(models.bakeLayer(l)));
     }
 }

@@ -111,6 +111,14 @@ public final class ModItems {
     public static final DeferredItem<com.steelstorm.arsenal.item.VoidwalkerArmorItem> VOIDWALKER_CHESTPLATE = voidwalker("voidwalker_chestplate", ArmorItem.Type.CHESTPLATE);
     public static final DeferredItem<com.steelstorm.arsenal.item.VoidwalkerArmorItem> VOIDWALKER_LEGGINGS = voidwalker("voidwalker_leggings", ArmorItem.Type.LEGGINGS);
     public static final DeferredItem<com.steelstorm.arsenal.item.VoidwalkerArmorItem> VOIDWALKER_BOOTS = voidwalker("voidwalker_boots", ArmorItem.Type.BOOTS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.CelestialArmorItem> CELESTIAL_HELMET = celestial("celestial_helmet", ArmorItem.Type.HELMET);
+    public static final DeferredItem<com.steelstorm.arsenal.item.CelestialArmorItem> CELESTIAL_CHESTPLATE = celestial("celestial_chestplate", ArmorItem.Type.CHESTPLATE);
+    public static final DeferredItem<com.steelstorm.arsenal.item.CelestialArmorItem> CELESTIAL_LEGGINGS = celestial("celestial_leggings", ArmorItem.Type.LEGGINGS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.CelestialArmorItem> CELESTIAL_BOOTS = celestial("celestial_boots", ArmorItem.Type.BOOTS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.DragonscaleArmorItem> DRAGONSCALE_HELMET = dragonscale("dragonscale_helmet", ArmorItem.Type.HELMET);
+    public static final DeferredItem<com.steelstorm.arsenal.item.DragonscaleArmorItem> DRAGONSCALE_CHESTPLATE = dragonscale("dragonscale_chestplate", ArmorItem.Type.CHESTPLATE);
+    public static final DeferredItem<com.steelstorm.arsenal.item.DragonscaleArmorItem> DRAGONSCALE_LEGGINGS = dragonscale("dragonscale_leggings", ArmorItem.Type.LEGGINGS);
+    public static final DeferredItem<com.steelstorm.arsenal.item.DragonscaleArmorItem> DRAGONSCALE_BOOTS = dragonscale("dragonscale_boots", ArmorItem.Type.BOOTS);
 
     // Interactive blocks.
     public static final DeferredItem<BlockItem> WHETSTONE = ITEMS.registerSimpleBlockItem("whetstone", ModBlocks.WHETSTONE);
@@ -152,6 +160,16 @@ public final class ModItems {
     private static DeferredItem<com.steelstorm.arsenal.item.VoidwalkerArmorItem> voidwalker(String name, ArmorItem.Type type) {
         return ITEMS.register(name, () -> new com.steelstorm.arsenal.item.VoidwalkerArmorItem(ModArmorMaterials.VOIDWALKER, type,
                 new Item.Properties().durability(type.getDurability(36)).rarity(net.minecraft.world.item.Rarity.RARE)));
+    }
+
+    private static DeferredItem<com.steelstorm.arsenal.item.CelestialArmorItem> celestial(String name, ArmorItem.Type type) {
+        return ITEMS.register(name, () -> new com.steelstorm.arsenal.item.CelestialArmorItem(ModArmorMaterials.CELESTIAL, type,
+                new Item.Properties().durability(type.getDurability(55)).fireResistant().rarity(net.minecraft.world.item.Rarity.EPIC)));
+    }
+
+    private static DeferredItem<com.steelstorm.arsenal.item.DragonscaleArmorItem> dragonscale(String name, ArmorItem.Type type) {
+        return ITEMS.register(name, () -> new com.steelstorm.arsenal.item.DragonscaleArmorItem(ModArmorMaterials.DRAGONSCALE, type,
+                new Item.Properties().durability(type.getDurability(60)).fireResistant().rarity(net.minecraft.world.item.Rarity.EPIC)));
     }
 
     public static DeferredItem<RuneItem> rune(Rune rune) {

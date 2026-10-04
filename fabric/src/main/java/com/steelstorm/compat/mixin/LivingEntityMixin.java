@@ -99,4 +99,12 @@ public abstract class LivingEntityMixin {
             cir.setReturnValue(true);
         }
     }
+
+    // Ulting players can't be knocked back.
+    @Inject(method = "knockback", at = @At("HEAD"), cancellable = true)
+    private void steelstorm$ultKnockback(double strength, double x, double z, CallbackInfo ci) {
+        if (com.steelstorm.arsenal.combat.UltGuard.isProtected((LivingEntity) (Object) this)) {
+            ci.cancel();
+        }
+    }
 }

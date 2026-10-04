@@ -30,5 +30,6 @@ public class WarlordArmorItem extends ArmorItem {
         tooltip.add(Component.translatable("tooltip.steelstorm.warlord." + piece + ".desc").withStyle(ChatFormatting.RED));
         tooltip.add(Component.translatable("tooltip.steelstorm.warlord_set").withStyle(ChatFormatting.DARK_RED));
         tooltip.add(Component.translatable("tooltip.steelstorm.warlord_set.desc").withStyle(ChatFormatting.RED));
+        tooltip.add(Component.translatable("tooltip.steelstorm.suit_ult.warlord").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }

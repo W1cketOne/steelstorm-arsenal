@@ -19,6 +19,7 @@ public final class ModKeyMappings {
     public static final KeyMapping ABILITY_3 = key("ability_3", GLFW.GLFW_KEY_V);
     public static final KeyMapping ULTIMATE = key("ultimate", GLFW.GLFW_KEY_Z);
     public static final KeyMapping INSPECT = key("inspect", GLFW.GLFW_KEY_H);
+    public static final KeyMapping SUIT_ULTIMATE = key("suit_ultimate", GLFW.GLFW_KEY_B);
     /** The ability keys in slot order. */
     public static final KeyMapping[] ABILITIES = {ABILITY_1, ABILITY_2, ABILITY_3, ULTIMATE};
 
@@ -30,6 +31,7 @@ public final class ModKeyMappings {
     public static void register(RegisterKeyMappingsEvent event) {
         event.register(DODGE);
         event.register(INSPECT);
+        event.register(SUIT_ULTIMATE);
         for (KeyMapping key : ABILITIES) {
             event.register(key);
         }

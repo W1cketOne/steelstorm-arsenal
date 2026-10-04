@@ -31,5 +31,6 @@ public class StormsteelArmorItem extends ArmorItem {
         tooltip.add(Component.translatable("tooltip.steelstorm.armor." + piece + ".desc").withStyle(ChatFormatting.DARK_AQUA));
         tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel_set").withStyle(ChatFormatting.BLUE));
         tooltip.add(Component.translatable("tooltip.steelstorm.stormsteel_set.desc").withStyle(ChatFormatting.DARK_AQUA));
+        tooltip.add(Component.translatable("tooltip.steelstorm.suit_ult.stormsteel").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }

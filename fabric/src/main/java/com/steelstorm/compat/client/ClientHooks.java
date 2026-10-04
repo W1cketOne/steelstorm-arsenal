@@ -41,6 +41,8 @@ import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.item.Item;
 
 public final class ClientHooks {
+    private static final ResourceLocation SWIRL = ResourceLocation.fromNamespaceAndPath("steelstorm", "textures/misc/suit_swirl.png");
+
     public static void init() {
         com.steelstorm.compat.Subscribers.registerClient();
         PacketDistributor.clientSender = ClientPlayNetworking::send;
@@ -128,7 +130,30 @@ public final class ClientHooks {
                 default -> {
                 }
             }
-            ArmorRenderer.renderPart(pose, buffers, light, stack, model, texture(stack.getItem(), entity, stack, slot));
+            float partial = net.minecraft.client.Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(true);
+            float glow = com.steelstorm.arsenal.client.SuitGlow.strength(entity, partial);
+            // During an ultimate the armour blazes: drawn full-bright, wrapped in a swirling aura of the ultimate's colour.
+            ArmorRenderer.renderPart(pose, buffers, glow > 0 ? net.minecraft.client.renderer.LightTexture.FULL_BRIGHT : light, stack, model,
+                    texture(stack.getItem(), entity, stack, slot));
+            if (glow > 0) {
+                // The plate itself blazes: its own texture added on top, full bright, in the ultimate's colour...
+                int gc = com.steelstorm.arsenal.client.SuitGlow.color(entity);
+                float throb = 0.7F + 0.3F * net.minecraft.util.Mth.sin((entity.tickCount + partial) * 0.5F);
+                int eyes = ((int) (255 * glow * throb) << 24) | (gc & 0xFFFFFF);
+                model.renderToBuffer(pose, buffers.getBuffer(net.minecraft.client.renderer.RenderType.eyes(texture(stack.getItem(), entity, stack, slot))),
+                        net.minecraft.client.renderer.LightTexture.FULL_BRIGHT, net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, eyes);
+                // ...inside a swirling shell of energy.
+                float t = (entity.tickCount + partial) * 0.012F;
+                com.mojang.blaze3d.vertex.VertexConsumer vc = buffers.getBuffer(net.minecraft.client.renderer.RenderType.energySwirl(SWIRL, t % 1.0F, (t * 0.7F) % 1.0F));
+                int c = com.steelstorm.arsenal.client.SuitGlow.color(entity);
+                float pulse = 0.75F + 0.25F * net.minecraft.util.Mth.sin((entity.tickCount + partial) * 0.4F);
+                int argb = ((int) (255 * glow * pulse) << 24) | (c & 0xFFFFFF);
+                pose.pushPose();
+                pose.scale(1.1F, 1.05F, 1.1F);
+                model.renderToBuffer(pose, vc, net.minecraft.client.renderer.LightTexture.FULL_BRIGHT,
+                        net.minecraft.client.renderer.texture.OverlayTexture.NO_OVERLAY, argb);
+                pose.popPose();
+            }
         };
         for (Item item : BuiltInRegistries.ITEM) {
             if (com.steelstorm.arsenal.client.StormsteelArmorRendering.isModArmor(item)) {

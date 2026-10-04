@@ -24,6 +24,20 @@ public final class WeaponAnimator {
     /** How much of each attack's yaw, pitch and roll first person shows. */
     private static float[] FP_SCALE = {0.6F, 0.6F, 0.8F};
     private static long tuneRead;
+    /** Dev aid: with STEELSTORM_ANIMLOG=path set, every first-person frame's attack pose is logged there. */
+    private static final java.io.PrintWriter ANIM_LOG = openAnimLog();
+
+    private static java.io.PrintWriter openAnimLog() {
+        String path = System.getenv("STEELSTORM_ANIMLOG");
+        if (path == null) {
+            return null;
+        }
+        try {
+            return new java.io.PrintWriter(new java.io.FileWriter(path));
+        } catch (java.io.IOException e) {
+            return null;
+        }
+    }
 
     /** Dev aid: config/steelstorm-anim-tune.properties, if present, overrides the first-person arc live. */
     private static void tune() {
@@ -236,6 +250,9 @@ public final class WeaponAnimator {
             float[] a = new float[AttackAnims.CHANNELS];
             if (SwingClock.sample(entity, swing, type, partialTick, a)) {
                 model.attackTime = 0;
+                // Blend from whatever the body was doing (running, resting, jumping), so the attack
+                // neither snaps in from nor snaps back to a different pose.
+                runAndJump(model, entity, type, partialTick);
                 attackThirdPerson(model, entity, type, a);
                 return;
             }
@@ -345,20 +362,29 @@ public final class WeaponAnimator {
     public static void applyLean(HumanoidModel<?> model) {
         Float lean = LEAN.remove(model);
         if (lean == null || model.crouching) {
+            // Vanilla never resets head.z, so put back anything a lean moved.
+            if (LEANED.remove(model) != null) {
+                model.head.z = 0;
+                model.hat.z = 0;
+            }
             return;
         }
+        LEANED.put(model, Boolean.TRUE);
         model.body.xRot += lean;
         float dy = Mth.sin(lean) * 12.0F * 0.25F;
         float dz = Mth.sin(lean) * 12.0F * 0.5F;
         model.rightArm.y += dy;
         model.leftArm.y += dy;
-        model.head.y += dy;
-        model.hat.y += dy;
+        model.head.y = dy;
+        model.hat.y = dy;
         model.rightArm.z += dz;
         model.leftArm.z += dz;
-        model.head.z += dz;
-        model.hat.z += dz;
+        // Set, not add: head.z is never reset by vanilla and would creep away frame after frame.
+        model.head.z = dz;
+        model.hat.z = dz;
     }
+
+    private static final java.util.Map<HumanoidModel<?>, Boolean> LEANED = new java.util.WeakHashMap<>();
 
     /** Sprinting carries the weapon low and trailing (or across the chest); jumping raises it and tucks a knee. */
     private static void runAndJump(HumanoidModel<?> model, LivingEntity entity, WeaponType type, float partialTick) {
@@ -419,10 +445,14 @@ public final class WeaponAnimator {
 
     /** First-person run sway, jump lift and landing dip, added while not swinging or casting. */
     private static void moveFirstPerson(PoseStack pose, LivingEntity player, int side, WeaponType type, float partialTick) {
+        moveFirstPerson(pose, player, side, type, partialTick, 1.0F);
+    }
+
+    private static void moveFirstPerson(PoseStack pose, LivingEntity player, int side, WeaponType type, float partialTick, float scale) {
         MovementAnims.State s = MovementAnims.get(player);
-        float sprint = s.sprint(partialTick);
-        float air = s.air(partialTick);
-        float land = s.land(partialTick);
+        float sprint = s.sprint(partialTick) * scale;
+        float air = s.air(partialTick) * scale;
+        float land = s.land(partialTick) * scale;
         if (sprint <= 0.001F && air <= 0.001F && land <= 0.001F) {
             return;
         }
@@ -483,7 +513,15 @@ public final class WeaponAnimator {
         // Vanilla dips the item while the attack recharges; with big 3D weapons that reads as the
         // weapon bobbing about between swings, so only a hint of it is kept.
         pose.translate(side * 0.56F, -0.52F + equip * -0.08F, -0.72F);
+        if (ANIM_LOG != null) {
+            float[] v = a == null ? new float[AttackAnims.CHANNELS] : a;
+            ANIM_LOG.printf(java.util.Locale.ROOT, "%d %s %.2f %.2f %.2f %.3f %.3f%n", System.nanoTime() / 1000000, type,
+                    v[0], v[1], v[2], v[3], v[7]);
+            ANIM_LOG.flush();
+        }
         if (a != null) {
+            // Running/jump sway fades out as the attack takes over and back in as it ends.
+            moveFirstPerson(pose, player, side, type, partialTick, 1.0F - a[7]);
             pose.translate(0, 0, -a[3]);
             pose.mulPose(Axis.ZP.rotationDegrees(side * a[2] * FP_SCALE[2]));
             return;

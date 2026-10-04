@@ -80,6 +80,7 @@ public final class AbilityManager {
             return;
         }
         CHARGING.put(player.getUUID(), new Charge(player.level().getGameTime(), set.id()));
+        com.steelstorm.arsenal.combat.UltGuard.setCharging(player, true);
         PlayerAnimPayload.send(player, CastPose.STANCE);
         Fx.sound(player.level(), player.position(), ModSounds.ABILITY_CAST, 0.8F, 0.6F);
         player.displayClientMessage(Component.translatable("message.steelstorm.charging").withStyle(ChatFormatting.GOLD), true);
@@ -88,6 +89,7 @@ public final class AbilityManager {
     /** The ultimate key came up: unleash it, stronger the longer it was held. */
     public static void releaseCharge(ServerPlayer player) {
         Charge charge = CHARGING.remove(player.getUUID());
+        com.steelstorm.arsenal.combat.UltGuard.setCharging(player, false);
         if (charge == null) {
             return;
         }
@@ -111,6 +113,7 @@ public final class AbilityManager {
         AbilitySet set = Abilities.forStack(player.getMainHandItem());
         if (!player.isAlive() || set == null || !set.id().equals(charge.setId())) {
             CHARGING.remove(player.getUUID());
+            com.steelstorm.arsenal.combat.UltGuard.setCharging(player, false);
             return;
         }
         long held = player.level().getGameTime() - charge.start();
@@ -208,6 +211,9 @@ public final class AbilityManager {
             if (!creative) {
                 data.ultimate = 0;
             }
+            // Untouchable for the whole ultimate (and the nova that ends it).
+            com.steelstorm.arsenal.combat.UltGuard.protect(player, 80);
+            com.steelstorm.arsenal.network.SuitGlowPayload.send(player, 80, ctx.color());
             Fx.ring(player.serverLevel(), player.position(), Fx.GOLD, 4.0F);
             // The ultimate flare: a magic circle underfoot, a pillar of light and orbs whirling round.
             int c = ctx.color();

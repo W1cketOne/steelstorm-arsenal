@@ -30,5 +30,6 @@ public class CelestialArmorItem extends ArmorItem {
         tooltip.add(Component.translatable("tooltip.steelstorm.celestial." + piece + ".desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.steelstorm.celestial_set").withStyle(ChatFormatting.GOLD));
         tooltip.add(Component.translatable("tooltip.steelstorm.celestial_set.desc").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.steelstorm.suit_ult.celestial").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }

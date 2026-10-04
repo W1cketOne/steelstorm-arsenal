@@ -41,6 +41,11 @@ public final class ModNetwork {
                 com.steelstorm.arsenal.combat.VoidwalkerAbilities.blink(player);
             }
         });
+        registrar.playToServer(SuitUltPayload.TYPE, SuitUltPayload.STREAM_CODEC, (payload, context) -> {
+            if (context.player() instanceof ServerPlayer player) {
+                player.server.execute(() -> com.steelstorm.arsenal.combat.SuitUltimates.activate(player));
+            }
+        });
         registrar.playToServer(SwingPayload.TYPE, SwingPayload.STREAM_CODEC, (payload, context) -> {
             if (context.player() instanceof ServerPlayer player) {
                 SwingEffects.onSwing(player, payload.heavy(), payload.roll());
@@ -55,6 +60,8 @@ public final class ModNetwork {
                 (payload, context) -> com.steelstorm.arsenal.client.DamageNumbers.add(payload));
         registrar.playToClient(KillStreakPayload.TYPE, KillStreakPayload.STREAM_CODEC,
                 (payload, context) -> com.steelstorm.arsenal.client.KillBanner.show(payload));
+        registrar.playToClient(SuitGlowPayload.TYPE, SuitGlowPayload.STREAM_CODEC,
+                (payload, context) -> com.steelstorm.arsenal.client.SuitGlow.start(payload));
         registrar.playToClient(PlayerAnimPayload.TYPE, PlayerAnimPayload.STREAM_CODEC,
                 (payload, context) -> ClientPayloadHandler.handleAnim(payload));
     }

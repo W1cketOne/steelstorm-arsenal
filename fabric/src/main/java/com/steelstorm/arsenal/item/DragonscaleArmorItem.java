@@ -30,5 +30,6 @@ public class DragonscaleArmorItem extends ArmorItem {
         tooltip.add(Component.translatable("tooltip.steelstorm.dragonscale." + piece + ".desc").withStyle(ChatFormatting.GRAY));
         tooltip.add(Component.translatable("tooltip.steelstorm.dragonscale_set").withStyle(ChatFormatting.DARK_RED));
         tooltip.add(Component.translatable("tooltip.steelstorm.dragonscale_set.desc").withStyle(ChatFormatting.GRAY));
+        tooltip.add(Component.translatable("tooltip.steelstorm.suit_ult.dragonscale").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }

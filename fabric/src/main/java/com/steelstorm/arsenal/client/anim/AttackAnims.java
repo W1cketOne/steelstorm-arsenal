@@ -32,7 +32,9 @@ public final class AttackAnims {
         float apply(float f) {
             return switch (this) {
                 case SMOOTH -> f * f * (3 - 2 * f);
-                case OUT -> 1 - (1 - f) * (1 - f) * (1 - f);
+                // Half smoothstep, half quadratic ease-out: the cut accelerates out of the wind-up
+                // instead of starting at full speed (which reads as a jump), and still lands hard.
+                case OUT -> 0.5F * (f * f * (3 - 2 * f)) + 0.5F * (1 - (1 - f) * (1 - f));
                 case IN_OUT -> -(Mth.cos(Mth.PI * f) - 1) / 2;
                 case LINEAR -> f;
             };
@@ -85,7 +87,12 @@ public final class AttackAnims {
      * @param body torso twist {wind-up, strike}
      */
     private static Attack swing(float tWind, float tStrike, float[] from, float[] to, float push, float[] body, float lean, float step) {
-        float tHold = Math.min(0.9F, tStrike + 0.14F);
+        // The cut itself always gets a good third of the attack: shorter and a fast weapon sweeps
+        // 70-90 degrees between two frames, which reads as choppy rather than quick.
+        // ...and the recovery back to guard at least a third, or it snaps back just as hard.
+        tWind = Math.min(tWind, 0.25F);
+        tStrike = Math.min(0.55F, Math.max(tStrike, tWind + 0.28F));
+        float tHold = tStrike + 0.08F;
         float[][] keys = {
                 {0, 0, 0, 0, 0, 0, 0, 0, 0},
                 {tWind, from[0], from[1], from[2], -push * 0.25F, body[0], -lean * 0.3F, step * 0.2F, 1},
@@ -110,8 +117,8 @@ public final class AttackAnims {
                 swing(0.3F, 0.5F, p(70, 30, 60), p(-70, -20, -35), 0.1F, b(0.4F, -0.4F), 0.12F, 0.45F),
                 swing(0.34F, 0.55F, p(5, 95, 0), p(0, -45, 0), 0.25F, b(0, 0), 0.28F, 0.75F)});
         COMBOS.put(WeaponType.KATANA, new Attack[]{
-                swing(0.26F, 0.44F, p(-80, 12, -75), p(80, 0, 70), 0.08F, b(-0.4F, 0.5F), 0.1F, 0.5F),
-                swing(0.26F, 0.44F, p(80, 22, 75), p(-80, -8, -70), 0.08F, b(0.45F, -0.45F), 0.1F, 0.5F),
+                swing(0.26F, 0.44F, p(-68, 12, -70), p(68, 0, 65), 0.08F, b(-0.4F, 0.5F), 0.1F, 0.5F),
+                swing(0.26F, 0.44F, p(68, 22, 70), p(-68, -8, -65), 0.08F, b(0.45F, -0.45F), 0.1F, 0.5F),
                 swing(0.3F, 0.5F, p(-40, -35, -30), p(50, 75, 25), 0.15F, b(-0.3F, 0.35F), 0.05F, 0.6F)});
         COMBOS.put(WeaponType.DUAL_DAGGERS, new Attack[]{
                 swing(0.22F, 0.4F, p(-10, 6, 0), p(6, 0, 0), 0.45F, b(-0.15F, 0.25F), 0.12F, 0.4F),

@@ -45,7 +45,9 @@ public final class SwingClock {
     private static float durationFor(LivingEntity entity, WeaponType type) {
         if (entity instanceof Player player) {
             // Matches the attack cooldown, so a fully charged hit always plays a full animation.
-            return Mth.clamp(player.getCurrentItemAttackStrengthDelay() * 0.92F, 7, 22);
+            // At least 11 ticks: quicker weapons chain hits by cross-fading rather than cramming a
+            // whole cut into a couple of frames.
+            return Mth.clamp(player.getCurrentItemAttackStrengthDelay() * 0.92F, 11, 22);
         }
         return duration(type);
     }

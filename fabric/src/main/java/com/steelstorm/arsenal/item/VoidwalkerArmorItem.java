@@ -35,5 +35,6 @@ public class VoidwalkerArmorItem extends ArmorItem {
         tooltip.add(Component.translatable("tooltip.steelstorm.voidwalker." + piece + ".desc").withStyle(ChatFormatting.DARK_PURPLE));
         tooltip.add(Component.translatable("tooltip.steelstorm.voidwalker_set").withStyle(ChatFormatting.DARK_PURPLE));
         tooltip.add(Component.translatable("tooltip.steelstorm.voidwalker_set.desc").withStyle(ChatFormatting.DARK_PURPLE));
+        tooltip.add(Component.translatable("tooltip.steelstorm.suit_ult.voidwalker").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD));
     }
 }

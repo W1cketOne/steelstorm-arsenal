@@ -51,6 +51,11 @@ public final class ClientEvents {
                         com.steelstorm.arsenal.anim.CastPose.INSPECT.duration);
             }
         }
+        while (ModKeyMappings.SUIT_ULTIMATE.consumeClick()) {
+            if (mc.screen == null && !player.isSpectator()) {
+                PacketDistributor.sendToServer(new com.steelstorm.arsenal.network.SuitUltPayload());
+            }
+        }
         while (ModKeyMappings.DODGE.consumeClick()) {
             if (mc.screen == null && !player.isSpectator()) {
                 PacketDistributor.sendToServer(new DodgePayload(player.input.forwardImpulse, player.input.leftImpulse));
@@ -115,6 +120,7 @@ public final class ClientEvents {
     @SubscribeEvent
     public static void onLogout(ClientPlayerNetworkEvent.LoggingOut event) {
         ClientCombatState.reset();
+        SuitGlow.clear();
     }
 
     /** Small, decaying camera shake on heavy hits. Can be turned off in the client config. */

@@ -159,6 +159,8 @@ public class ModLanguageProvider extends LanguageProvider {
         config("screenShakeStrength", "Screen Shake Strength");
         config("showComboCounter", "Show Combo Counter");
         config("showDamageNumbers", "Show Damage Numbers");
+        config("meteorChance", "Meteor Chance");
+        config("meteorCraters", "Meteor Craters");
         config("ultimateCinematic", "Cinematic Ultimate Camera");
 
         // Stage 3: interactive blocks, runes, armour and new enemies.
@@ -247,6 +249,7 @@ public class ModLanguageProvider extends LanguageProvider {
         add("tooltip.steelstorm.voidwalker.boots.desc", " Press jump in mid-air to teleport 7 blocks forward");
         add("tooltip.steelstorm.voidwalker_set", "Between Worlds (full set):");
         add("tooltip.steelstorm.voidwalker_set.desc", " No fall damage; ender pearls don't hurt");
+        add("entity.steelstorm.meteor", "Meteor");
         add("tooltip.steelstorm.stormsteel_set", "Stormcaller (full set):");
         add("tooltip.steelstorm.stormsteel_set.desc", " 10% faster, immune to lightning, melee attackers may be zapped");
         add("message.steelstorm.sharpened", "Sharpened! +2 damage for the next %s hits");

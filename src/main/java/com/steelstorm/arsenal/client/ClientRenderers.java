@@ -30,6 +30,7 @@ public final class ClientRenderers {
         event.registerEntityRenderer(ModEntities.VORTEX.get(), VortexRenderer::new);
         event.registerEntityRenderer(ModEntities.ORBIT_BLADES.get(), OrbitBladesRenderer::new);
         event.registerEntityRenderer(ModEntities.AURA_FX.get(), com.steelstorm.arsenal.client.render.AuraFxRenderer::new);
+        event.registerEntityRenderer(ModEntities.METEOR.get(), com.steelstorm.arsenal.client.render.MeteorRenderer::new);
         event.registerEntityRenderer(ModEntities.TARGET_DUMMY.get(),
                 ctx -> new SkinnedHumanoidRenderer<>(ctx, SteelstormArsenal.id("textures/entity/target_dummy.png"), 1.0F));
         event.registerEntityRenderer(ModEntities.BANDIT_DUELIST.get(), ctx -> new SteelstormMobRenderer<>(ctx, "bandit_duelist", 1.0F, false));

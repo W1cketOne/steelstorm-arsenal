@@ -59,8 +59,8 @@ public final class UltimateCinematic {
     public static void onDistance(CalculateDetachedCameraDistanceEvent event) {
         float t = progress((float) Minecraft.getInstance().getTimer().getGameTimeDeltaPartialTick(false));
         if (t >= 0) {
-            float out = Mth.sin(Math.min(1, t * 1.6F) * Mth.HALF_PI) * (1 - smooth((t - 0.8F) / 0.2F));
-            event.setDistance(event.getDistance() + 4.5F * out);
+            float out = smooth(t / 0.25F) * (1 - smooth((t - 0.7F) / 0.3F));
+            event.setDistance(event.getDistance() + 3.0F * out);
         }
     }
 
@@ -68,9 +68,9 @@ public final class UltimateCinematic {
     public static void onAngles(ViewportEvent.ComputeCameraAngles event) {
         float t = progress((float) event.getPartialTick());
         if (t >= 0 && !Minecraft.getInstance().options.getCameraType().isFirstPerson()) {
-            float swing = Mth.sin(t * Mth.PI);
-            event.setYaw(event.getYaw() + side * 55 * smooth(t) * (1 - smooth((t - 0.8F) / 0.2F)));
-            event.setPitch(event.getPitch() + 14 * swing);
+            // A gentle tilt down onto the action; no orbiting, so the view never swings about.
+            float lift = smooth(t / 0.25F) * (1 - smooth((t - 0.7F) / 0.3F));
+            event.setPitch(event.getPitch() + 8 * lift);
         }
     }
 

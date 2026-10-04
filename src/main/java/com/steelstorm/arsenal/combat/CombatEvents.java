@@ -290,7 +290,7 @@ public final class CombatEvents {
             if (weapon != null) {
                 WeaponEffects.onSpecialHit(attacker, weapon, target, damage);
             }
-            AbilityManager.addUltimate(attacker, damage * 0.4F * charge);
+            AbilityManager.addUltimate(attacker, Math.max(10.0F, damage * 0.4F) * charge);
             return;
         }
         Entity direct = source.getDirectEntity();
@@ -311,7 +311,8 @@ public final class CombatEvents {
         // Only well-timed swings build a combo; spam-clicking resets it.
         data.combo = full ? data.comboAt(now) + 1 : 0;
         data.lastHitTime = now;
-        AbilityManager.addUltimate(attacker, damage * (full ? 0.8F : 0.3F) * charge);
+        // Three solid hits fill the ultimate.
+        AbilityManager.addUltimate(attacker, (full ? 40.0F : 15.0F) * charge);
 
         ServerLevel level = (ServerLevel) attacker.level();
         Vec3 at = target.getBoundingBox().getCenter();

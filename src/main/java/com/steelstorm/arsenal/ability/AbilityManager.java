@@ -6,6 +6,7 @@ import com.steelstorm.arsenal.network.PlayerAnimPayload;
 import com.steelstorm.arsenal.Config;
 import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.combat.CombatData;
+import com.steelstorm.arsenal.combat.ServerScheduler;
 import com.steelstorm.arsenal.combat.Stamina;
 import com.steelstorm.arsenal.fx.Fx;
 import com.steelstorm.arsenal.registry.ModEffects;
@@ -193,7 +194,8 @@ public final class AbilityManager {
             return;
         }
         AbilityContext ctx = new AbilityContext(player, stack, ability, baseDamage(stack));
-        ctx.power = power;
+        // Ultimates hit three times as hard as their base design.
+        ctx.power = ability.isUltimate() ? power * 3.0F : power;
         if (ability.isUltimate()) {
             data.ultimateLockUntil = now + 120;
         }
@@ -222,6 +224,7 @@ public final class AbilityManager {
                 Fx.sound(level, player.position(), ModSounds.ABILITY_SHOCKWAVE, 1.2F, 0.7F);
             }
             Stamina.shake(player, 0.8F + 0.4F * power, 10);
+            nova(ctx, power);
         } else {
             Stamina.tryConsume(player, cost);
             Fx.sparkles(player.serverLevel(), player.position().add(0, 1.1, 0), ctx.color(), 8, 0.5);
@@ -247,6 +250,45 @@ public final class AbilityManager {
             stack.hurtAndBreak(ability.isUltimate() ? 5 : 2, player, EquipmentSlot.MAINHAND);
         }
         Stamina.sync(player, true);
+    }
+
+    /**
+     * Every ultimate ends in a Nova: a huge shockwave, lightning called down on the nearest enemies,
+     * and a few seconds of Overdrive (strength and speed) for the caster.
+     */
+    private static void nova(AbilityContext ctx, float power) {
+        ServerPlayer player = ctx.player;
+        ServerLevel level = ctx.level;
+        int c = ctx.color();
+        ServerScheduler.schedule(14, () -> {
+            if (!ctx.alive()) {
+                return;
+            }
+            Vec3 at = player.position();
+            Shockwaves.ring(level, player, at, 12.0F * Math.min(1.5F, power), 1.2F, ctx.dmg(2.0F), 0.9, c, null);
+            Fx.sunburst(level, at.add(0, 0.3, 0), c, Fx.WHITE, 12.0F, 20, 22);
+            Fx.sound(level, at, ModSounds.ABILITY_EPIC_IMPACT, 2.0F, 0.6F);
+            int struck = 0;
+            for (net.minecraft.world.entity.LivingEntity e : level.getEntitiesOfClass(net.minecraft.world.entity.LivingEntity.class,
+                    player.getBoundingBox().inflate(16), e -> Shockwaves.canHit(player, e))) {
+                if (struck++ >= 6) {
+                    break;
+                }
+                net.minecraft.world.entity.LightningBolt bolt = net.minecraft.world.entity.EntityType.LIGHTNING_BOLT.create(level);
+                if (bolt != null) {
+                    bolt.moveTo(e.getX(), e.getY(), e.getZ());
+                    bolt.setVisualOnly(true);
+                    level.addFreshEntity(bolt);
+                }
+                e.invulnerableTime = 0;
+                com.steelstorm.arsenal.combat.CombatUtil.specialHurt(player, e, ctx.dmg(1.5F));
+            }
+        });
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_BOOST, 140, 1, false, true, true));
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.MOVEMENT_SPEED, 140, 1, false, true, true));
+        player.addEffect(new net.minecraft.world.effect.MobEffectInstance(net.minecraft.world.effect.MobEffects.DAMAGE_RESISTANCE, 140, 1, false, true, true));
+        Fx.orbit(level, player.position(), player, Fx.GOLD, c, 8, 1.4F, 1.0F, 140);
+        player.displayClientMessage(net.minecraft.network.chat.Component.literal("OVERDRIVE!").withStyle(ChatFormatting.GOLD, ChatFormatting.BOLD), true);
     }
 
     /** Damage of one full hit with whatever the player holds (weapons, thrown weapons, or fists). */

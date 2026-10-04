@@ -212,6 +212,19 @@ public final class WeaponAnimator {
         float[] base = {model.rightArm.xRot, model.rightArm.yRot, model.rightArm.zRot,
                 model.leftArm.xRot, model.leftArm.yRot, model.leftArm.zRot, 0, 0};
         track.sample(t, v, base);
+        // Keep third-person swings readable: the arms move part of the way, the body turns less, and
+        // the arm only reaches forward a little instead of detaching from the shoulder.
+        for (int i = 0; i < 6; i++) {
+            if (!Float.isNaN(v[i])) {
+                v[i] = base[i] + (v[i] - base[i]) * 0.72F;
+            }
+        }
+        if (!Float.isNaN(v[6])) {
+            v[6] *= 0.6F;
+        }
+        if (!Float.isNaN(v[7])) {
+            v[7] *= 0.3F;
+        }
         apply(model.rightArm, v[0], v[1], v[2]);
         apply(model.leftArm, v[3], v[4], v[5]);
         if (cast != null && cast.pose() == CastPose.FLURRY) {
@@ -344,7 +357,9 @@ public final class WeaponAnimator {
     public static void poseFirstPerson(PoseStack pose, LivingEntity player, HumanoidArm arm, WeaponType type, float partialTick,
                                        float equip, float swing) {
         int side = arm == HumanoidArm.RIGHT ? 1 : -1;
-        pose.translate(side * 0.56F, -0.52F + equip * -0.6F, -0.72F);
+        // Vanilla dips the item while the attack recharges; with big 3D weapons that reads as the
+        // weapon bobbing about between swings, so only a hint of it is kept.
+        pose.translate(side * 0.56F, -0.52F + equip * -0.08F, -0.72F);
         ClientAnims.Active cast = ClientAnims.get(player, partialTick);
         float[] v = new float[6];
         if (cast != null && cast.pose() == CastPose.SPIN) {

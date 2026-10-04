@@ -37,7 +37,8 @@ public final class SwingClock {
         double now = entity.tickCount + partialTick;
         // A new swing starts when vanilla's progress jumps back toward zero.
         if (vanillaSwing > 0 && (state.lastVanilla == 0 || vanillaSwing < state.lastVanilla - 0.05F)) {
-            if (now - state.start > duration(type) * 0.45) {
+            // A click mid-swing doesn't restart it; only start over once the cut has played out.
+            if (now - state.start > duration(type) * 0.9) {
                 state.start = now - vanillaSwing * 6;
                 state.cut = 1 - state.cut;
                 // Every third hit of a combo is an overhead finisher (only the local player knows its combo).

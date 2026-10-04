@@ -77,6 +77,11 @@ public final class ModEntities {
                     .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(6).updateInterval(Integer.MAX_VALUE)
                     .build("orbit_blades"));
 
+    public static final Supplier<EntityType<com.steelstorm.arsenal.entity.MeteorEntity>> METEOR = ENTITIES.register("meteor",
+            () -> EntityType.Builder.<com.steelstorm.arsenal.entity.MeteorEntity>of(com.steelstorm.arsenal.entity.MeteorEntity::new, MobCategory.MISC)
+                    .sized(1.0F, 1.0F).fireImmune().clientTrackingRange(16).updateInterval(1)
+                    .build("meteor"));
+
     public static final Supplier<EntityType<AuraFxEntity>> AURA_FX = ENTITIES.register("aura_fx",
             () -> EntityType.Builder.<AuraFxEntity>of(AuraFxEntity::new, MobCategory.MISC)
                     .sized(0.5F, 0.5F).noSave().noSummon().fireImmune().clientTrackingRange(10).updateInterval(Integer.MAX_VALUE)

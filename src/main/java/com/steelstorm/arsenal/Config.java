@@ -40,6 +40,8 @@ public final class Config {
     public static final ModConfigSpec.DoubleValue WATCHTOWER_CHANCE;
     public static final ModConfigSpec.DoubleValue STORMSTEEL_MINE_CHANCE;
     public static final ModConfigSpec.DoubleValue BOSS_LAIR_CHANCE;
+    public static final ModConfigSpec.DoubleValue METEOR_CHANCE;
+    public static final ModConfigSpec.BooleanValue METEOR_CRATERS;
     public static final ModConfigSpec.BooleanValue STARTER_OUTPOST;
 
     static {
@@ -54,15 +56,15 @@ public final class Config {
         GUARD_COST_PER_DAMAGE = BUILDER.comment("Stamina spent per point of damage absorbed while guarding")
                 .defineInRange("guardCostPerDamage", 2.0, 0.0, 100.0);
         SPECIAL_COST_MULTIPLIER = BUILDER.comment("Multiplier on every special ability's stamina cost")
-                .defineInRange("specialCostMultiplier", 1.0, 0.0, 10.0);
+                .defineInRange("specialCostMultiplier", 0.5, 0.0, 10.0);
         BUILDER.pop();
 
         BUILDER.push("combat");
         WEAPON_DAMAGE_MULTIPLIER = BUILDER.comment("Multiplier on all melee damage dealt with Steelstorm weapons")
-                .defineInRange("weaponDamageMultiplier", 1.0, 0.0, 10.0);
+                .defineInRange("weaponDamageMultiplier", 2.0, 0.0, 10.0);
         HEAVY_ATTACK_MULTIPLIER = BUILDER.comment("Damage multiplier of a heavy attack").defineInRange("heavyAttackMultiplier", 1.5, 1.0, 10.0);
         SPECIAL_DAMAGE_MULTIPLIER = BUILDER.comment("Multiplier on damage dealt by special abilities")
-                .defineInRange("specialDamageMultiplier", 1.0, 0.0, 10.0);
+                .defineInRange("specialDamageMultiplier", 3.0, 0.0, 10.0);
         GUARD_DAMAGE_REDUCTION = BUILDER.comment("Fraction of damage blocked while guarding outside the perfect parry window")
                 .defineInRange("guardDamageReduction", 0.5, 0.0, 1.0);
         PERFECT_PARRY_TICKS = BUILDER.comment("How many ticks after raising your guard count as a perfect parry")
@@ -71,7 +73,7 @@ public final class Config {
         DODGE_INVULNERABILITY_TICKS = BUILDER.comment("Invulnerability window at the start of a dodge roll, in ticks")
                 .defineInRange("dodgeInvulnerabilityTicks", 8, 0, 40);
         SPECIAL_COOLDOWN_MULTIPLIER = BUILDER.comment("Multiplier on every ability's cooldown")
-                .defineInRange("specialCooldownMultiplier", 1.0, 0.0, 10.0);
+                .defineInRange("specialCooldownMultiplier", 0.5, 0.0, 10.0);
         ULTIMATE_CHARGE_MULTIPLIER = BUILDER.comment("How fast the ultimate meter fills from dealing and taking damage (1.0 = normal)")
                 .defineInRange("ultimateChargeMultiplier", 1.0, 0.0, 10.0);
         BUILDER.pop();
@@ -95,6 +97,10 @@ public final class Config {
                 .defineInRange("watchtowerChance", 0.7, 0.0, 1.0);
         STORMSTEEL_MINE_CHANCE = BUILDER.comment("Chance (0-1) that a possible Stormsteel Mine location actually gets one")
                 .defineInRange("stormsteelMineChance", 0.7, 0.0, 1.0);
+        METEOR_CHANCE = BUILDER.comment("Chance per player per second, at night, that a meteor crashes nearby (0 turns meteors off)")
+                .defineInRange("meteorChance", 0.0015, 0.0, 1.0);
+        METEOR_CRATERS = BUILDER.comment("Meteors blast craters in natural ground and leave a meteorite of Stormsteel ore")
+                .define("meteorCraters", true);
         BOSS_LAIR_CHANCE = BUILDER.comment("Chance (0-1) that a possible boss lair (Colossus Forge, Moonlit Sanctum) location actually gets one")
                 .defineInRange("bossLairChance", 0.8, 0.0, 1.0);
         STARTER_OUTPOST = BUILDER.comment("Build the Warrior's Outpost next to spawn when a new world is created")

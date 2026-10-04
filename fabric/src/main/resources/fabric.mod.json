@@ -1,0 +1,23 @@
+{
+  "schemaVersion": 1,
+  "id": "steelstorm",
+  "version": "${version}",
+  "name": "Steelstorm Arsenal",
+  "description": "Weapons, abilities, ultimates, bosses and structures for epic melee combat.",
+  "authors": ["Steelstorm"],
+  "license": "MIT",
+  "icon": "assets/steelstorm/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.steelstorm.arsenal.SteelstormArsenal"],
+    "client": ["com.steelstorm.arsenal.client.SteelstormClient"]
+  },
+  "mixins": ["steelstorm.mixins.json"],
+  "accessWidener": "steelstorm.accesswidener",
+  "depends": {
+    "fabricloader": ">=0.16.0",
+    "minecraft": "~1.21.1",
+    "java": ">=21",
+    "fabric-api": "*"
+  }
+}

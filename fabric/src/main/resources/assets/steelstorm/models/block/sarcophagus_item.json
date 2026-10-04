@@ -1,0 +1,372 @@
+{
+  "parent": "block/block",
+  "textures": {
+    "particle": "steelstorm:block/sarcophagus_side",
+    "side": "steelstorm:block/sarcophagus_side",
+    "lid": "steelstorm:block/sarcophagus_lid",
+    "relief": "steelstorm:block/sarcophagus_relief",
+    "inside": "steelstorm:block/sarcophagus_inside",
+    "glyphs": "steelstorm:block/sarcophagus_glyphs"
+  },
+  "elements": [
+    {
+      "from": [
+        1,
+        0,
+        -8
+      ],
+      "to": [
+        15,
+        9,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            1,
+            0,
+            15,
+            16
+          ],
+          "texture": "#inside"
+        },
+        "down": {
+          "uv": [
+            1,
+            0,
+            15,
+            16
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        9,
+        -8
+      ],
+      "to": [
+        15.5,
+        12,
+        8
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.5,
+            4,
+            15.5,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "south": {
+          "uv": [
+            0.5,
+            4,
+            15.5,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            16,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            16,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "up": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#relief"
+        },
+        "down": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#lid"
+        }
+      }
+    },
+    {
+      "from": [
+        1,
+        0,
+        8
+      ],
+      "to": [
+        15,
+        9,
+        24
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "south": {
+          "uv": [
+            1,
+            7,
+            15,
+            16
+          ],
+          "texture": "#side"
+        },
+        "east": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "west": {
+          "uv": [
+            0,
+            7,
+            16,
+            16
+          ],
+          "texture": "#side"
+        },
+        "up": {
+          "uv": [
+            1,
+            0,
+            15,
+            16
+          ],
+          "texture": "#inside"
+        },
+        "down": {
+          "uv": [
+            1,
+            0,
+            15,
+            16
+          ],
+          "texture": "#side"
+        }
+      }
+    },
+    {
+      "from": [
+        0.5,
+        9,
+        8
+      ],
+      "to": [
+        15.5,
+        12,
+        24
+      ],
+      "faces": {
+        "north": {
+          "uv": [
+            0.5,
+            4,
+            15.5,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "south": {
+          "uv": [
+            0.5,
+            4,
+            15.5,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "east": {
+          "uv": [
+            0,
+            4,
+            16,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "west": {
+          "uv": [
+            0,
+            4,
+            16,
+            7
+          ],
+          "texture": "#lid"
+        },
+        "up": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#lid"
+        },
+        "down": {
+          "uv": [
+            0.5,
+            0,
+            15.5,
+            16
+          ],
+          "texture": "#lid"
+        }
+      }
+    }
+  ],
+  "display": {
+    "gui": {
+      "rotation": [
+        30,
+        225,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.42,
+        0.42,
+        0.42
+      ]
+    },
+    "ground": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        3,
+        0
+      ],
+      "scale": [
+        0.2,
+        0.2,
+        0.2
+      ]
+    },
+    "fixed": {
+      "rotation": [
+        0,
+        0,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.4,
+        0.4,
+        0.4
+      ]
+    },
+    "thirdperson_righthand": {
+      "rotation": [
+        75,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        2.5,
+        0
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    },
+    "firstperson_righthand": {
+      "rotation": [
+        0,
+        45,
+        0
+      ],
+      "translation": [
+        0,
+        0,
+        0
+      ],
+      "scale": [
+        0.3,
+        0.3,
+        0.3
+      ]
+    }
+  }
+}

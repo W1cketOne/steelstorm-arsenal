@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "G": {
+      "item": "minecraft:gold_ingot"
+    },
+    "Q": {
+      "item": "minecraft:quartz_block"
+    }
+  },
+  "pattern": [
+    "GGG",
+    " Q ",
+    "QQQ"
+  ],
+  "result": {
+    "count": 1,
+    "id": "steelstorm:legendary_pedestal"
+  }
+}

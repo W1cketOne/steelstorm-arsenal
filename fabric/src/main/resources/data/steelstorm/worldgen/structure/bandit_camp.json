@@ -1,0 +1,8 @@
+{
+  "type": "steelstorm:steelstorm_structure",
+  "kind": "bandit_camp",
+  "biomes": "#steelstorm:has_structure/bandit_camp",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

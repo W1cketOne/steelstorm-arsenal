@@ -1,0 +1,359 @@
+{
+  "weapon.swing": {
+    "sounds": [
+      "steelstorm:weapon/swing1",
+      "steelstorm:weapon/swing2",
+      "steelstorm:weapon/swing3"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.swing"
+  },
+  "weapon.swing_heavy": {
+    "sounds": [
+      "steelstorm:weapon/swing_heavy1",
+      "steelstorm:weapon/swing_heavy2"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.swing_heavy"
+  },
+  "weapon.hit": {
+    "sounds": [
+      "steelstorm:weapon/hit1",
+      "steelstorm:weapon/hit2",
+      "steelstorm:weapon/hit3"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.hit"
+  },
+  "weapon.hit_metal": {
+    "sounds": [
+      "steelstorm:weapon/hit_metal1",
+      "steelstorm:weapon/hit_metal2"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.hit_metal"
+  },
+  "weapon.parry": {
+    "sounds": [
+      "steelstorm:weapon/parry"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.parry"
+  },
+  "weapon.perfect_parry": {
+    "sounds": [
+      "steelstorm:weapon/perfect_parry"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.perfect_parry"
+  },
+  "weapon.guard_break": {
+    "sounds": [
+      "steelstorm:weapon/guard_break"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.guard_break"
+  },
+  "player.dodge": {
+    "sounds": [
+      "steelstorm:player/dodge"
+    ],
+    "subtitle": "subtitles.steelstorm.player.dodge"
+  },
+  "ability.cast": {
+    "sounds": [
+      "steelstorm:ability/cast"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.cast"
+  },
+  "ability.dash": {
+    "sounds": [
+      "steelstorm:ability/dash"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.dash"
+  },
+  "ability.ready": {
+    "sounds": [
+      "steelstorm:ability/ready"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.ready"
+  },
+  "ultimate.ready": {
+    "sounds": [
+      "steelstorm:ability/ultimate_ready"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.ready"
+  },
+  "ultimate.cast": {
+    "sounds": [
+      "steelstorm:ability/ultimate_cast"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.cast"
+  },
+  "ability.shockwave": {
+    "sounds": [
+      "steelstorm:ability/shockwave"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.shockwave"
+  },
+  "ability.ground_crack": {
+    "sounds": [
+      "steelstorm:ability/ground_crack"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.ground_crack"
+  },
+  "ability.rumble": {
+    "sounds": [
+      "steelstorm:ability/rumble"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.rumble"
+  },
+  "ability.zap": {
+    "sounds": [
+      "steelstorm:ability/zap"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.zap"
+  },
+  "ability.thunder": {
+    "sounds": [
+      "steelstorm:ability/thunder"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.thunder"
+  },
+  "ability.frost": {
+    "sounds": [
+      "steelstorm:ability/frost"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.frost"
+  },
+  "ability.void": {
+    "sounds": [
+      "steelstorm:ability/void"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.void"
+  },
+  "ability.void_hum": {
+    "sounds": [
+      "steelstorm:ability/void_hum"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.void_hum"
+  },
+  "ability.blood": {
+    "sounds": [
+      "steelstorm:ability/blood"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blood"
+  },
+  "ability.smoke": {
+    "sounds": [
+      "steelstorm:ability/smoke"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.smoke"
+  },
+  "ability.slash_wave": {
+    "sounds": [
+      "steelstorm:ability/slash_wave"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.slash_wave"
+  },
+  "ability.blade_fall": {
+    "sounds": [
+      "steelstorm:ability/blade_fall"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blade_fall"
+  },
+  "ability.katana_draw": {
+    "sounds": [
+      "steelstorm:ability/katana_draw"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.katana_draw"
+  },
+  "ability.petals": {
+    "sounds": [
+      "steelstorm:ability/petals"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.petals"
+  },
+  "ability.war_cry": {
+    "sounds": [
+      "steelstorm:ability/war_cry"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.war_cry"
+  },
+  "ability.berserk": {
+    "sounds": [
+      "steelstorm:ability/berserk"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.berserk"
+  },
+  "weapon.throw": {
+    "sounds": [
+      "steelstorm:weapon/throw"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.throw"
+  },
+  "weapon.chakram_spin": {
+    "sounds": [
+      "steelstorm:weapon/chakram_spin"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.chakram_spin"
+  },
+  "weapon.hammer_throw": {
+    "sounds": [
+      "steelstorm:weapon/hammer_throw"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.hammer_throw"
+  },
+  "weapon.hammer_catch": {
+    "sounds": [
+      "steelstorm:weapon/hammer_catch"
+    ],
+    "subtitle": "subtitles.steelstorm.weapon.hammer_catch"
+  },
+  "block.gong": {
+    "sounds": [
+      "steelstorm:block/gong"
+    ],
+    "subtitle": "subtitles.steelstorm.block.gong"
+  },
+  "block.coffer_unlock": {
+    "sounds": [
+      "steelstorm:block/coffer_unlock"
+    ],
+    "subtitle": "subtitles.steelstorm.block.coffer_unlock"
+  },
+  "block.vault_open": {
+    "sounds": [
+      "steelstorm:block/vault_open"
+    ],
+    "subtitle": "subtitles.steelstorm.block.vault_open"
+  },
+  "block.sarcophagus_open": {
+    "sounds": [
+      "steelstorm:block/sarcophagus_open"
+    ],
+    "subtitle": "subtitles.steelstorm.block.sarcophagus_open"
+  },
+  "block.altar_charge": {
+    "sounds": [
+      "steelstorm:block/altar_charge"
+    ],
+    "subtitle": "subtitles.steelstorm.block.altar_charge"
+  },
+  "block.altar_summon": {
+    "sounds": [
+      "steelstorm:block/altar_summon"
+    ],
+    "subtitle": "subtitles.steelstorm.block.altar_summon"
+  },
+  "block.whetstone": {
+    "sounds": [
+      "steelstorm:block/whetstone"
+    ],
+    "subtitle": "subtitles.steelstorm.block.whetstone"
+  },
+  "block.rune_forge": {
+    "sounds": [
+      "steelstorm:block/rune_forge"
+    ],
+    "subtitle": "subtitles.steelstorm.block.rune_forge"
+  },
+  "block.brazier_ignite": {
+    "sounds": [
+      "steelstorm:block/brazier_ignite"
+    ],
+    "subtitle": "subtitles.steelstorm.block.brazier_ignite"
+  },
+  "entity.warlord_roar": {
+    "sounds": [
+      "steelstorm:entity/warlord_roar"
+    ],
+    "subtitle": "subtitles.steelstorm.entity.warlord_roar"
+  },
+  "entity.herald_cast": {
+    "sounds": [
+      "steelstorm:entity/herald_cast"
+    ],
+    "subtitle": "subtitles.steelstorm.entity.herald_cast"
+  },
+  "entity.captain_taunt": {
+    "sounds": [
+      "steelstorm:entity/captain_taunt"
+    ],
+    "subtitle": "subtitles.steelstorm.entity.captain_taunt"
+  },
+  "ability.epic_impact": {
+    "sounds": [
+      "steelstorm:ability/epic_impact1",
+      "steelstorm:ability/epic_impact2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.epic_impact"
+  },
+  "ability.lightning_strike": {
+    "sounds": [
+      "steelstorm:ability/lightning_strike1",
+      "steelstorm:ability/lightning_strike2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.lightning_strike"
+  },
+  "ability.blade_throw": {
+    "sounds": [
+      "steelstorm:ability/blade_throw1",
+      "steelstorm:ability/blade_throw2",
+      "steelstorm:ability/blade_throw3"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blade_throw"
+  },
+  "ability.blade_storm": {
+    "sounds": [
+      "steelstorm:ability/blade_storm"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.blade_storm"
+  },
+  "ability.dark_power": {
+    "sounds": [
+      "steelstorm:ability/dark_power1",
+      "steelstorm:ability/dark_power2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.dark_power"
+  },
+  "ability.wind_rush": {
+    "sounds": [
+      "steelstorm:ability/wind_rush1",
+      "steelstorm:ability/wind_rush2"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.wind_rush"
+  },
+  "ability.inferno": {
+    "sounds": [
+      "steelstorm:ability/inferno"
+    ],
+    "subtitle": "subtitles.steelstorm.ability.inferno"
+  },
+  "ultimate.release": {
+    "sounds": [
+      "steelstorm:ability/ultimate_release1",
+      "steelstorm:ability/ultimate_release2"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.release"
+  },
+  "ultimate.charge": {
+    "sounds": [
+      "steelstorm:ability/ultimate_charge"
+    ],
+    "subtitle": "subtitles.steelstorm.ultimate.charge"
+  },
+  "armor.double_jump": {
+    "sounds": [
+      "steelstorm:armor/double_jump"
+    ],
+    "subtitle": "subtitles.steelstorm.armor.double_jump"
+  },
+  "armor.barrier": {
+    "sounds": [
+      "steelstorm:armor/barrier"
+    ],
+    "subtitle": "subtitles.steelstorm.armor.barrier"
+  },
+  "music.boss": {
+    "sounds": [
+      {
+        "name": "steelstorm:music/boss_battle",
+        "stream": true
+      }
+    ]
+  }
+}

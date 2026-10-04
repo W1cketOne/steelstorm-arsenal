@@ -12,3 +12,7 @@
 /repo/
 **/src/generated/**/.cache/
 tools/__pycache__/
+fabric/.gradle/
+fabric/build/
+fabric/run/
+fabric/run-server/

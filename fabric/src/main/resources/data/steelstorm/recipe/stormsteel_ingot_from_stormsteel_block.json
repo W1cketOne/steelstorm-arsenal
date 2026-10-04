@@ -1,0 +1,13 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "steelstorm:stormsteel_block"
+    }
+  ],
+  "result": {
+    "count": 9,
+    "id": "steelstorm:stormsteel_ingot"
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "B": {
+      "item": "steelstorm:stormsteel_block"
+    },
+    "D": {
+      "item": "minecraft:polished_deepslate"
+    },
+    "S": {
+      "item": "steelstorm:stormsteel_ingot"
+    }
+  },
+  "pattern": [
+    "DSD",
+    "SBS",
+    "DDD"
+  ],
+  "result": {
+    "count": 1,
+    "id": "steelstorm:storm_altar"
+  }
+}

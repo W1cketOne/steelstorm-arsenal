@@ -1,0 +1,8 @@
+{
+  "type": "steelstorm:steelstorm_structure",
+  "kind": "knights_crypt",
+  "biomes": "#steelstorm:has_structure/knights_crypt",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

@@ -1,0 +1,143 @@
+{
+  "type": "minecraft:entity",
+  "pools": [
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:tempest_edge"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:rimecleaver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:voidreaver"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:earthshaker"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:bloodfang"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:skypiercer"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:moonveil"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:kingsbane"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 14.0,
+                "min": 8.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "steelstorm:stormsteel_ingot"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 4.0,
+                "min": 2.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:netherite_scrap"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "functions": [
+            {
+              "add": false,
+              "count": {
+                "type": "minecraft:uniform",
+                "max": 6.0,
+                "min": 3.0
+              },
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "minecraft:diamond"
+        }
+      ],
+      "rolls": 1.0
+    },
+    {
+      "bonus_rolls": 0.0,
+      "conditions": [
+        {
+          "chance": 0.6,
+          "condition": "minecraft:random_chance"
+        }
+      ],
+      "entries": [
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:ember_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:frost_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:storm_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:venom_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:vampiric_rune"
+        },
+        {
+          "type": "minecraft:item",
+          "name": "steelstorm:gale_rune"
+        }
+      ],
+      "rolls": 1.0
+    }
+  ],
+  "random_sequence": "steelstorm:entities/forge_colossus"
+}

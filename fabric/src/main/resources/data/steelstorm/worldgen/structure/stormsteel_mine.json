@@ -1,0 +1,8 @@
+{
+  "type": "steelstorm:steelstorm_structure",
+  "kind": "stormsteel_mine",
+  "biomes": "#steelstorm:has_structure/stormsteel_mine",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

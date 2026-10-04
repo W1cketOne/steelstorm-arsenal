@@ -1,0 +1,8 @@
+{
+  "type": "steelstorm:steelstorm_structure",
+  "kind": "storm_shrine",
+  "biomes": "#steelstorm:has_structure/storm_shrine",
+  "step": "top_layer_modification",
+  "spawn_overrides": {},
+  "terrain_adaptation": "beard_thin"
+}

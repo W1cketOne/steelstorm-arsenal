@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "com.steelstorm.compat.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [
+    "EnderManMixin",
+    "LivingEntityMixin",
+    "MinecraftServerMixin",
+    "MobMixin",
+    "PlayerMixin",
+    "ServerEntityMixin"
+  ],
+  "client": [
+    "client.AbstractContainerScreenMixin",
+    "client.CameraMixin",
+    "client.GameRendererMixin",
+    "client.GuiGraphicsMixin",
+    "client.HumanoidModelMixin",
+    "client.ItemInHandRendererMixin",
+    "client.ItemRendererMixin",
+    "client.MinecraftMixin",
+    "client.PlayerRendererMixin",
+    "client.TooltipRenderUtilMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

@@ -4,11 +4,13 @@ import com.steelstorm.arsenal.SteelstormArsenal;
 import com.steelstorm.arsenal.world.build.BuildContext;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.core.SectionPos;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.chunk.ChunkAccess;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.minecraft.world.level.levelgen.structure.BoundingBox;
 import org.jetbrains.annotations.Nullable;
@@ -89,8 +91,8 @@ public final class OutpostPlacer {
         for (int x = 0; x < OutpostBuilder.WIDTH; x += 3) {
             for (int z = 0; z < OutpostBuilder.DEPTH; z += 3) {
                 BlockPos column = BuildContext.transform(origin, facing, x, 0, z);
-                int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ()) - 1;
-                int surface = level.getHeight(Heightmap.Types.WORLD_SURFACE, column.getX(), column.getZ()) - 1;
+                int top = topY(level, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
+                int surface = topY(level, Heightmap.Types.WORLD_SURFACE, column.getX(), column.getZ());
                 BlockState state = level.getBlockState(column.atY(top));
                 if (!state.getFluidState().isEmpty() || state.is(BlockTags.ICE)) {
                     wet++;
@@ -112,7 +114,7 @@ public final class OutpostPlacer {
     }
 
     private static BlockState pickSurface(ServerLevel level, BlockPos column) {
-        int top = level.getHeight(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ()) - 1;
+        int top = topY(level, Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, column.getX(), column.getZ());
         BlockState state = level.getBlockState(column.atY(top));
         if (state.is(Blocks.GRASS_BLOCK) || state.is(Blocks.SAND) || state.is(Blocks.RED_SAND) || state.is(Blocks.PODZOL)
                 || state.is(Blocks.SNOW_BLOCK) || state.is(Blocks.MYCELIUM) || state.is(Blocks.COARSE_DIRT)
@@ -120,6 +122,15 @@ public final class OutpostPlacer {
             return state.is(Blocks.GRASS_BLOCK) ? Blocks.GRASS_BLOCK.defaultBlockState() : state;
         }
         return Blocks.GRASS_BLOCK.defaultBlockState();
+    }
+
+    /**
+     * Y of the topmost block in a column. Loads (and if needed generates) the chunk first:
+     * {@code Level#getHeight} silently answers with the world floor for chunks that are not loaded.
+     */
+    private static int topY(ServerLevel level, Heightmap.Types type, int x, int z) {
+        ChunkAccess chunk = level.getChunk(SectionPos.blockToSectionCoord(x), SectionPos.blockToSectionCoord(z));
+        return chunk.getHeight(type, x & 15, z & 15);
     }
 
     /** Whether a player standing at {@code pos} would be inside (or on top of) the outpost. */

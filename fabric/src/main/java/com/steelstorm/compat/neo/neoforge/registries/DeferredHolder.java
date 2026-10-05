@@ -33,6 +33,11 @@ public class DeferredHolder<R, T extends R> implements Holder<R>, Supplier<T> {
         return (T) ref().value();
     }
 
+    /** The registry's own reference, which save codecs require; this holder until registration. */
+    public Holder<R> delegate() {
+        return ref != null ? ref : this;
+    }
+
     public ResourceLocation getId() {
         return key.location();
     }

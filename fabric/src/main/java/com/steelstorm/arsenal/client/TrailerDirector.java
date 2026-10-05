@@ -49,6 +49,7 @@ public final class TrailerDirector {
     /** HUD hidden but the first-person hand kept. */
     public static boolean hideGuiOnly;
     private static boolean hideHud;
+    private static boolean switchedView;
     /** Script seconds per real second (filming with a slowed tick rate). */
     private static double speed = 1;
     private static double duelYaw = Double.NaN;
@@ -78,6 +79,16 @@ public final class TrailerDirector {
         } catch (Exception ignored) {
         }
         mc.options.hideGui = hideHud;
+        // A director camera is a third-person view: without this, first-person screen overlays
+        // (burning, water, the hand) are still drawn over the shot.
+        boolean thirdPerson = cameraActive();
+        if (thirdPerson && mc.options.getCameraType().isFirstPerson()) {
+            mc.options.setCameraType(net.minecraft.client.CameraType.THIRD_PERSON_BACK);
+            switchedView = true;
+        } else if (!thirdPerson && switchedView) {
+            mc.options.setCameraType(net.minecraft.client.CameraType.FIRST_PERSON);
+            switchedView = false;
+        }
         if (aimBoss) {
             LivingEntity boss = nearestBoss(mc);
             if (boss != null) {

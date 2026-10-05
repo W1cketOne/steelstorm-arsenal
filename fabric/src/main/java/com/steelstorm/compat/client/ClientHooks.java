@@ -71,6 +71,7 @@ public final class ClientHooks {
 
         ClientTickEvents.START_CLIENT_TICK.register(mc -> NeoBus.post(new ClientTickEvent.Pre()));
         ClientTickEvents.END_CLIENT_TICK.register(mc -> NeoBus.post(new ClientTickEvent.Post()));
+        ClientTickEvents.END_CLIENT_TICK.register(com.steelstorm.arsenal.client.TrailerDirector::tick);
         ClientTickEvents.START_WORLD_TICK.register(level -> NeoBus.post(new LevelTickEvent.Pre(level)));
         ClientTickEvents.END_WORLD_TICK.register(level -> NeoBus.post(new LevelTickEvent.Post(level)));
         ClientPlayConnectionEvents.DISCONNECT.register((handler, mc) -> NeoBus.post(new ClientPlayerNetworkEvent.LoggingOut()));

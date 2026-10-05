@@ -44,6 +44,10 @@ loom {
             if (project.findProperty('quickPlayServer')) {
                 programArgs '--quickPlayMultiplayer', project.findProperty('quickPlayServer').toString()
             }
+            if (project.findProperty('winSize')) {
+                def wh = project.findProperty('winSize').toString().split('x')
+                programArgs '--width', wh[0], '--height', wh[1]
+            }
         }
         server {
             runDir 'run-server'

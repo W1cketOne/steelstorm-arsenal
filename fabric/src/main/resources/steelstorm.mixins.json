@@ -15,7 +15,9 @@
   "client": [
     "client.AbstractContainerScreenMixin",
     "client.CameraMixin",
+    "client.EntityRenderDispatcherMixin",
     "client.GameRendererMixin",
+    "client.GuiMixin",
     "client.GuiGraphicsMixin",
     "client.HumanoidModelMixin",
     "client.ItemInHandRendererMixin",

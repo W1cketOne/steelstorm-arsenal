@@ -19,6 +19,9 @@ import org.jetbrains.annotations.Nullable;
  * <pre>
  * cam abs|player|boss [yaw]   keys are world coordinates, or offsets from the player / nearest
  *                             boss (rotated by its facing at the start of the shot with "yaw")
+ * cam track [boss|follow]     camera keys are offsets from the player's position (and facing) when
+ *                             the shot starts; it looks at the live midpoint of player and boss
+ *                             (or at the boss), plus the look-at offsets
  * cam duel                    offsets from the player in a frame facing the nearest boss (+z
  *                             toward it, +x to the left); look-at offsets from their midpoint
  * k t x y z lx ly lz          camera at (x,y,z) looking at (lx,ly,lz) at t seconds (Catmull-Rom)
@@ -35,6 +38,10 @@ public final class TrailerDirector {
     private static final List<double[]> KEYS = new ArrayList<>();
     private static String frame = "abs";
     private static boolean frameYaw;
+    private static boolean trackBoss;
+    private static Vec3 trackLook;
+    private static boolean trackFollow;
+    private static Vec3 trackOrigin;
     private static float frameYawDeg;
     private static Vec3 frameOrigin = Vec3.ZERO;
     private static boolean aimBoss;
@@ -95,6 +102,8 @@ public final class TrailerDirector {
         hideGuiOnly = false;
         speed = 1;
         duelYaw = Double.NaN;
+        trackLook = null;
+        trackOrigin = null;
         for (String raw : lines) {
             String[] p = raw.trim().split("\\s+");
             if (p.length == 0 || p[0].isEmpty() || p[0].startsWith("#")) {
@@ -104,6 +113,8 @@ public final class TrailerDirector {
                 case "cam" -> {
                     frame = p[1];
                     frameYaw = p.length > 2 && p[2].equals("yaw");
+                    trackBoss = p.length > 2 && p[2].equals("boss");
+                    trackFollow = p.length > 2 && p[2].equals("follow");
                 }
                 case "k" -> {
                     double[] k = new double[7];
@@ -133,7 +144,7 @@ public final class TrailerDirector {
     @Nullable
     private static Entity target(Minecraft mc) {
         return switch (frame) {
-            case "player" -> mc.player;
+            case "player", "track" -> mc.player;
             case "boss" -> nearestBoss(mc);
             default -> null;
         };
@@ -166,7 +177,24 @@ public final class TrailerDirector {
         double[] s = sample(t);
         Vec3 pos = new Vec3(s[0], s[1], s[2]);
         Vec3 look = new Vec3(s[3], s[4], s[5]);
-        if (frame.equals("duel") && mc.player != null) {
+        if (frame.equals("track") && mc.player != null) {
+            Entity boss = nearestBoss(mc);
+            Vec3 me = mc.player.getPosition(partialTick);
+            Vec3 them = boss == null ? me : boss.getPosition(partialTick);
+            float a = -frameYawDeg * Mth.DEG_TO_RAD;
+            Vec3 origin = frameOrigin;
+            if (trackFollow) {
+                // The crane drifts after the fighters, so a dodge or a knockback can't carry them out of shot.
+                Vec3 centre = me.add(them).scale(0.5);
+                trackOrigin = trackOrigin == null ? frameOrigin : trackOrigin.lerp(centre, 0.03);
+                origin = trackOrigin;
+            }
+            pos = origin.add(pos.yRot(a));
+            Vec3 want = (trackBoss ? them : me.add(them).scale(0.5)).add(look);
+            // A camera operator's pan: follows the action without twitching at every dodge.
+            trackLook = trackLook == null ? want : trackLook.lerp(want, 0.06);
+            look = trackLook;
+        } else if (frame.equals("duel") && mc.player != null) {
             Entity boss = nearestBoss(mc);
             Vec3 me = mc.player.getPosition(partialTick);
             Vec3 them = boss == null ? me.add(0, 0, 1) : boss.getPosition(partialTick);

@@ -149,7 +149,7 @@ public final class WeaponEffects {
                     if (other != target) {
                         Vec3 to = target.position().subtract(other.position()).multiply(1, 0, 1);
                         if (to.lengthSqr() > 1) {
-                            Vec3 pull = to.normalize().scale(0.45);
+                            Vec3 pull = to.normalize().scale(0.45 * com.steelstorm.arsenal.ability.Shockwaves.resist(other));
                             other.setDeltaMovement(pull.x, Math.max(other.getDeltaMovement().y, 0.1), pull.z);
                             other.hurtMarked = true;
                         }
@@ -220,7 +220,7 @@ public final class WeaponEffects {
                     if (other != target) {
                         Vec3 to = target.position().subtract(other.position()).multiply(1, 0, 1);
                         if (to.lengthSqr() > 1) {
-                            Vec3 pull = to.normalize().scale(0.55);
+                            Vec3 pull = to.normalize().scale(0.55 * com.steelstorm.arsenal.ability.Shockwaves.resist(other));
                             other.setDeltaMovement(pull.x, Math.max(other.getDeltaMovement().y, 0.1), pull.z);
                             other.hurtMarked = true;
                         }
@@ -237,7 +237,7 @@ public final class WeaponEffects {
             case DRAGONSPINE -> {
                 target.igniteForSeconds(6);
                 if (target.onGround()) {
-                    target.setDeltaMovement(target.getDeltaMovement().add(0, 0.75, 0));
+                    target.setDeltaMovement(target.getDeltaMovement().add(0, 0.75 * com.steelstorm.arsenal.ability.Shockwaves.resist(target), 0));
                     target.hurtMarked = true;
                 }
                 level.sendParticles(net.minecraft.core.particles.ParticleTypes.FLAME, target.getX(), target.getY(0.5), target.getZ(),

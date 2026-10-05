@@ -223,7 +223,8 @@ public final class SignatureAbilities {
             }
             Vec3 pullTo = ctx.pos().add(ctx.flatLook().scale(1.5));
             Vec3 v = pullTo.subtract(target.position());
-            target.setDeltaMovement(v.x * 0.32, 0.35 + Math.max(0, v.y) * 0.1, v.z * 0.32);
+            double r = com.steelstorm.arsenal.ability.Shockwaves.resist(target);
+            target.setDeltaMovement(v.x * 0.32 * r, (0.35 + Math.max(0, v.y) * 0.1) * r, v.z * 0.32 * r);
             target.hurtMarked = true;
             ctx.hit(target, 0.8F, c);
             ctx.stagger(target, 40);

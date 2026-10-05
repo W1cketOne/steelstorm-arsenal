@@ -93,7 +93,8 @@ public final class WarlordAbilities {
                 }
                 BOWLED.put(e.getUUID(), now + 15);
                 Vec3 away = e.position().subtract(player.position()).multiply(1, 0, 1).normalize();
-                e.setDeltaMovement(away.x * 1.1 + look.x * 0.4, 0.45, away.z * 1.1 + look.z * 0.4);
+                double r = com.steelstorm.arsenal.ability.Shockwaves.resist(e);
+                e.setDeltaMovement((away.x * 1.1 + look.x * 0.4) * r, 0.45 * r, (away.z * 1.1 + look.z * 0.4) * r);
                 e.hurtMarked = true;
                 e.hurt(player.damageSources().playerAttack(player), 3.0F);
                 e.igniteForSeconds(3);

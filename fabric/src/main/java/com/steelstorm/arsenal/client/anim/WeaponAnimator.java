@@ -20,9 +20,9 @@ import net.minecraft.world.entity.LivingEntity;
 public final class WeaponAnimator {
     private static final float N = Float.NaN;
     /** First-person shoulder pivot relative to the camera, and how much of each attack's arc it shows. */
-    private static float[] FP_SHOULDER = {0.3F, -0.45F, 0.05F};
+    private static float[] FP_SHOULDER = {0.05F, -0.45F, 0.4F};
     /** How much of each attack's yaw, pitch and roll first person shows. */
-    private static float[] FP_SCALE = {0.6F, 0.6F, 0.8F};
+    private static float[] FP_SCALE = {0.85F, 0.6F, 0.8F};
     private static long tuneRead;
     /** Dev aid: with STEELSTORM_ANIMLOG=path set, every first-person frame's attack pose is logged there. */
     private static final java.io.PrintWriter ANIM_LOG = openAnimLog();
@@ -495,7 +495,7 @@ public final class WeaponAnimator {
         float[] a = null;
         if (cast == null) {
             a = new float[AttackAnims.CHANNELS];
-            if (!SwingClock.sample(player, swing, type, partialTick, a)) {
+            if (!SwingClock.sampleFp(player, swing, type, partialTick, a)) {
                 a = null;
             }
         }

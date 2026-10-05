@@ -55,10 +55,15 @@ public final class SwingTrails {
                 continue;
             }
             float progress = SwingClock.progress(p, p.getAttackAnim(partial), weapon.type(), partial);
+            boolean firstPerson = p == mc.player && camera.getEntity() == p && !camera.isDetached();
+            if (firstPerson) {
+                // First-person cuts are faster: map their strike window onto the ribbon's.
+                float fp = SwingClock.progressFp(p, weapon.type(), partial);
+                progress = fp <= 0 ? 0 : Mth.clamp(0.15F + (fp - 0.09F) * (0.45F / 0.3F), 0.13F, 0.999F);
+            }
             if (progress <= 0.12F) {
                 continue;
             }
-            boolean firstPerson = p == mc.player && camera.getEntity() == p && !camera.isDetached();
             any |= draw(vc, pose, cam, p, weapon.type(), stack, progress, partial, firstPerson);
         }
         if (any) {

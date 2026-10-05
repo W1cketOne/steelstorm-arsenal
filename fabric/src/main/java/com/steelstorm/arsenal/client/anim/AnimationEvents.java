@@ -94,8 +94,9 @@ public final class AnimationEvents {
                 : net.minecraft.world.item.ItemDisplayContext.FIRST_PERSON_LEFT_HAND;
         mc.getEntityRenderDispatcher().getItemInHandRenderer().renderItem(player, stack, ctx, side < 0, pose,
                 event.getMultiBufferSource(), event.getPackedLight());
-        float progress = SwingClock.progress(player, player.getAttackAnim(event.getPartialTick()), weapon.type(), event.getPartialTick());
-        AttackAnims.Attack attack = SwingClock.attack(player, weapon.type());
+        SwingClock.progress(player, player.getAttackAnim(event.getPartialTick()), weapon.type(), event.getPartialTick());
+        float progress = SwingClock.progressFp(player, weapon.type(), event.getPartialTick());
+        AttackAnims.Attack attack = SwingClock.attack(player, weapon.type()).fp;
         BladeTrail.renderFirstPerson(pose, event.getMultiBufferSource(), player, stack, weapon.type(), ctx, side < 0,
                 progress > attack.strikeFrom && progress < attack.strikeTo, com.steelstorm.arsenal.weapon.WeaponLooks.trailColor(stack));
         pose.popPose();

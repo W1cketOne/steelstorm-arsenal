@@ -199,10 +199,14 @@ public final class AbilityManager {
         AbilityContext ctx = new AbilityContext(player, stack, ability, baseDamage(stack));
         // Ultimates hit three times as hard as their base design.
         ctx.power = ability.isUltimate() ? power * 3.0F : power;
+        // While the ultimate plays out its own hits don't refill the meter (set before running,
+        // since the first hits land inside run(); undone if nothing happened).
+        long oldLock = data.ultimateLockUntil;
         if (ability.isUltimate()) {
             data.ultimateLockUntil = now + 120;
         }
         if (!ability.run(ctx)) {
+            data.ultimateLockUntil = oldLock;
             player.displayClientMessage(Component.translatable("message.steelstorm.no_target").withStyle(ChatFormatting.GRAY), true);
             return;
         }

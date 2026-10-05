@@ -22,6 +22,10 @@ public final class SwingClock {
         final float[] last = new float[AttackAnims.CHANNELS];
         final float[] from = new float[AttackAnims.CHANNELS];
         boolean blending;
+        final float[] lastFp = new float[AttackAnims.CHANNELS];
+        final float[] fromFp = new float[AttackAnims.CHANNELS];
+        boolean blendingFp;
+        boolean activeFp;
     }
 
     private static final WeakHashMap<LivingEntity, State> STATES = new WeakHashMap<>();
@@ -59,11 +63,15 @@ public final class SwingClock {
         if (vanillaSwing > 0 && (state.lastVanilla == 0 || vanillaSwing < state.lastVanilla - 0.05F)) {
             float elapsed = (float) (now - state.start);
             // Clicking again early in a cut doesn't restart it; past the strike it chains into the next hit.
-            if (elapsed > state.duration * 0.55F) {
+            if (elapsed > Math.min(state.duration * 0.55F, AttackAnims.fpDuration(type) * 0.6F)) {
                 boolean active = elapsed < state.duration;
                 state.blending = active;
                 if (active) {
                     System.arraycopy(state.last, 0, state.from, 0, AttackAnims.CHANNELS);
+                }
+                state.blendingFp = state.activeFp && elapsed < AttackAnims.fpDuration(type);
+                if (state.blendingFp) {
+                    System.arraycopy(state.lastFp, 0, state.fromFp, 0, AttackAnims.CHANNELS);
                 }
                 // Chains keep counting; a pause resets the combo to its first hit.
                 boolean chained = now - Math.max(state.lastEnd, state.start + state.duration) < 12;
@@ -111,6 +119,42 @@ public final class SwingClock {
             }
         }
         System.arraycopy(out, 0, state.last, 0, out.length);
+        return true;
+    }
+
+    /** Progress 0..1 of the first-person attack (call after progress() has updated the clock). */
+    public static float progressFp(LivingEntity entity, WeaponType type, float partialTick) {
+        State state = STATES.get(entity);
+        if (state == null) {
+            return 0;
+        }
+        float t = (float) ((entity.tickCount + partialTick - state.start) / AttackAnims.fpDuration(type));
+        return t > 0 && t < 1 ? t : 0;
+    }
+
+    /** First-person attack: same combo step and start as the third-person one, its own snappy timing. */
+    public static boolean sampleFp(LivingEntity entity, float vanillaSwing, WeaponType type, float partialTick, float[] out) {
+        State state = update(entity, vanillaSwing, type, partialTick);
+        float elapsed = (float) (entity.tickCount + partialTick - state.start);
+        float t = elapsed / AttackAnims.fpDuration(type);
+        if (t <= 0 || t >= 1) {
+            state.activeFp = false;
+            return false;
+        }
+        state.activeFp = true;
+        AttackAnims.getFp(type, Math.max(0, state.step)).sample(t, out);
+        if (state.blendingFp) {
+            float b = elapsed / 1.5F;
+            if (b >= 1) {
+                state.blendingFp = false;
+            } else {
+                b = b * b * (3 - 2 * b);
+                for (int i = 0; i < out.length; i++) {
+                    out[i] = state.fromFp[i] + (out[i] - state.fromFp[i]) * b;
+                }
+            }
+        }
+        System.arraycopy(out, 0, state.lastFp, 0, out.length);
         return true;
     }
 

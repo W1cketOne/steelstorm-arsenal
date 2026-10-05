@@ -48,6 +48,8 @@ public final class AttackAnims {
         /** The window (in attack progress) where the blade is moving fast: trails are drawn here. */
         public final float strikeFrom;
         public final float strikeTo;
+        /** First-person version: the cut starts at once, since the hit has already landed. */
+        Attack fp;
 
         Attack(float[][] keys, Ease[] eases, float strikeFrom, float strikeTo) {
             this.keys = keys;
@@ -100,7 +102,29 @@ public final class AttackAnims {
                 {tHold, to[0] * 1.06F, to[1] - 4, to[2], push * 0.9F, body[1] * 1.08F, lean, step, 1},
                 {1, 0, 0, 0, 0, 0, 0, 0, 0}};
         Ease[] eases = {Ease.LINEAR, Ease.SMOOTH, Ease.OUT, Ease.SMOOTH, Ease.IN_OUT};
-        return new Attack(keys, eases, tWind - 0.02F, tStrike + 0.06F);
+        Attack attack = new Attack(keys, eases, tWind - 0.02F, tStrike + 0.06F);
+        attack.fp = swingFp(from, to, push);
+        return attack;
+    }
+
+    /**
+     * First person: the hit lands the moment you click, so the blade must already be moving. A
+     * one-frame hint of the wind-up gives the cut its direction, then it sweeps through in a couple
+     * of ticks, holds a beat and eases back to guard.
+     */
+    private static Attack swingFp(float[] from, float[] to, float push) {
+        // The cut stops at the edge of the view rather than off-screen, and the weapon comes back
+        // low (under the view) instead of retracing the cut.
+        float[] end = {to[0] * 0.8F, to[1] * 0.8F, to[2]};
+        float[][] keys = {
+                {0, 0, 0, 0, 0, 0, 0, 0, 0},
+                {0.09F, from[0] * 0.55F, from[1] * 0.55F, from[2] * 0.55F, -push * 0.15F, 0, 0, 0, 1},
+                {0.36F, end[0], end[1], end[2], push, 0, 0, 0, 1},
+                {0.46F, end[0] * 1.04F, end[1] - 3, end[2], push * 0.9F, 0, 0, 0, 1},
+                {0.72F, end[0] * 0.3F, Math.min(end[1], 0) - 40, end[2] * 0.3F, push * 0.3F, 0, 0, 0, 0.6F},
+                {1, 0, 0, 0, 0, 0, 0, 0, 0}};
+        Ease[] eases = {Ease.LINEAR, Ease.SMOOTH, Ease.OUT, Ease.SMOOTH, Ease.SMOOTH, Ease.SMOOTH};
+        return new Attack(keys, eases, 0.05F, 0.42F);
     }
 
     private static float[] p(float yaw, float pitch, float roll) {
@@ -149,6 +173,22 @@ public final class AttackAnims {
     public static Attack get(WeaponType type, int step) {
         Attack[] combo = COMBOS.get(type);
         return combo[Math.floorMod(step, combo.length)];
+    }
+
+    public static Attack getFp(WeaponType type, int step) {
+        return get(type, step).fp;
+    }
+
+    /** First-person attack length in ticks: short and snappy, independent of the cooldown. */
+    public static float fpDuration(WeaponType type) {
+        return switch (type) {
+            case DUAL_DAGGERS -> 7;
+            case KATANA -> 8;
+            case LONGSWORD -> 9;
+            case SPEAR -> 10;
+            case SCYTHE, BATTLEAXE -> 11;
+            case GREATSWORD, WARHAMMER -> 12;
+        };
     }
 
     private AttackAnims() {

@@ -88,7 +88,7 @@ public final class LongswordAbilities {
         Fx.sound(level, player.position(), ModSounds.WEAPON_PERFECT_PARRY, 1.2F, 1.1F);
         Stamina.shake(player, 0.7F, 7);
         Stamina.restore(player, 15);
-        AbilityManager.addUltimate(player, 12);
+        AbilityManager.addUltimate(player, 6);
         player.displayClientMessage(Component.translatable("message.steelstorm.riposte").withStyle(ChatFormatting.GOLD), true);
     }
 

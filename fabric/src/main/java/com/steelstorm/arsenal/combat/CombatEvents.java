@@ -228,7 +228,7 @@ public final class CombatEvents {
         Stamina.restore(player, 10.0F);
         Stamina.shake(player, 0.5F, 5);
         if (player instanceof ServerPlayer serverPlayer) {
-            AbilityManager.addUltimate(serverPlayer, 15);
+            AbilityManager.addUltimate(serverPlayer, 8);
         }
         player.displayClientMessage(Component.translatable("message.steelstorm.perfect_parry").withStyle(ChatFormatting.GOLD), true);
     }
@@ -267,7 +267,7 @@ public final class CombatEvents {
         // Getting hit breaks your own combo but builds your ultimate.
         if (target instanceof ServerPlayer hurt && source.getEntity() != hurt) {
             Stamina.data(hurt).combo = 0;
-            AbilityManager.addUltimate(hurt, damage * 0.5F * charge);
+            AbilityManager.addUltimate(hurt, Math.min(8.0F, damage * 0.3F) * charge);
         }
         if (!(source.getEntity() instanceof ServerPlayer attacker) || attacker == target) {
             return;
@@ -290,12 +290,12 @@ public final class CombatEvents {
             if (weapon != null) {
                 WeaponEffects.onSpecialHit(attacker, weapon, target, damage);
             }
-            AbilityManager.addUltimate(attacker, Math.max(10.0F, damage * 0.4F) * charge);
+            AbilityManager.addUltimate(attacker, Math.min(6.0F, Math.max(2.0F, damage * 0.08F)) * charge);
             return;
         }
         Entity direct = source.getDirectEntity();
         if (direct instanceof ThrowingKnifeEntity || direct instanceof ChakramEntity || direct instanceof ThrownSpear) {
-            AbilityManager.addUltimate(attacker, damage * 0.6F * charge);
+            AbilityManager.addUltimate(attacker, Math.min(5.0F, damage * 0.25F) * charge);
             return;
         }
         if (!CombatUtil.isDirectMelee(source)) {
@@ -311,8 +311,8 @@ public final class CombatEvents {
         // Only well-timed swings build a combo; spam-clicking resets it.
         data.combo = full ? data.comboAt(now) + 1 : 0;
         data.lastHitTime = now;
-        // Three solid hits fill the ultimate.
-        AbilityManager.addUltimate(attacker, (full ? 40.0F : 15.0F) * charge);
+        // About ten solid hits fill the ultimate; spam-clicking barely moves it.
+        AbilityManager.addUltimate(attacker, (full ? 10.0F : 2.0F) * charge);
 
         ServerLevel level = (ServerLevel) attacker.level();
         Vec3 at = target.getBoundingBox().getCenter();

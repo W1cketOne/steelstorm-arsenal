@@ -55,7 +55,7 @@ public final class AbilityManager {
     /** Whether the ultimate could be used right now; shows why not otherwise. */
     private static boolean ultimateReady(ServerPlayer player, Ability ability) {
         CombatData data = Stamina.data(player);
-        long left = data.cooldownLeft(ability.id(), player.level().getGameTime());
+        long left = player.getAbilities().instabuild ? 0 : data.cooldownLeft(ability.id(), player.level().getGameTime());
         if (left > 0) {
             player.displayClientMessage(Component.translatable("message.steelstorm.ability_cooldown",
                     Component.translatable(ability.nameKey()), String.format(java.util.Locale.ROOT, "%.1f", left / 20.0F))
@@ -163,9 +163,9 @@ public final class AbilityManager {
         }
         CombatData data = Stamina.data(player);
         long now = player.level().getGameTime();
-        long left = data.cooldownLeft(ability.id(), now);
         boolean creative = player.getAbilities().instabuild;
-        boolean charged = ability.charges() > 1 && !ability.isUltimate();
+        long left = creative ? 0 : data.cooldownLeft(ability.id(), now);
+        boolean charged = ability.charges() > 1 && !ability.isUltimate() && !creative;
         if (charged) {
             if (now < data.nextUse.getOrDefault(ability.id(), 0L)) {
                 return;
@@ -239,7 +239,8 @@ public final class AbilityManager {
             Stamina.tryConsume(player, cost);
             Fx.sparkles(player.serverLevel(), player.position().add(0, 1.1, 0), ctx.color(), 8, 0.5);
         }
-        int cooldown = (int) Math.round(ability.cooldown() * Config.SPECIAL_COOLDOWN_MULTIPLIER.get());
+        // Creative mode skips cooldowns, as it already skips the ultimate meter.
+        int cooldown = creative ? 0 : (int) Math.round(ability.cooldown() * Config.SPECIAL_COOLDOWN_MULTIPLIER.get());
         if (charged) {
             int used = data.chargesUsed.getOrDefault(ability.id(), 0) + 1;
             data.chargesUsed.put(ability.id(), used);
